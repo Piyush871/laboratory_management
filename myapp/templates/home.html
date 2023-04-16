@@ -1,0 +1,275 @@
+{% extends 'base_staff_user.html' %} {% block content %}
+<div id="layoutSidenav_content">
+  <main>
+    <div class="container-fluid px-4">
+      <h1 class="mt-4">Dashboard</h1>
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Dashboard</li>
+      </ol>
+
+      <div class="row">
+        <div class="col-xl-6 col-lg-6">
+          <div class="card mb-4">
+            <div class="card-header text-center">
+              <i class="fas fa-chart-area me-1"></i>
+              ASSINGN EQUIPEMENT FORM
+            </div>
+            <form id="assign-equipment-form">
+              {% csrf_token %}
+              <div class="mb-1 mt-3 px-5">
+                <div class="mb-3 mt-3">
+                  <div class="d-flex align-items-center">
+                    <p class="m-0 me-2 mr-3">EQUIP.ID</p>
+                    <input
+                      type="text"
+                      class="form-control flex-grow-1"
+                      placeholder="enter the id of the equipment"
+                      id="equipment_id"
+                      name="equipment_id"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-1 mt-3 px-5">
+                <div class="mb-3 mt-3">
+                  <div class="d-flex align-items-center">
+                    <p class="m-0 me-2 mr-3">LOCATION</p>
+                    <input
+                      type="text"
+                      class="form-control flex-grow-1"
+                      placeholder="enter the location of the equipment"
+                      id="location"
+                      name="location"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-4 mt-3 px-5">
+                <div class="mb-3 mt-3">
+                  <div class="d-flex align-items-center">
+                    <p class="m-0 me-2 mr-3">EMPLOYEE.ID</p>
+                    <input
+                      type="text"
+                      class="form-control flex-grow-1"
+                      placeholder="enter the id of the equipment"
+                      id="employee_id"
+                      name="employee_id"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-2 px-5">
+                <p
+                  style="display: inline-block; margin-left: 5px"
+                  id="details_1"
+                >
+                  equipment name and the employee name will appear heare
+                </p>
+              </div>
+              <div class="d-flex justify-content-between px-5">
+                <button
+                  id="check_button_assign"
+                  onclick="checkEquipmentAssignment()"
+                  type="button"
+                  class="btn btn-primary"
+                >
+                  Check Button
+                </button>
+                <button type="submit" class="btn btn-primary ml-autop">
+                  Submit Button
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-xl-6 col-lg-6">
+          <div class="card mb-4">
+            <div class="card-header text-center">
+              <i class="fas fa-chart-area me-1"></i>
+              DE-ASSINGN EQUIPEMENT FORM
+            </div>
+            <form id="deassign-equipment-form">
+              {% csrf_token %}
+              <div class="mb-4 mt-3 px-5">
+                <div class="mb-3 mt-3">
+                  <div class="d-flex align-items-center">
+                    <p class="m-0 me-2 mr-3">EQUIP.ID</p>
+                    <input
+                      type="text"
+                      class="form-control flex-grow-1"
+                      placeholder="enter the id of the equipment"
+                      id="equipment_id_deassign"
+                      name="employee_id_deassign"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-4 mt-3 px-5">
+                <div class="mb-3 mt-3">
+                  <div class="d-flex align-items-center">
+                    <p class="m-0 me-2 mr-3">LOCATION</p>
+                    <input
+                      type="text"
+                      class="form-control flex-grow-1"
+                      placeholder="enter the location of the equipment"
+                      id="location_deassign_input"
+                      name="location_deassign_input"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-1 px-5">
+                <p
+                  style="display: inline-block; margin-left: 5px"
+                  id="details_2"
+                >
+                  equipment name and the employee name will appear here
+                </p>
+              </div>
+              <div class="mb-2 px-5">
+                <p
+                  style="display: inline-block; margin-left: 5px"
+                  id="location_deassign_text"
+                >
+                  location of the equipment will appear here
+                </p>
+              </div>
+              <div class="d-flex justify-content-between px-5">
+                <button
+                  id="check_button_deassign"
+                  class="btn btn-primary"
+                  type="button"
+                >
+                  Check Button
+                </button>
+                <button type="submit" class="btn btn-primary ml-autop">
+                  Submit Button
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="fas fa-table me-1"></i>
+          DataTable Example
+        </div>
+        <div class="card-body">
+          <table id="datatablesSimple" class="display">
+            <thead>
+              <tr>
+                {% comment %} <th>equipment_id</th> {% endcomment %}
+                <th>equipment_name</th>
+                <th>category</th>
+                <th>assigned_user</th>
+                <th>last_assigned</th>
+                <th>viewDetails</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Tiger Nixon</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+              </tr>
+              <tr>
+                <td>Garrett Winters</td>
+                <td>Accountant</td>
+                <td>Tokyo</td>
+                <td>63</td>
+                <td>2011/07/25</td>
+                <td>$170,750</td>
+              </tr>
+              <tr>
+                <td>Ashton Cox</td>
+                <td>Junior Technical Author</td>
+                <td>San Francisco</td>
+                <td>66</td>
+                <td>2009/01/12</td>
+                <td>$86,000</td>
+              </tr>
+              <tr>
+                <td>Cedric Kelly</td>
+                <td>Senior Javascript Developer</td>
+                <td>Edinburgh</td>
+                <td>22</td>
+                <td>2012/03/29</td>
+                <td>$433,060</td>
+              </tr>
+              <tr>
+                <td>Airi Satou</td>
+                <td>Accountant</td>
+                <td>Tokyo</td>
+                <td>33</td>
+                <td>2008/11/28</td>
+                <td>$162,700</td>
+              </tr>
+              <tr>
+                <td>Brielle Williamson</td>
+                <td>Integration Specialist</td>
+                <td>New York</td>
+                <td>61</td>
+                <td>2012/12/02</td>
+                <td>$372,000</td>
+              </tr>
+              <tr>
+                <td>Herrod Chandler</td>
+                <td>Sales Assistant</td>
+                <td>San Francisco</td>
+                <td>59</td>
+                <td>2012/08/06</td>
+                <td>$137,500</td>
+              </tr>
+              <tr>
+                <td>Rhona Davidson</td>
+                <td>Integration Specialist</td>
+                <td>Tokyo</td>
+                <td>55</td>
+                <td>2010/10/14</td>
+                <td>$327,900</td>
+              </tr>
+              <tr>
+                <td>Colleen Hurst</td>
+                <td>Javascript Developer</td>
+                <td>San Francisco</td>
+                <td>39</td>
+                <td>2009/09/15</td>
+                <td>$205,500</td>
+              </tr>
+              <tr>
+                <td>Sonya Frost</td>
+                <td>Software Engineer</td>
+                <td>Edinburgh</td>
+                <td>23</td>
+                <td>2008/12/13</td>
+                <td>$103,600</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="py-4 bg-light mt-auto">
+    <div class="container-fluid px-4">
+      <div class="d-flex align-items-center justify-content-between small">
+        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+        <div>
+          <a href="#">Privacy Policy</a>
+          &middot;
+          <a href="#">Terms &amp; Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+{% endblock content %}

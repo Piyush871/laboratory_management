@@ -13,5 +13,6 @@ urlpatterns = [
     path('check_equipment_deassign', views.check_equipment_deassign_view, name='check_equipment_assignment'),
     path('deassign_equipment', views.deassign_equipment_view, name='deassign_equipment'),
     path('api/data/', views.data_api, name='data_api'),
-
+    path("dataTable",views.dataTable_view,name="dataTable"),
+    path("simpleDataTable",views.simpleDataTable_view,name="simpleDataTable"),
 ] 

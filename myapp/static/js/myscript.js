@@ -123,28 +123,25 @@ document
 
 //^^ this is for the table 
 
-$(document).ready(function() {
-  $('#datatablesSimple').DataTable({
-      "processing": true,
-      "serverSide": true,
-      "ajax": {
-          "url": "/api/data/",
-          "type": "GET"
-      },
-      "columns": [
-          { "data": "equipment_name" },
-          { "data": "category" },
-          { "data": "assigned_user" },
-          { "data": "last_assigned" },
-          { "data": "view_details" }
-      ],
-      "columnDefs": [
-          {
-              "targets": 4,
-              "render": function (data, type, row, meta) {
-                  return '<a href="/equipment/' + row.equipment_id + '/">View Details</a>';
-              }
-          }
-      ]
-  });
-});
+// $(document).ready(function() {
+//   $('#myTable').DataTable({
+//       "processing": true,
+//       "serverSide": true,
+//       "ajax": {
+//           "url": "/api/data/",
+//           "type": "GET"
+//       },
+//       "columns": [
+//           { "data": "equipment_name" },
+//           { "data": "category" },
+//           { "data": "assigned_user" },
+//           { "data": "last_assigned" },
+//           {
+//               "data": "equipment_id",
+//               "render": function (data, type, row, meta) {
+//                   return '<a href="/equipment/' + data + '/">View Details</a>';
+//               }
+//           }
+//       ],
+//   });
+// });

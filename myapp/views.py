@@ -1,17 +1,17 @@
+from .models import equipment, CustomUser
 from django.shortcuts import render, redirect
-from myapp.models import CustomUser ,equipment
+from myapp.models import CustomUser, equipment
 from myapp.forms import UserRegistrationForm
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse, JsonResponse
 # import the authentication backend
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
-#import the timezone
+# import the timezone
 from django.utils import timezone
 from django.core.paginator import Paginator
-
-
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 # import httpresponse
 
@@ -42,8 +42,6 @@ def home_view(request):
     return render(request, 'home.html', context)
 
 
-
-
 def reg_normal_user_view(request):
     if request.method == 'POST':
         # get the data from the user form
@@ -61,7 +59,7 @@ def reg_normal_user_view(request):
             print(form.errors)
             return render(request, 'register.html', {'form': form})
     else:
-        return render(request,'register.html')
+        return render(request, 'register.html')
 
         # feed the data to the form  object
 
@@ -90,9 +88,6 @@ def inactiveUsers_view(request):
     return render(request, 'inactiveUsers.html', context)
 
 
-
-
-
 def get_names_view(request):
     equipment_id = request.GET.get("equipment_id")
     employee_id = request.GET.get("employee_id")
@@ -103,7 +98,6 @@ def get_names_view(request):
     print(employee_name)
 
     return JsonResponse({"equipment_name": equipment_name, "employee_name": employee_name})
-
 
 
 @login_required(login_url='reg_normal_user')
@@ -123,7 +117,6 @@ def assign_equipment_view(request):
     eq.allocation_status = True
     eq.save()
     return JsonResponse({'message': 'Equipment assigned successfully!'})
-
 
 
 @login_required(login_url='reg_normal_user')
@@ -147,14 +140,16 @@ def check_equipment_deassign_view(request):
         data = {"error": str(e)}
         return JsonResponse(data, status=400)
 
-#**DEASSIGN EQUIPMENT**
+# **DEASSIGN EQUIPMENT**
+
+
 def deassign_equipment_view(request):
     print("deassigning equipment")
     equipment_id = request.POST.get("equipment_id")
     print(equipment_id)
     eq = equipment.objects.get(equipment_id=equipment_id)
     eq.assigned_user = None
-    if(request.POST.get("location") == " "):
+    if (request.POST.get("location") == " "):
         eq.location = " "
     eq.location = request.POST.get("location")
     eq.last_assigned_date = None
@@ -162,35 +157,32 @@ def deassign_equipment_view(request):
     eq.save()
     return JsonResponse({'message': 'Equipment deassigned successfully!'})
 
+
+
 def data_api(request):
-    draw = int(request.GET.get('draw', 0))
-    start = int(request.GET.get('start', 0))
-    length = int(request.GET.get('length', 10))
-    search_value = request.GET.get('search[value]', '')
-
     queryset = equipment.objects.all()
+    data = []
 
-    if search_value:
-        queryset = queryset.filter(equipment_name__icontains=search_value)
+    for item in queryset:
+        row = [
+            item.equipment_id,
+            item.equipment_name,
+            item.category,
+            item.assigned_user.name if item.assigned_user else '',
+            item.last_assigned_date.strftime('%Y-%m-%d') if item.last_assigned_date else '',
+            '',  # This column will be rendered in the frontend with the 'render' function
+        ]
+        data.append(row)
 
-    total_records = queryset.count()
-    paginator = Paginator(queryset, length)
-    page = (start // length) + 1
-    results = paginator.get_page(page)
-
-    data = [{
-        'equipment_id': item.equipment_id,
-        'equipment_name': item.equipment_name,
-        'category': item.category,
-        'assigned_user': str(item.assigned_user),
-        'last_assigned': item.last_assigned_date.strftime('%Y-%m-%d') if item.last_assigned_date else None,
-    } for item in results]
-
-    response_data = {
-        'draw': draw,
-        'recordsTotal': total_records,
-        'recordsFiltered': total_records,
-        'data': data,
-    }
+    response_data = {'data': data}
 
     return JsonResponse(response_data)
+
+
+
+def dataTable_view(request):
+    return render(request, 'dataTable.html')
+
+
+def simpleDataTable_view(request):
+    return render(request, 'simpleDataTable.html')

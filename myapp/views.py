@@ -10,10 +10,10 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
 # import the timezone
 from django.utils import timezone
-from django.core.paginator import Paginator
-from django.db.models import Q
 from django.shortcuts import get_object_or_404
 # import httpresponse
+from django.db.models import Q
+from django.core import serializers
 
 
 @login_required(login_url='reg_normal_user')
@@ -116,7 +116,7 @@ def assign_equipment_view(request):
     eq.last_assigned_date = timezone.now()
     eq.allocation_status = True
     eq.save()
-    return JsonResponse({'message': 'Equipment assigned successfully!'})
+    return JsonResponse({'message': 'equipment assigned successfully!'})
 
 
 @login_required(login_url='reg_normal_user')
@@ -126,7 +126,7 @@ def check_equipment_deassign_view(request):
     try:
         eq = equipment.objects.get(equipment_id=equipment_id)
         if eq.assigned_user is None:
-            raise ValueError("Equipment is not currently assigned to anyone")
+            raise ValueError("equipment is not currently assigned to anyone")
 
         user = eq.assigned_user
         print(user.name)
@@ -155,21 +155,20 @@ def deassign_equipment_view(request):
     eq.last_assigned_date = None
     eq.allocation_status = False
     eq.save()
-    return JsonResponse({'message': 'Equipment deassigned successfully!'})
+    return JsonResponse({'message': 'equipment deassigned successfully!'})
 
 
-
-def data_api(request):
+# def data_api(request):
     queryset = equipment.objects.all()
     data = []
-
     for item in queryset:
         row = [
             item.equipment_id,
             item.equipment_name,
             item.category,
             item.assigned_user.name if item.assigned_user else '',
-            item.last_assigned_date.strftime('%Y-%m-%d') if item.last_assigned_date else '',
+            item.last_assigned_date.strftime(
+                '%Y-%m-%d') if item.last_assigned_date else '',
             '',  # This column will be rendered in the frontend with the 'render' function
         ]
         data.append(row)
@@ -178,6 +177,40 @@ def data_api(request):
 
     return JsonResponse(response_data)
 
+
+def data_api(request):
+    search = request.GET.get('search', '')
+    print(search)
+
+    if search:
+        queryset = equipment.objects.filter(
+            Q(equipment_id__icontains=search) |
+            Q(equipment_name__icontains=search) |
+            Q(category__icontains=search) |
+            Q(date_of_purchase__icontains=search) |
+            Q(location__icontains=search) |
+            Q(assigned_user__name__icontains=search) |
+            Q(assigned_user__employee_id__icontains=search)
+        )[:100]
+    else:
+        queryset = equipment.objects.all().order_by('-last_assigned_date')[:100]
+
+    data = []
+    for item in queryset:
+        row = [
+            item.equipment_id,
+            item.equipment_name,
+            item.category,
+            item.assigned_user.name if item.assigned_user else '',
+            item.last_assigned_date.strftime(
+                '%Y-%m-%d') if item.last_assigned_date else '',
+            '',  # This column will be rendered in the frontend with the 'render' function
+        ]
+        data.append(row)
+
+    print(data)
+    response_data = {'data': data}
+    return JsonResponse(response_data)
 
 
 def dataTable_view(request):

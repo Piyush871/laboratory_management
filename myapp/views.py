@@ -213,7 +213,6 @@ def inactiveUsers_view(request):
 def inactive_users_api(request):
     search = request.GET.get('search', '')
     print(search)
-
     if search:
         queryset = CustomUser.objects.filter(
             Q(name__icontains=search) |
@@ -232,10 +231,19 @@ def inactive_users_api(request):
             item.employee_designation,
             item.email,
             item.contact_no,
-            False
+            f'<input type="checkbox" class="user-checkbox" data-id="{item.employee_id}" />',
         ]
         data.append(row)
-
     print(data)
     response_data = {'data': data}
     return JsonResponse(response_data)
+
+
+def activate_users_api(request):
+    ids = request.GET.getlist('ids[]')
+
+    if ids:
+        CustomUser.objects.filter(employee_id__in=ids).update(is_active=True)
+        return JsonResponse({'status': 'success', 'message': 'Users activated successfully.'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'No user IDs provided.'})

@@ -11,7 +11,7 @@ function checkEquipmentAssignment(event) {
         data.equipment_name + " will be assigned to " + data.employee_name;
     });
 }
-    
+
 document
   .querySelector("#check_button_assign")
   .addEventListener("click", checkEquipmentAssignment);
@@ -54,32 +54,27 @@ function assignEquipment(event) {
 document
   .querySelector("#assign-equipment-form")
   .addEventListener("submit", assignEquipment);
-  
 
+//&&deal with cheking when  deassigning the eq
 
+function checkEquipmentDeassignment(event) {
+  event.preventDefault(); // prevents the form from being submitted
+  const equipmentId = document.querySelector("#equipment_id_deassign").value;
 
+  fetch(`check_equipment_deassign?equipment_id=${equipmentId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      const DetailsElement = document.querySelector("#details_2");
+      DetailsElement.innerHTML =
+        data.equipment_name + "is assigned to " + data.employee_name;
+      const LocationElement = document.querySelector("#location_deassign_text");
+      LocationElement.innerHTML = "Location: " + data.location;
+    });
+}
 
-
-
-
-//&&deal with cheking when  deassigning the eq 
-
-  function checkEquipmentDeassignment(event) {
-    event.preventDefault(); // prevents the form from being submitted
-    const equipmentId = document.querySelector("#equipment_id_deassign").value;
-  
-    fetch(`check_equipment_deassign?equipment_id=${equipmentId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        const DetailsElement = document.querySelector("#details_2");
-        DetailsElement.innerHTML = data.equipment_name + "is assigned to " + data.employee_name;
-        const LocationElement = document.querySelector("#location_deassign_text");
-        LocationElement.innerHTML = "Location: " + data.location;
-      });
-  }
-  
-  document.querySelector("#check_button_deassign").addEventListener("click", checkEquipmentDeassignment);
-
+document
+  .querySelector("#check_button_deassign")
+  .addEventListener("click", checkEquipmentDeassignment);
 
 //&& deal with deassigning the eq
 
@@ -115,33 +110,64 @@ function deassignEquipment(event) {
     });
 }
 
-
 document
   .querySelector("#deassign-equipment-form")
   .addEventListener("submit", deassignEquipment);
+
+
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const myTable = document.querySelector("#datatablesSimple");
   
-
-//^^ this is for the table 
-
-// $(document).ready(function() {
-//   $('#myTable').DataTable({
-//       "processing": true,
-//       "serverSide": true,
-//       "ajax": {
-//           "url": "/api/data/",
-//           "type": "GET"
-//       },
-//       "columns": [
-//           { "data": "equipment_name" },
-//           { "data": "category" },
-//           { "data": "assigned_user" },
-//           { "data": "last_assigned" },
-//           {
-//               "data": "equipment_id",
-//               "render": function (data, type, row, meta) {
-//                   return '<a href="/equipment/' + data + '/">View Details</a>';
-//               }
-//           }
-//       ],
-//   });
-// });
+    const generateDataTableConfig = (data) => ({
+      data: data,
+      columns: [
+        { select: 0, sort: "asc", title: "equipment_id" },
+        { select: 1, title: "equipment_name" },
+        { select: 2, title: "category" },
+        { select: 3, title: "assigned_user" },
+        { select: 4, title: "last_assigned" },
+        {
+          select: 5,
+          title: "viewDetails",
+          render: function (data, cell, row) {
+            return `<a href="/equipment/${row[0]}/">View Details</a>`;
+          },
+        },
+      ],
+    });
+  
+    let dataTable;
+  
+    function fetchData(query = "") {
+      console.log("fetching data");
+      fetch(`/api/equipment/?search=${query}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (dataTable) {
+            dataTable.destroy();
+          }
+          dataTable = new simpleDatatables.DataTable(
+            myTable,
+            generateDataTableConfig(data)
+          );
+          document
+            .querySelector(".datatable-input")
+            .addEventListener("keydown", (event) => {
+              if (event.key === "Enter") {
+                const query = event.target.value;
+                if (query.length >= 3 || query.length === 0) {
+                  fetchData(query);
+                }
+              }
+            });
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }
+  
+    fetchData();
+  });
+  

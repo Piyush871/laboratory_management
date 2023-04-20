@@ -12,7 +12,14 @@ urlpatterns = [
     path("assign_equipment",views.assign_equipment_view,name="assign_equipment"),
     path('check_equipment_deassign', views.check_equipment_deassign_view, name='check_equipment_assignment'),
     path('deassign_equipment', views.deassign_equipment_view, name='deassign_equipment'),
-    path('api/data/', views.data_api, name='data_api'),
-    path("dataTable",views.dataTable_view,name="dataTable"),
-    path("simpleDataTable",views.simpleDataTable_view,name="simpleDataTable"),
+    path('api/equipment/', views.equipment_api, name='equipment_api'),
+    path('api/inactive_users/', views.inactive_users_api, name='inactive_users_api'),
+    
+    
+    #this were for the testing purpose
+    # path("dataTable",views.dataTable_view,name="dataTable"),
+    # path("simpleDataTable",views.simpleDataTable_view,name="simpleDataTable"),
+    
+    path("inactiveUsers",views.inactiveUsers_view,name="inactiveUsers"),
+    
 ] 

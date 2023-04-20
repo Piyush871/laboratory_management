@@ -158,27 +158,7 @@ def deassign_equipment_view(request):
     return JsonResponse({'message': 'equipment deassigned successfully!'})
 
 
-# def data_api(request):
-    queryset = equipment.objects.all()
-    data = []
-    for item in queryset:
-        row = [
-            item.equipment_id,
-            item.equipment_name,
-            item.category,
-            item.assigned_user.name if item.assigned_user else '',
-            item.last_assigned_date.strftime(
-                '%Y-%m-%d') if item.last_assigned_date else '',
-            '',  # This column will be rendered in the frontend with the 'render' function
-        ]
-        data.append(row)
-
-    response_data = {'data': data}
-
-    return JsonResponse(response_data)
-
-
-def data_api(request):
+def equipment_api(request):
     search = request.GET.get('search', '')
     print(search)
 
@@ -193,7 +173,8 @@ def data_api(request):
             Q(assigned_user__employee_id__icontains=search)
         )[:100]
     else:
-        queryset = equipment.objects.all().order_by('-last_assigned_date')[:100]
+        queryset = equipment.objects.all().order_by(
+            '-last_assigned_date')[:100]
 
     data = []
     for item in queryset:
@@ -219,3 +200,42 @@ def dataTable_view(request):
 
 def simpleDataTable_view(request):
     return render(request, 'simpleDataTable.html')
+
+
+def inactiveUsers_view(request):
+    users = CustomUser.objects.filter(is_active=False)
+    context = {
+        'users': users
+    }
+    return render(request, 'inactiveUsers.html', context)
+
+
+def inactive_users_api(request):
+    search = request.GET.get('search', '')
+    print(search)
+
+    if search:
+        queryset = CustomUser.objects.filter(
+            Q(name__icontains=search) |
+            Q(employee_id__icontains=search) |
+            Q(email__icontains=search) |
+            Q(user_type__icontains=search)
+        )
+    else:
+        queryset = CustomUser.objects.filter(is_active=False, user_type='normal')
+
+    data = []
+    for item in queryset:
+        row = [
+            item.employee_id,
+            item.name,
+            item.employee_designation,
+            item.email,
+            item.contact_no,
+            False
+        ]
+        data.append(row)
+
+    print(data)
+    response_data = {'data': data}
+    return JsonResponse(response_data)

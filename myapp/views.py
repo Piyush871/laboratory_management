@@ -49,14 +49,15 @@ def reg_normal_user_view(request):
         print(form_data)
         # set user_type directly from form data
         form_data['user_type'] = 'normal'
-        form_data['is_active']
+        form_data['is_active'] = False
         form = UserRegistrationForm(form_data)
-
         if form.is_valid():
+            print("Form is valid")
             form.save()
             return HttpResponse('<script>alert("User registered successfully!");window.location.href="/";</script>')
         else:
             print(form.errors)
+            print("Form is not valid")
             return render(request, 'register.html', {'form': form})
     else:
         return render(request, 'register.html')

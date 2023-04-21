@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, name, employee_id, contact_no, employee_designation, password=None, user_type="normal"):
+    def create_user(self, email, name, employee_id, contact_no, employee_designation, password=None, user_type="normal",is_active=False):
         """
         Creates and saves a new user with the given email, password, and user type.
         """
@@ -14,7 +14,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
         user = self.model(email=email, name=name, employee_id=employee_id, contact_no=contact_no,
-                          employee_designation=employee_designation, user_type=user_type)
+                          employee_designation=employee_designation, user_type=user_type,is_active=is_active )
         user.set_password(password)
         user.save(using=self._db)
         return user

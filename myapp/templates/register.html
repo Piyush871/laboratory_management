@@ -3,7 +3,7 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>CodePen - Weekly Coding Challenge #1 -  Double slider Sign in/up Form - Desktop Only</title>
+  <title>Online Lab Assitant</title>
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css'>
     {% load static %}
   <link rel="stylesheet" href={% static 'css/registerCSS.css' %}>
@@ -12,18 +12,7 @@
 <body>
 
 
-{% comment %} 
 
-    email = models.EmailField(unique=True)
-    name = models.CharField(max_length=100)
-    employee_id = models.CharField(max_length=20, unique=True)
-    contact_no = models.CharField(max_length=15)
-    employee_designation = models.CharField(max_length=100)
-    is_staff = models.BooleanField(default=False)
-    user_type = models.CharField(max_length=100, default="normal")
-    is_active = models.BooleanField(default=True)
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'employee_id', 'contact_no', 'employee_designation'] {% endcomment %}
 
 
 <!-- partial:index.partial.html -->
@@ -39,18 +28,19 @@
             <input type="text" placeholder="Contact_no" name="contact_no" />
             <input type="text" placeholder="Employee_designation" name="employee_designation" />
             <input type="password" placeholder="Password" name="password" />
-            
+
 			<button>Sign Up</button>
 		</form>
 	</div>
 	<div class="form-container sign-in-container">
-		<form action="#">
+		<form action="login" method="POST">
+			{% csrf_token %}
 			<h1>Sign in</h1>
 			<span>or use your account</span>
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
+			<input type="email" placeholder="Email" name="email" />
+			<input type="password" placeholder="Password" name="password"/>
 			<a href="#">Forgot your password?</a>
-			<button>Sign In</button>
+			<button type="submit" >Sign In</button>
 		</form>
 	</div>
 	<div class="overlay-container">
@@ -68,15 +58,6 @@
 		</div>
 	</div>
 </div>
-
-<footer>
-	<p>
-		Created with <i class="fa fa-heart"></i> by
-		<a target="_blank" href="https://florin-pop.com">Florin Pop</a>
-		- Read how I created this and how you can join the challenge
-		<a target="_blank" href="https://www.florin-pop.com/blog/2019/03/double-slider-sign-in-up-form/">here</a>.
-	</p>
-</footer>
 <!-- partial -->
   <script  src={% static 'js/registerScript.js' %}></script>
 

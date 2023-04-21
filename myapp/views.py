@@ -42,6 +42,8 @@ def home_view(request):
     return render(request, 'home.html', context)
 
 
+#************************view for registring normal user **************************************************************
+
 def reg_normal_user_view(request):
     if request.method == 'POST':
         # get the data from the user form
@@ -64,6 +66,7 @@ def reg_normal_user_view(request):
 
         # feed the data to the form  object
 
+#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&LOGIN VIEW &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
 def login_view(request):
     if request.method == 'POST':
@@ -74,7 +77,8 @@ def login_view(request):
             login(request, user)
             messages.success(request, 'Login successful!')
             print("Login successful!")
-            return redirect('home')
+            #send user to home page and send his details
+            return redirect('home', {'user': user})
         else:
             print("Invalid email or password!")
             messages.error(request, 'Invalid email or password!')

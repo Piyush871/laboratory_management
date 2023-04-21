@@ -46,40 +46,78 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   fetchData();
-});
 
-document.querySelector("#activeButton").addEventListener("click", function () {
-  const checkboxes = document.querySelectorAll("input.user-checkbox:checked");
-  console.log("Checked checkboxes:", checkboxes);
 
-  const ids = Array.from(checkboxes).map((checkbox) => {
-    console.log("Checkbox:", checkbox);
-    return checkbox.dataset.id;
+  document.querySelector("#activeButton").addEventListener("click", function () {
+    const checkboxes = document.querySelectorAll("input.user-checkbox:checked");
+    console.log("Checked checkboxes:", checkboxes);
+  
+    const ids = Array.from(checkboxes).map((checkbox) => {
+      console.log("Checkbox:", checkbox);
+      return checkbox.dataset.id;
+    });
+  
+    // Call your activate API endpoint with ids array
+    console.log("Activate user ids:", ids);
+  
+    if (ids.length > 0) {
+      fetch(`api/activate_users/?ids[]=${ids.join("&ids[]=")}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+  
+          if (data.status === 'success') {
+            alert(data.message);
+            // Reload the table data
+            fetchData();
+          } else {
+            alert("Error: " + data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error activating users:", error);
+          alert("Error activating users. Please try again.");
+        });
+    } else {
+      alert("Please select at least one user to activate.");
+    }
   });
-
-  // Call your activate API endpoint with ids array
-  console.log("Activate user ids:", ids);
-
-  if (ids.length > 0) {
-    fetch(`api/activate_users/?ids[]=${ids.join("&ids[]=")}`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-
-        if (data.status === 'success') {
-          alert(data.message);
-          // Reload the table data
-          fetchData();
-        } else {
-          alert("Error: " + data.message);
-        }
-      })
-      .catch((error) => {
-        console.error("Error activating users:", error);
-        alert("Error activating users. Please try again.");
-      });
-  } else {
-    alert("Please select at least one user to activate.");
-  }
+  
+  document.querySelector("#deleteButton").addEventListener("click", function () {
+    const checkboxes = document.querySelectorAll("input.user-checkbox:checked");
+    console.log("Checked checkboxes:", checkboxes);
+  
+    const ids = Array.from(checkboxes).map((checkbox) => {
+      console.log("Checkbox:", checkbox);
+      return checkbox.dataset.id;
+    });
+  
+    // Call your activate API endpoint with ids array
+    console.log("Delete user ids:", ids);
+  
+    if (ids.length > 0) {
+      fetch(`api/delete_users/?ids[]=${ids.join("&ids[]=")}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+  
+          if (data.status === 'success') {
+            alert(data.message);
+            // Reload the table data
+            fetchData();
+          } else {
+            alert("Error: " + data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting  users:", error);
+          alert("Error activating users. Please try again.");
+        });
+    } else {
+      alert("Please select at least one user to activate.");
+    }
+  });
+  
+    
 });
 

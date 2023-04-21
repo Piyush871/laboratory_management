@@ -2,7 +2,7 @@ from .models import equipment, CustomUser
 from django.shortcuts import render, redirect
 from myapp.models import CustomUser, equipment
 from myapp.forms import UserRegistrationForm
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse , HttpResponseRedirect
 # import the authentication backend
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -14,32 +14,25 @@ from django.shortcuts import get_object_or_404
 # import httpresponse
 from django.db.models import Q
 from django.core import serializers
+from django.urls import reverse
 
 
 @login_required(login_url='reg_normal_user')
 def home_view(request):
-    user_type = ""
-    user_name = ""
-
+    user_type = request.user.user_type
+    context = {
+        'user': request.user,
+    }
     if request.user.is_authenticated:
-        user_type = "User"
         if (request.user.is_staff):
-            user_type = "Staff"
-        elif (request.user.is_superuser):
-            user_type = "Superuser"
+            return render(request, 'home.html', context)
+        elif (request.user.user_type=="superuser" ):
+            return render(request, 'home.html', context)
         else:
-            user_type = "User"
+            return render(request, 'home.html', context)
         user_name = request.user.name
 
-    else:
-        user_type = "Anonymous"
-        user_name = "Anonymous"
-
-    context = {
-        'user_type': user_type,
-        'name': user_name,
-    }
-    return render(request, 'home.html', context)
+   
 
 
 #************************view for registring normal user **************************************************************
@@ -78,11 +71,19 @@ def login_view(request):
             messages.success(request, 'Login successful!')
             print("Login successful!")
             #send user to home page and send his details
-            return redirect('home', {'user': user})
+            return redirect('home')
         else:
             print("Invalid email or password!")
             messages.error(request, 'Invalid email or password!')
             return render(request, 'register.html')
+        
+        
+        
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%LOGGOUT VIEW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def logout_view(request):
+    print("in the logout view")
+    logout(request)
+    return HttpResponseRedirect(reverse('reg_normal_user'))  # Replace 'login' with the name of your login view in the urls.py
 
 
 def inactiveUsers_view(request):
@@ -250,5 +251,14 @@ def activate_users_api(request):
     if ids:
         CustomUser.objects.filter(employee_id__in=ids).update(is_active=True)
         return JsonResponse({'status': 'success', 'message': 'Users activated successfully.'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'No user IDs provided.'})
+    
+    
+def delete_users_api(request):
+    ids = request.GET.getlist('ids[]')
+    if ids:
+        CustomUser.objects.filter(employee_id__in=ids).delete()
+        return JsonResponse({'status': 'success', 'message': 'Users deleted successfully.'})
     else:
         return JsonResponse({'status': 'error', 'message': 'No user IDs provided.'})

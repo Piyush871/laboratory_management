@@ -7,6 +7,7 @@ urlpatterns = [
     path("",views.home_view,name="home"),
     path("reg_normal_user",views.reg_normal_user_view,name="reg_normal_user"),
     path("login",views.login_view,name="login"),
+    path("logout",views.logout_view,name="logout"),
     path("inactiveUsers",views.inactiveUsers_view,name="inactiveUsers"),
     path("get_names",views.get_names_view,name="get_names"),
     path("assign_equipment",views.assign_equipment_view,name="assign_equipment"),
@@ -15,6 +16,8 @@ urlpatterns = [
     path('api/equipment/', views.equipment_api, name='equipment_api'),
     path('api/inactive_users/', views.inactive_users_api, name='inactive_users_api'),
     path('api/activate_users/', views.activate_users_api, name='active_users_api'),
+    path('api/delete_users/', views.delete_users_api, name='delete_users_api'),
+    
     
     
     #this were for the testing purpose

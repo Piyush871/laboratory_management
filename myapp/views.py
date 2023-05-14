@@ -2,7 +2,7 @@ from .models import equipment, CustomUser
 from django.shortcuts import render, redirect
 from myapp.models import CustomUser, equipment
 from myapp.forms import UserRegistrationForm
-from django.http import HttpResponse, JsonResponse , HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 # import the authentication backend
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core import serializers
 from django.urls import reverse
+import json
 
 
 @login_required(login_url='reg_normal_user')
@@ -26,16 +27,14 @@ def home_view(request):
     if request.user.is_authenticated:
         if (request.user.is_staff):
             return render(request, 'home.html', context)
-        elif (request.user.user_type=="superuser" ):
+        elif (request.user.user_type == "superuser"):
             return render(request, 'home.html', context)
         else:
             return render(request, 'home.html', context)
         user_name = request.user.name
 
-   
 
-
-#************************view for registring normal user **************************************************************
+# ************************view for registring normal user **************************************************************
 
 def reg_normal_user_view(request):
     if request.method == 'POST':
@@ -59,7 +58,8 @@ def reg_normal_user_view(request):
 
         # feed the data to the form  object
 
-#&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&LOGIN VIEW &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+# &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&LOGIN VIEW &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -70,20 +70,20 @@ def login_view(request):
             login(request, user)
             messages.success(request, 'Login successful!')
             print("Login successful!")
-            #send user to home page and send his details
+            # send user to home page and send his details
             return redirect('home')
         else:
             print("Invalid email or password!")
             messages.error(request, 'Invalid email or password!')
             return render(request, 'register.html')
-        
-        
-        
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%LOGGOUT VIEW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%LOGGOUT VIEW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 def logout_view(request):
     print("in the logout view")
     logout(request)
-    return HttpResponseRedirect(reverse('reg_normal_user'))  # Replace 'login' with the name of your login view in the urls.py
+    # Replace 'login' with the name of your login view in the urls.py
+    return HttpResponseRedirect(reverse('reg_normal_user'))
 
 
 def inactiveUsers_view(request):
@@ -191,13 +191,88 @@ def equipment_api(request):
             item.assigned_user.name if item.assigned_user else '',
             item.last_assigned_date.strftime(
                 '%Y-%m-%d') if item.last_assigned_date else '',
-            '',  # This column will be rendered in the frontend with the 'render' function
+            # This column will be rendered in the frontend with the 'render' function
+            item.equipment_id,
         ]
         data.append(row)
 
     print(data)
     response_data = {'data': data}
     return JsonResponse(response_data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+# **EQUIPMENT DETAILS API**
+
+def equipment_details_api(request):
+    equipment_id = request.GET.get('equipment_id', None)
+    if equipment_id is not None:
+        try:
+            equipment_obj = equipment.objects.get(equipment_id=equipment_id)
+            data = {
+                'equipment_id': equipment_obj.equipment_id,
+                'equipment_name': equipment_obj.equipment_name,
+                'category': equipment_obj.category,
+                'assigned_user': equipment_obj.assigned_user.name if equipment_obj.assigned_user else None,
+                'last_assigned': equipment_obj.last_assigned_date.strftime('%Y-%m-%d') if equipment_obj.last_assigned_date else None,
+                'location': equipment_obj.location,
+                'image_url': equipment_obj.image.url if equipment_obj.image else None,
+                'status': True
+            }
+        except equipment.DoesNotExist:
+            data = {'status': False, 'error': 'No equipment found with this ID'}
+    else:
+        data = {'status': False, 'error': 'No equipment ID provided'}
+    print(data)
+
+    return JsonResponse(data)
+
+def update_equipment_api(request):
+    if request.method == 'POST':
+        equipment_id = request.POST.get('equipment_id')
+        equipment_name = request.POST.get('equipment_name')
+        category = request.POST.get('category')
+        location = request.POST.get('location')
+        image = request.FILES.get('image')
+        
+        try:
+            eq = equipment.objects.get(equipment_id=equipment_id)
+        except equipment.DoesNotExist:
+            return JsonResponse({"status": False, "error": "Equipment not found."})
+
+        eq.equipment_name = equipment_name
+        eq.category = category
+        eq.location = location
+        if image is not None:
+            eq.image = image
+        eq.save()
+
+        return JsonResponse({"status": True, "message": "Equipment updated successfully."})
+    else:
+        return JsonResponse({"status": False, "error": "Invalid request method."})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def dataTable_view(request):
@@ -227,7 +302,8 @@ def inactive_users_api(request):
             Q(user_type__icontains=search)
         )
     else:
-        queryset = CustomUser.objects.filter(is_active=False, user_type='normal')
+        queryset = CustomUser.objects.filter(
+            is_active=False, user_type='normal')
 
     data = []
     for item in queryset:
@@ -253,8 +329,8 @@ def activate_users_api(request):
         return JsonResponse({'status': 'success', 'message': 'Users activated successfully.'})
     else:
         return JsonResponse({'status': 'error', 'message': 'No user IDs provided.'})
-    
-    
+
+
 def delete_users_api(request):
     ids = request.GET.getlist('ids[]')
     if ids:

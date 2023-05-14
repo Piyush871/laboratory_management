@@ -187,24 +187,124 @@
       </div>
     </div>
   </main>
-  <footer class="py-4 bg-light mt-auto">
-    <div class="container-fluid px-4">
-      <div class="d-flex align-items-center justify-content-between small">
-        <div class="text-muted">Copyright &copy; Your Website 2023</div>
-        <div>
-          <a href="#">Privacy Policy</a>
-          &middot;
-          <a href="#">Terms &amp; Conditions</a>
+{% comment %} <div class="modal" id="equipmentModal" tabindex="-1" role="dialog" >
+  <div class="modal-dialog mw-100 w-75 modal-dialog-centered modal-lg" role="document" >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Equipment Details</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <!-- In your modal-footer -->
+
+
+<!-- In your modal-body -->
+<div class="modal-body" >
+  <div class="row">
+    <div class="col-md-6 ">
+  <p><strong>Image:</strong> <img style="width: 500px; height: 500px" id="equipment_image_d" src="" alt=""><input type="file" id="new_image" style="display:none;"></p>
+  </div>
+  
+  <div class="col-md-6">
+    <p><strong>Equipment ID:      </strong> <input type="text" id="equipment_id_d" readonly></p>
+    <p><strong>Name:              </strong> <input type="text" id="equipment_name_d" readonly></p>
+    <p><strong>Category:          </strong> <input type="text" id="category_d" readonly></p>
+    <p><strong>Assigned User:     </strong> <input type="text" id="assigned_user_d" readonly></p>
+    <p><strong>Last Assigned Date:</strong> <input type="text" id="last_assigned_d" readonly></p>
+    <p><strong>Location:          </strong> <input type="text" id="location_d" readonly></p>
+  </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+  <button id="editButton" type="button" class="btn btn-primary" onclick="editEquipment()">Edit</button>
+  <button id="saveButton" type="button" class="btn btn-success" onclick="saveEquipment()" style="display:none;">Save</button>
+</div>
+
+    </div>
+  </div>
+</div>  {% endcomment %}
+
+<div class="modal" id="equipmentModal" tabindex="-1" role="dialog" >
+  <div class="modal-dialog mw-100 w-75 modal-dialog-centered modal-lg" role="document" >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Equipment Details</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body" >
+        <div class="row">
+          <div class="col-md-6 ">
+            <p><strong>Image:</strong> <img style="width: 500px; height: 500px" id="equipment_image_d" src="" alt=""><input type="file" id="new_image" style="display:none;"></p>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="form-group row mt-2">
+              <label class="col-sm-4 col-form-label"><strong>Equipment ID:</strong></label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="equipment_id_d" readonly>
+              </div>
+            </div>
+            <div class="form-group row mt-2">
+              <label class="col-sm-4 col-form-label"><strong>Name:</strong></label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="equipment_name_d" readonly>
+              </div>
+            </div>
+            <div class="form-group row mt-2">
+              <label class="col-sm-4 col-form-label"><strong>Category:</strong></label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="category_d" readonly>
+              </div>
+            </div>
+            <div class="form-group row mt-2">
+              <label class="col-sm-4 col-form-label"><strong>Assigned User:</strong></label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="assigned_user_d" readonly>
+              </div>
+            </div>
+            <div class="form-group row mt-2">
+              <label class="col-sm-4 col-form-label"><strong>Last Assigned Date:</strong></label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="last_assigned_d" readonly>
+              </div>
+            </div>
+            <div class="form-group row mt-2">
+              <label class="col-sm-4 col-form-label"><strong>Location:</strong></label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="location_d" readonly>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="editButton" type="button" class="btn btn-primary" onclick="editEquipment()">Edit</button>
+        <button id="saveButton" type="button" class="btn btn-success" onclick="saveEquipment()" style="display:none;">Save</button>
+      </div>
+
+    </div>             
+  </div>
 </div>
+
+
+
 {% load static %}
 
 
 {% endblock content %}
 
 {% block staticFiles %}
+<style link={% static 'css/homeStyle.css' %}></style>
 <script src={% static 'js/homeScript.js' %}></script>
 {% endblock staticFiles %}
+
+
+
+

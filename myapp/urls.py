@@ -17,8 +17,8 @@ urlpatterns = [
     path('api/inactive_users/', views.inactive_users_api, name='inactive_users_api'),
     path('api/activate_users/', views.activate_users_api, name='active_users_api'),
     path('api/delete_users/', views.delete_users_api, name='delete_users_api'),
-    
-    
+    path('api/equipment_details/',views.equipment_details_api,name="equipment_api"),
+    path('api/update_equipment/',views.update_equipment_api,name="update_equipment_api"),
     
     #this were for the testing purpose
     # path("dataTable",views.dataTable_view,name="dataTable"),

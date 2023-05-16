@@ -16,6 +16,9 @@ from django.db.models import Q
 from django.core import serializers
 from django.urls import reverse
 import json
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.base import ContentFile
+import base64
 
 
 @login_required(login_url='reg_normal_user')
@@ -177,10 +180,10 @@ def equipment_api(request):
             Q(location__icontains=search) |
             Q(assigned_user__name__icontains=search) |
             Q(assigned_user__employee_id__icontains=search)
-        )[:100]
+        )
     else:
         queryset = equipment.objects.all().order_by(
-            '-last_assigned_date')[:100]
+            '-last_assigned_date')
 
     data = []
     for item in queryset:
@@ -201,6 +204,44 @@ def equipment_api(request):
     return JsonResponse(response_data)
 
 
+
+def allEquipments_api(request):
+    search = request.GET.get('search', '')
+    print(search)
+
+    if search:
+        queryset = equipment.objects.filter(
+            Q(equipment_id__icontains=search) |
+            Q(equipment_name__icontains=search) |
+            Q(category__icontains=search) |
+            Q(date_of_purchase__icontains=search) |
+            Q(location__icontains=search) |
+            Q(assigned_user__name__icontains=search) |
+            Q(assigned_user__employee_id__icontains=search)
+        )
+    else:
+        queryset = equipment.objects.all().order_by(
+            '-last_assigned_date')
+
+    data = []
+    for item in queryset:
+        row = [
+            item.equipment_id,
+            item.equipment_name,
+            item.category,
+            item.assigned_user.name if item.assigned_user else '',
+            item.last_assigned_date.strftime(
+                '%Y-%m-%d') if item.last_assigned_date else '',
+            # This column will be rendered in the frontend with the 'render' function
+            item.equipment_id,
+            f'<input type="checkbox" class="user-checkbox" data-id="{item.equipment_id}" />',
+            
+        ]
+        data.append(row)
+
+    print(data)
+    response_data = {'data': data}
+    return JsonResponse(response_data)
 
 
 
@@ -260,6 +301,50 @@ def update_equipment_api(request):
         return JsonResponse({"status": True, "message": "Equipment updated successfully."})
     else:
         return JsonResponse({"status": False, "error": "Invalid request method."})
+
+
+
+def allEquipments_view(request):
+    return render(request, 'allEquipments.html')
+
+
+@csrf_exempt
+def add_equipment(request):
+    if request.method == 'POST':
+        try:
+            print("int the add equipment")
+            equipment_id = request.POST['equipment_id']
+            equipment_name = request.POST['equipment_name']
+            category = request.POST['category']
+            date_of_purchase = request.POST['date_of_purchase']
+            location = request.POST['location']
+            image_file = request.FILES['image']
+
+            new_equipment = equipment(
+                equipment_id = equipment_id,
+                equipment_name = equipment_name,
+                category = category,
+                date_of_purchase = date_of_purchase,
+                location = location,
+            )
+            new_equipment.image.save(image_file.name, image_file)
+
+            new_equipment.save()
+
+            return JsonResponse({'status':'ok'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid Method'}, status=400)
+
+
+
+
+
+
+
+
+
 
 
 

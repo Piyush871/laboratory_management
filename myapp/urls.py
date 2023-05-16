@@ -19,6 +19,9 @@ urlpatterns = [
     path('api/delete_users/', views.delete_users_api, name='delete_users_api'),
     path('api/equipment_details/',views.equipment_details_api,name="equipment_api"),
     path('api/update_equipment/',views.update_equipment_api,name="update_equipment_api"),
+    path('allEquipments',views.allEquipments_view,name="allEquipments"),
+    path('api/allEquipments/',views.allEquipments_api,name="allEquipments_api"),
+    path('api/addEquipment/', views.add_equipment, name='add_equipment'),
     
     #this were for the testing purpose
     # path("dataTable",views.dataTable_view,name="dataTable"),

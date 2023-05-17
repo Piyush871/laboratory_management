@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
-from myapp import views 
+from myapp import normal_user_equip_views
+from myapp import views
 
 urlpatterns = [
     path("",views.home_view,name="home"),
@@ -28,5 +29,19 @@ urlpatterns = [
     # path("simpleDataTable",views.simpleDataTable_view,name="simpleDataTable"),
     
     path("inactiveUsers",views.inactiveUsers_view,name="inactiveUsers"),
+    
+    
+    
+    
+    #normal user apis**************
+    
+    path("api/normal_user/assigned_equipments/", normal_user_equip_views.normal_user_assigned_equipments_api, name="normal_user_assigned_equipments_api"),
+    
+    path("api/normal_user/all_equipments/",normal_user_equip_views.normal_user_all_equipments_api,name="normal_user_assigned_equipments_api"),
+
+    path("api/normal_user/available_equipments/",normal_user_equip_views.normal_user_available_equipments_api,name="normal_user_available_equipments_api"),
+     
+    
+    
     
 ] 

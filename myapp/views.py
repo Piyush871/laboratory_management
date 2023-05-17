@@ -23,6 +23,7 @@ import base64
 
 @login_required(login_url='reg_normal_user')
 def home_view(request):
+    print('inside home view')
     user_type = request.user.user_type
     context = {
         'user': request.user,
@@ -33,7 +34,7 @@ def home_view(request):
         elif (request.user.user_type == "superuser"):
             return render(request, 'home.html', context)
         else:
-            return render(request, 'home.html', context)
+            return render(request, 'normalUserHome.html', context)
         user_name = request.user.name
 
 
@@ -66,8 +67,10 @@ def reg_normal_user_view(request):
 
 def login_view(request):
     if request.method == 'POST':
+        print("inside login view")
         email = request.POST.get('email')
         password = request.POST.get('password')
+        print(email, password)
         user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
@@ -76,7 +79,7 @@ def login_view(request):
             # send user to home page and send his details
             return redirect('home')
         else:
-            print("Invalid email or password!")
+            print("error")
             messages.error(request, 'Invalid email or password!')
             return render(request, 'register.html')
 

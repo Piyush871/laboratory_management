@@ -1,1 +1,103 @@
-<h1>Welcome, {{ user.name }}!</h1>
+<!--inherit base normal user template-->
+{% extends 'base_normal_user.html' %} {% block content %}
+
+<div id="layoutSidenav_content">
+  <main>
+    <div class="container-fluid px-4 py-5">
+      <h1 class="mt-4" style="color: darkblue">
+        Hey, {{ user.name }}!Welcome to SMSS
+      </h1>
+      {% comment %}
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+        <li class="breadcrumb-item active">All Equipments</li>
+      </ol>
+      {% endcomment %}
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="fas fa-table me-1"></i>
+          Equipment Table
+        </div>
+        <div class="card-body">
+          <table id="datatablesSimple">
+            <thead>
+              <tr>
+                <th>equipment_id</th>
+                <th>equipment_name</th>
+                <th>category</th>
+                <th>availability_status</th>
+                <th>viewDetails</th>
+                <th>checkbox</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>equipment_id</th>
+                <th>equipment_name</th>
+                <th>category</th>
+                <th>availability_status</th>
+                <th>viewDetails</th>
+                <th>checkbox</th>
+              </tr>
+            </tfoot>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-table me-1"></i>
+            <p class="me-2 mb-0">Actions</p>
+
+            <!-- Dropdown Menu -->
+            <div class="dropdown">
+              <button
+                class="btn btn-info dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Select Type
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" id="assignedEquipmentsButton" href="#"
+                  >Assigned Equipments</a
+                >
+                <a class="dropdown-item" id="availableEquipmentsButton" href="#"
+                  >Available Equipments</a
+                >
+                <a class="dropdown-item" id="allButton" href="#"
+                  >All Equipments</a
+                >
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-warning ms-2"
+              id="addEquipmentButton"
+              data-bs-toggle="modal"
+              data-bs-target="#addEquipmentModal"
+            >
+              Add Equipment
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning ms-2"
+              id="requestAssignmentButton"
+            >
+              Request Assignment
+            </button>
+            {% comment %} <button type="button" class="btn btn-danger ms-2" id="deleteButton">
+              Delete Selected
+            </button> {% endcomment %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock content %} {% load static %} {% block staticFiles %}
+<script src="{% static 'js/normalUserHomeScript.js' %}"></script>
+{% endblock staticFiles %}

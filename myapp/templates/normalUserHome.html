@@ -27,7 +27,7 @@
                 <th>category</th>
                 <th>availability_status</th>
                 <th>viewDetails</th>
-                <th>checkbox</th>
+                <th>Select</th>
               </tr>
             </thead>
             <tfoot>
@@ -37,7 +37,7 @@
                 <th>category</th>
                 <th>availability_status</th>
                 <th>viewDetails</th>
-                <th>checkbox</th>
+                <th>Select</th>
               </tr>
             </tfoot>
             <tbody></tbody>
@@ -72,7 +72,6 @@
                 >
               </div>
             </div>
-
             <button
               type="button"
               class="btn btn-warning ms-2"
@@ -87,17 +86,63 @@
               class="btn btn-warning ms-2"
               id="requestAssignmentButton"
             >
-              Request Assignment
+              Req. Assignment
             </button>
-            {% comment %} <button type="button" class="btn btn-danger ms-2" id="deleteButton">
-              Delete Selected
-            </button> {% endcomment %}
+            <button type="button" class="btn btn-danger ms-2" id="deleteButton">
+              Req. deallocation
+            </button>
           </div>
         </div>
       </div>
     </div>
   </main>
 </div>
+
+
+<div class="modal fade" id="addEquipmentModal" tabindex="-1" role="dialog" aria-labelledby="addEquipmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addEquipmentModalLabel">Add New Equipment</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="addEquipmentForm">
+            <div class="form-group">
+              <label for="equipmentId">Equipment ID</label>
+              <input type="text" class="form-control" id="equipmentId" required>
+            </div>
+            <div class="form-group">
+              <label for="equipmentName">Equipment Name</label>
+              <input type="text" class="form-control" id="equipmentName" required>
+            </div>
+            <div class="form-group">
+              <label for="category">Category</label>
+              <input type="text" class="form-control" id="category" required>
+            </div>
+            <div class="form-group">
+              <label for="dateOfPurchase">Date of Purchase</label>
+              <input type="date" class="form-control" id="dateOfPurchase" required>
+            </div>
+            <div class="form-group">
+              <label for="location">Location</label>
+              <input type="text" class="form-control" id="location" required>
+            </div>
+            <div class="form-group">
+              <label for="image">Image</label>
+              <input type="file" class="form-control" id="image" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add Equipment</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %} {% load static %} {% block staticFiles %}
 <script src="{% static 'js/normalUserHomeScript.js' %}"></script>
 {% endblock staticFiles %}

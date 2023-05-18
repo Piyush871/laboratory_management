@@ -79,3 +79,31 @@ class equipment(models.Model):
 
     def __str__(self):
         return self.equipment_name
+
+
+class requested_equipments(models.Model):
+    equipment_id = models.CharField(max_length=20,unique=True)
+    equipment_name = models.CharField(max_length=100)
+    category = models.CharField(max_length=100,default="Others")
+    date_of_purchase = models.DateField(default=timezone.now)
+    location = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='equipment_images')
+    
+    def __str__(self):
+        return self.equipment_name
+    
+    
+    
+class AllocationRequest(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('APPROVED', 'Approved'),
+        ('REJECTED', 'Rejected'),
+    ]
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    equipment = models.ForeignKey(equipment, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} requested {self.equipment}"

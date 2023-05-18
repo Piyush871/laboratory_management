@@ -41,7 +41,7 @@ urlpatterns = [
 
     path("api/normal_user/available_equipments/",normal_user_equip_views.normal_user_available_equipments_api,name="normal_user_available_equipments_api"),
      
-    
+    path("api/normal_user/addEquipment/",normal_user_equip_views.normal_user_add_equipment_api,name="normal_user_add_equipment_api"),
     
     
 ] 

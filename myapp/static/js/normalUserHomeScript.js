@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
           return `<a href="#" data-bs-toggle="modal" data-bs-target="#equipmentModal" >View Details</a>`;
         },
       },
-      { select: 5, title: "CheckBox", html: true },
+      { select: 5, title: "Select", html: true },
     ],
   });
   let dataTable;
@@ -86,4 +86,62 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
   fetchData();
+
+  document
+    .getElementById("addEquipmentForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      var formData = new FormData();
+      formData.append(
+        "equipment_id",
+        document.getElementById("equipmentId").value
+      );
+      formData.append(
+        "equipment_name",
+        document.getElementById("equipmentName").value
+      );
+      formData.append("category", document.getElementById("category").value);
+      formData.append(
+        "date_of_purchase",
+        document.getElementById("dateOfPurchase").value
+      );
+      formData.append("location", document.getElementById("location").value);
+      formData.append("image", document.getElementById("image").files[0]);
+
+      fetch("/api/normal_user/addEquipment/", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"), // function to get the cookie value
+        },
+      })
+        .then(function (response) {
+          if (response.ok) {
+            alert("Equipment added successfully");
+            $("#addEquipmentModal").modal("hide");
+            fetchData();
+          } else {
+            alert("Error: " + response.statusText);
+          }
+        })
+        .catch(function (error) {
+          alert("Error: " + error);
+        });
+    });
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      var cookies = document.cookie.split(";");
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = jQuery.trim(cookies[i]);
+        // Does this cookie string begin with the name we want?
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
 });

@@ -8,6 +8,7 @@
     {% load static %}
   <link rel="stylesheet" href={% static 'css/registerCSS.css' %}>
 
+
   <style>
 	.header {
 		display: flex;
@@ -22,6 +23,18 @@
 		height: 100px; /* adjust as needed */
 		margin-right: 10px;
 	}
+	{% comment %} body {
+		background-image: url('{% static "assets/img/backgroundRegiter.jpeg" %}');
+		background-repeat: no-repeat;
+		background-size: cover;
+		min-height: 100vh;
+	  } {% endcomment %}
+	  {% comment %} body {
+		background: #8C7F7C;
+	  } {% endcomment %}
+
+
+
 </style>
 <script>
     function validateForm() {

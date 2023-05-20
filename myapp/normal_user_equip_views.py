@@ -18,24 +18,19 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from myapp.forms import UserRegistrationForm
-from myapp.models import CustomUser, equipment, requested_equipments
+from myapp.models import CustomUser, equipment, requested_equipments, AllocationRequest
 
 from .models import CustomUser, equipment
 
-#*imports completed for the normal user views
-
-
-
-
-
+# *imports completed for the normal user views
 
 
 def normal_user_assigned_equipments_api(request):
     if request.method == "GET":
         user_id = request.user.id
         queryset = equipment.objects.filter(
-        assigned_user_id=user_id
-    )
+            assigned_user_id=user_id
+        )
         data = []
         for item in queryset:
             row = [
@@ -53,17 +48,17 @@ def normal_user_assigned_equipments_api(request):
         print(data)
         response_data = {'data': data}
         return JsonResponse(response_data)
-    
+
 
 def normal_user_all_equipments_api(request):
-    if request.method=="GET":
+    if request.method == "GET":
         search = request.GET.get('search', '')
         print(search)
         if search:
             queryset = equipment.objects.filter(
                 Q(equipment_id__icontains=search) |
                 Q(equipment_name__icontains=search) |
-                Q(category__icontains=search) 
+                Q(category__icontains=search)
             )
         else:
             queryset = equipment.objects.all().order_by(
@@ -85,11 +80,11 @@ def normal_user_all_equipments_api(request):
         print(data)
         response_data = {'data': data}
         return JsonResponse(response_data)
-    
-    
+
+
 def normal_user_available_equipments_api(request):
-    if request.method=="GET":
-        queryset=equipment.objects.filter(allocation_status=False)
+    if request.method == "GET":
+        queryset = equipment.objects.filter(allocation_status=False)
         data = []
         for item in queryset:
             row = [
@@ -107,7 +102,6 @@ def normal_user_available_equipments_api(request):
         print(data)
         response_data = {'data': data}
         return JsonResponse(response_data)
-            
 
 
 def normal_user_add_equipment_api(request):
@@ -122,16 +116,80 @@ def normal_user_add_equipment_api(request):
             image_file = request.FILES['image']
 
             new_equipment = requested_equipments(
-                equipment_id = equipment_id,
-                equipment_name = equipment_name,
-                category = category,
-                date_of_purchase = date_of_purchase,
-                location = location,
+                equipment_id=equipment_id,
+                equipment_name=equipment_name,
+                category=category,
+                date_of_purchase=date_of_purchase,
+                location=location,
             )
             new_equipment.image.save(image_file.name, image_file)
             new_equipment.save()
-            return JsonResponse({'status':'ok'}, status=200)
+            return JsonResponse({'status': 'ok'}, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     else:
         return JsonResponse({'error': 'Invalid Method'}, status=400)
+
+
+def normal_user_request_equipment_api(request):
+    print("in the request equipment*********************************")
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        equipment_ids = data.get('equipments')
+        request_type = data.get('request_type')
+        print(equipment_ids)
+        print(request_type)
+        if request_type == 'ALLOCATION':
+            for equipment_id in equipment_ids:
+                # if all the equipment ids are valid and if there allocation statur is false then only the equipment will be allocated
+                if equipment.objects.filter(equipment_id=equipment_id, allocation_status=False).exists():
+                    print("equipment is available for allocation")
+                else:
+                    return JsonResponse({"message": "Equipment is not available for allocation"})
+
+                # check if the allocation request is already made
+                if AllocationRequest.objects.filter(user=request.user, equipment=equipment.objects.get(equipment_id=equipment_id), request_type=request_type, status='PENDING').exists():
+                    return JsonResponse({"message": "Request is already made"})
+                else:
+                    continue
+
+            # Perform the allocation of equipment here.
+            # Use the equipment_ids to identify the equipment that needs to be allocated.
+            # create the allocation request
+            for equipment_id in equipment_ids:
+                new_request = AllocationRequest(
+                    user=request.user,
+                    equipment=equipment.objects.get(equipment_id=equipment_id),
+                    request_type=request_type,
+                    status='PENDING',
+                    timestamp=timezone.now()
+                )
+                new_request.save()
+
+        elif request_type == 'DEALLOCATION':
+            # only proceed if the equipment is allocated to the user
+            for equipment_id in equipment_ids:
+                if equipment.objects.filter(equipment_id=equipment_id, assigned_user=request.user).exists():
+                    print("equipment is available for dellocation")
+                else:
+                    return JsonResponse({"message": "Invalid equipment id"})
+
+                # check if the deallocation request is already made
+                if AllocationRequest.objects.filter(user=request.user, equipment=equipment.objects.get(equipment_id=equipment_id), request_type=request_type, status='PENDING').exists():
+                    return JsonResponse({"message": "Request is already made and pending"})
+
+            # Perform the deallocation of equipment here.
+            # Use the equipment_ids to identify the equipment that needs to be deallocated.
+            # create the allocation request
+            for equipment_id in equipment_ids:
+                new_request = AllocationRequest(
+                    user=request.user,
+                    equipment=equipment.objects.get(equipment_id=equipment_id),
+                    request_type=request_type,
+                    status='PENDING',
+                    timestamp=timezone.now()
+                )
+                new_request.save()
+
+        # Send a response back to the client.
+        return JsonResponse({"message": "Request processed successfully"})

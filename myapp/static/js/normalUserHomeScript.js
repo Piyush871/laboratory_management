@@ -144,4 +144,71 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     return cookieValue;
   }
+
+  document.addEventListener('change', function(event) {
+  if(event.target.classList.contains('user-checkbox')) {
+    var checked = document.querySelectorAll('.user-checkbox:checked');
+    if(checked.length > 5) {
+      alert('You can select at most 5 equipments at a time.');
+      event.target.checked = false;
+    }
+  }
+});
+
+
+//send request
+function sendRequest(requestType, selectedEquipments) {
+  var csrftoken = getCookie('csrftoken');
+
+  fetch('/api/normal_user/request_equipment/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify({
+          'request_type': requestType,
+          'equipments': selectedEquipments
+      })
+  })
+  .then(response => response.json())
+  .then(data => {
+      alert(data.message);
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+  });
+}
+
+document.getElementById("requestAssignmentButton").addEventListener('click', function() {
+  var checked = document.querySelectorAll('.user-checkbox:checked');
+  var selectedEquipments = Array.from(checked).map((checkbox) => {
+    console.log("Checkbox:", checkbox);
+    return checkbox.dataset.id;
+  });
+  if(selectedEquipments.length > 0) {
+      // Make a request to the server with the selectedEquipments
+      sendRequest('ALLOCATION', selectedEquipments);
+  } else {
+      alert('You must select at least one equipment.');
+  }
+});
+
+document.getElementById("deallocationButton").addEventListener('click', function() {
+  var checked = document.querySelectorAll('.user-checkbox:checked');
+  var selectedEquipments = Array.from(checked).map((checkbox) => {
+    console.log("Checkbox:", checkbox);
+    return checkbox.dataset.id;
+  });
+
+
+  if(selectedEquipments.length > 0) {
+      // Make a request to the server with the selectedEquipments
+      sendRequest('DEALLOCATION', selectedEquipments);
+  } else {
+      alert('You must select at least one equipment.');
+  }
+});
+
+
 });

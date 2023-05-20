@@ -43,5 +43,6 @@ urlpatterns = [
      
     path("api/normal_user/addEquipment/",normal_user_equip_views.normal_user_add_equipment_api,name="normal_user_add_equipment_api"),
     
+    path("api/normal_user/request_equipment/",normal_user_equip_views.normal_user_request_equipment_api,name="normal_user_request_equipment_api"),      
     
 ] 

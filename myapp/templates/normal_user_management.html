@@ -1,0 +1,100 @@
+{% extends 'base_staff_user.html' %} {% block content %}
+<div id="layoutSidenav_content">
+  <main>
+    <div class="px-4">
+      <h1 class="mt-4">Tables</h1>
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+        <li class="breadcrumb-item active" id="template heading" >Inactive Users</li>
+      </ol>
+    </div>
+    <div class="buttons px-4 mb-2">
+      <!-- Inactive Users Button -->
+      <button id="showInactive" class="btn btn-primary">Inactive Users</button>
+
+      <!-- Active Users Button -->
+      <button id="showActive" class="btn">Active Users</button>
+    </div>
+
+    <div id="inactiveContainer" class="container-fluid px-4">
+      <!-- Your existing code for inactive users table... -->
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="fas fa-table me-1"></i>
+          Inactive Employee
+        </div>
+        <div class="card-body">
+          <table id="inactive_users_table">
+            <thead>
+              <tr>
+                <th>Employee_id</th>
+                <th>Name</th>
+                <th>Employee_designation</th>
+                <th>Email</th>
+                <th>Contact_number</th>
+                <th>CheckBox</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="card-header">
+          <i class="fas fa-table me-1"></i>
+          Functions
+          <button type="button" class="btn btn-primary" id="activeButton">
+            Activate
+          </button>
+          <button type="button" class="btn btn-danger" id="deleteButton">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!--Active Employes table -->
+    <div
+      id="activeContainer"
+      class="container-fluid px-4"
+      style="display: none"
+    >
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="fas fa-table me-1"></i>
+          Active Employee
+        </div>
+        <div class="card-body">
+          <table id="active_user_table">
+            <thead>
+              <tr>
+                <th>Employee_id</th>
+                <th>Name</th>
+                <th>Employee_designation</th>
+                <th>Email</th>
+                <th>Contact_number</th>
+                <th>CheckBox</th>
+              </tr>
+            </thead>
+
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="card-header">
+          <i class="fas fa-table me-1"></i>
+          Functions
+          {% comment %} <button type="button" class="btn btn-primary" id="activeButton">
+            Activate
+          </button> {% endcomment %}
+          <button type="button" class="btn btn-danger" id="deleteButton">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+{% endblock content %} {% block staticFiles %} {% load static %}
+<script src="{% static 'js/normal_user_managementScript.js' %}"></script>
+
+{% endblock staticFiles %}

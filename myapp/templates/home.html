@@ -2,9 +2,9 @@
 <div id="layoutSidenav_content">
   <main>
     <div class="container-fluid px-4">
-      <h1 class="mt-4">Hii!{{user.name}}</h1>
+      <h2 class="mt-4">Welcome!{{user.name}}</h2>
       <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Welcome</li>
+        <li class="breadcrumb-item active"></li>
       </ol>
 
       <div class="row">
@@ -12,18 +12,18 @@
           <div class="card mb-4">
             <div class="card-header text-center">
               <i class="fas fa-chart-area me-1"></i>
-              ASSINGN EQUIPEMENT FORM
+              ASSINGN ITEM FORM
             </div>
             <form id="assign-equipment-form">
               {% csrf_token %}
               <div class="mb-1 mt-3 px-5">
                 <div class="mb-3 mt-3">
                   <div class="d-flex align-items-center">
-                    <p class="m-0 me-2 mr-3">EQUIP.ID</p>
+                    <p class="m-0 me-2 mr-3">ITEM.ID</p>
                     <input
                       type="text"
                       class="form-control flex-grow-1"
-                      placeholder="enter the id of the equipment"
+                      placeholder="enter the id of the Item"
                       id="equipment_id"
                       name="equipment_id"
                     />
@@ -38,7 +38,7 @@
                     <input
                       type="text"
                       class="form-control flex-grow-1"
-                      placeholder="enter the location of the equipment"
+                      placeholder="enter the location of the Item"
                       id="location"
                       name="location"
                     />
@@ -53,7 +53,7 @@
                     <input
                       type="text"
                       class="form-control flex-grow-1"
-                      placeholder="enter the id of the equipment"
+                      placeholder="enter the id of the Item"
                       id="employee_id"
                       name="employee_id"
                     />
@@ -65,7 +65,7 @@
                   style="display: inline-block; margin-left: 5px"
                   id="details_1"
                 >
-                  equipment name and the employee name will appear here
+                  Item name and the employee name will appear here
                 </p>
               </div>
               <div class="d-flex justify-content-between px-5">
@@ -88,18 +88,18 @@
           <div class="card mb-4">
             <div class="card-header text-center">
               <i class="fas fa-chart-area me-1"></i>
-              DE-ASSINGN EQUIPEMENT FORM
+              DE-ASSINGN ITEM FORM
             </div>
             <form id="deassign-equipment-form">
               {% csrf_token %}
               <div class="mb-4 mt-3 px-5">
                 <div class="mb-3 mt-3">
                   <div class="d-flex align-items-center">
-                    <p class="m-0 me-2 mr-3">EQUIP.ID</p>
+                    <p class="m-0 me-2 mr-3">ITEM.ID</p>
                     <input
                       type="text"
                       class="form-control flex-grow-1"
-                      placeholder="enter the id of the equipment"
+                      placeholder="enter the id of the Item"
                       id="equipment_id_deassign"
                       name="employee_id_deassign"
                     />
@@ -114,7 +114,7 @@
                     <input
                       type="text"
                       class="form-control flex-grow-1"
-                      placeholder="enter the location of the equipment"
+                      placeholder="enter the location of the Item"
                       id="location_deassign_input"
                       name="location_deassign_input"
                     />
@@ -127,7 +127,7 @@
                   style="display: inline-block; margin-left: 5px"
                   id="details_2"
                 >
-                  equipment name and the employee name will appear here
+                  Item name and the employee name will appear here
                 </p>
               </div>
               <div class="mb-2 px-5">
@@ -135,7 +135,7 @@
                   style="display: inline-block; margin-left: 5px"
                   id="location_deassign_text"
                 >
-                  location of the equipment will appear here
+                  location of the Item will appear here
                 </p>
               </div>
               <div class="d-flex justify-content-between px-5">
@@ -157,14 +157,14 @@
       <div class="card mb-4">
         <div class="card-header">
           <i class="fas fa-table me-1"></i>
-          Equipment Table
+          Item Table
         </div>
         <div class="card-body">
           <table id="datatablesSimple">
             <thead>
                 <tr>
-                  <th>equipment_id</th>
-                  <th>equipment_name</th>
+                  <th>Item_id</th>
+                  <th>Item_name</th>
                   <th>category</th>
                   <th>assigned_user</th>
                   <th>last_assigned</th>
@@ -173,8 +173,8 @@
             </thead>
             <tfoot>
                 <tr>
-                  <th>equipment_id</th>
-                  <th>equipment_name</th>
+                  <th>Item_id</th>
+                  <th>Item_name</th>
                   <th>category</th>
                   <th>assigned_user</th>
                   <th>last_assigned</th>
@@ -191,7 +191,7 @@
   <div class="modal-dialog mw-100 w-75 modal-dialog-centered modal-lg" role="document" >
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Equipment Details</h5>
+        <h5 class="modal-title">Item Details</h5>
         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -205,7 +205,7 @@
           
           <div class="col-md-6">
             <div class="form-group row mt-2">
-              <label class="col-sm-4 col-form-label"><strong>Equipment ID:</strong></label>
+              <label class="col-sm-4 col-form-label"><strong>Item ID:</strong></label>
               <div class="col-sm-8">
                 <input type="text" class="form-control" id="equipment_id_d" readonly>
               </div>

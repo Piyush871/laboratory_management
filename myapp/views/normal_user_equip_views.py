@@ -20,7 +20,7 @@ from django.views.decorators.http import require_POST
 from myapp.forms import UserRegistrationForm
 from myapp.models import CustomUser, equipment, requested_equipments, AllocationRequest
 
-from .models import CustomUser, equipment
+from ..models import CustomUser, equipment
 
 # *imports completed for the normal user views
 

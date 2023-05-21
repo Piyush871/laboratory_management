@@ -3,10 +3,12 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, name, employee_id, contact_no, employee_designation, password=None, user_type="normal",is_active=False):
+    def create_user(self, email, name, employee_id, contact_no, employee_designation, password=None, user_type="normal", is_active=False):
         """
         Creates and saves a new user with the given email, password, and user type.
         """
@@ -14,7 +16,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
         user = self.model(email=email, name=name, employee_id=employee_id, contact_no=contact_no,
-                          employee_designation=employee_designation, user_type=user_type,is_active=is_active )
+                          employee_designation=employee_designation, user_type=user_type, is_active=is_active)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -51,7 +53,8 @@ class CustomUser(AbstractBaseUser):
     user_type = models.CharField(max_length=100, default="normal")
     is_active = models.BooleanField(default=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'employee_id', 'contact_no', 'employee_designation']
+    REQUIRED_FIELDS = ['name', 'employee_id',
+                       'contact_no', 'employee_designation']
 
     objects = CustomUserManager()
 
@@ -66,9 +69,9 @@ class CustomUser(AbstractBaseUser):
 
 
 class equipment(models.Model):
-    equipment_id = models.CharField(max_length=20,unique=True)
+    equipment_id = models.CharField(max_length=20, unique=True)
     equipment_name = models.CharField(max_length=100)
-    category = models.CharField(max_length=100,default="Others")
+    category = models.CharField(max_length=100, default="Others")
     date_of_purchase = models.DateField(default=timezone.now)
     location = models.CharField(max_length=100)
     image = models.ImageField(upload_to='equipment_images')
@@ -81,19 +84,24 @@ class equipment(models.Model):
         return self.equipment_name
 
 
+@receiver(post_delete, sender=CustomUser)
+def set_equipment_unassigned(sender, instance, **kwargs):
+    equipment.objects.filter(assigned_user=instance).update(
+        allocation_status=False)
+
+
 class requested_equipments(models.Model):
-    equipment_id = models.CharField(max_length=20,unique=True)
+    equipment_id = models.CharField(max_length=20, unique=True)
     equipment_name = models.CharField(max_length=100)
-    category = models.CharField(max_length=100,default="Others")
+    category = models.CharField(max_length=100, default="Others")
     date_of_purchase = models.DateField(default=timezone.now)
     location = models.CharField(max_length=100)
     image = models.ImageField(upload_to='equipment_images')
-    
+
     def __str__(self):
         return self.equipment_name
-    
-    
-    
+
+
 class AllocationRequest(models.Model):
     REQUEST_CHOICES = [
         ('ALLOCATION', 'Allocation'),
@@ -106,10 +114,11 @@ class AllocationRequest(models.Model):
     ]
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     equipment = models.ForeignKey(equipment, on_delete=models.CASCADE)
-    request_type = models.CharField(max_length=12, choices=REQUEST_CHOICES, default='ALLOCATION')
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    request_type = models.CharField(
+        max_length=12, choices=REQUEST_CHOICES, default='ALLOCATION')
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default='PENDING')
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user} requested {self.request_type} of {self.equipment}"
-

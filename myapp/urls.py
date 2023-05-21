@@ -1,50 +1,56 @@
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
-from myapp import normal_user_equip_views,normal_user_managemet_view
+from myapp.views import staff_user_management_views
 from myapp import views
+from myapp.views import normal_user_equip_views, normal_user_managemet_views, staff_user_equipment_views
 
 urlpatterns = [
     
     #normal_user_management_view.py
-    path("normal_user_management",normal_user_managemet_view.inactiveUsers_view,name="inactiveUsers"),
-    path('api/activate_users/', normal_user_managemet_view.activate_users_api, name='active_users_api'),
-    path('api/inactive_users/', normal_user_managemet_view.inactive_users_api, name='inactive_users_api'),
-    path('api/delete_users/', normal_user_managemet_view.delete_users_api, name='delete_users_api'),
-    path("reg_normal_user",normal_user_managemet_view.reg_normal_user_view,name="reg_normal_user"),
-    path("api/active_users/",normal_user_managemet_view.active_users_api,name="active_users_api"),
+    path("normal_user_management",normal_user_managemet_views.inactiveUsers_view,name="inactiveUsers"),
+    # path("inactiveUsers",normal_user_managemet_views.inactiveUsers_view,name="inactiveUsers"),
+    path('api/activate_users/', normal_user_managemet_views.activate_users_api, name='active_users_api'),
+    path('api/inactive_users/', normal_user_managemet_views.inactive_users_api, name='inactive_users_api'),
+    path('api/delete_users/', normal_user_managemet_views.delete_users_api, name='delete_users_api'),
+    path("reg_normal_user",normal_user_managemet_views.reg_normal_user_view,name="reg_normal_user"),
+    path("api/active_users/",normal_user_managemet_views.active_users_api,name="active_users_api"),
     
+    #staff_user_management_views.py
+    path("",staff_user_management_views.home_view,name="home"),
+    path("login",staff_user_management_views.login_view,name="login"),
+    path("logout",staff_user_management_views.logout_view,name="logout"),
     
-    path("",views.home_view,name="home"),
-    
-    path("login",views.login_view,name="login"),
-    path("logout",views.logout_view,name="logout"),
-    
-    
-    path("get_names",views.get_names_view,name="get_names"),
-    
-    path("assign_equipment",views.assign_equipment_view,name="assign_equipment"),
-    path('check_equipment_deassign', views.check_equipment_deassign_view, name='check_equipment_assignment'),
-    path('deassign_equipment', views.deassign_equipment_view, name='deassign_equipment'),
-    path('api/equipment/', views.equipment_api, name='equipment_api'),
-    
-    
-    path('api/equipment_details/',views.equipment_details_api,name="equipment_api"),
-    path('api/update_equipment/',views.update_equipment_api,name="update_equipment_api"),
-    path('allEquipments',views.allEquipments_view,name="allEquipments"),
-    path('api/allEquipments/',views.allEquipments_api,name="allEquipments_api"),
-    path('api/addEquipment/', views.add_equipment, name='add_equipment'),
+    #staff user_equipment_views.py
+    path("get_names",staff_user_equipment_views.get_names_view,name="get_names"),
+    path("assign_equipment",staff_user_equipment_views.assign_equipment_view,name="assign_equipment"),
+    path('check_equipment_deassign', staff_user_equipment_views.check_equipment_deassign_view, name='check_equipment_assignment'),
+    path('deassign_equipment', staff_user_equipment_views.deassign_equipment_view, name='deassign_equipment'),
+    path('api/equipment/', staff_user_equipment_views.equipment_api, name='equipment_api'),
+    path('api/equipment_details/',staff_user_equipment_views.equipment_details_api,name="equipment_api"), 
+    path('api/update_equipment/',staff_user_equipment_views.update_equipment_api,name="update_equipment_api"),
+    path('allEquipments',staff_user_equipment_views.allEquipments_view,name="allEquipments"),
+    path('api/allEquipments/',staff_user_equipment_views.allEquipments_api,name="allEquipments_api"),
+    path('api/addEquipment/', staff_user_equipment_views.add_equipment, name='add_equipment'),
     
     #this were for the testing purpose
-    # path("dataTable",views.dataTable_view,name="dataTable"),
-    # path("simpleDataTable",views.simpleDataTable_view,name="simpleDataTable"),
+    # path("dataTable",staff_user_equipment_views.dataTable_view,name="dataTable"),
+    # path("simpleDataTable",staff_user_equipment_views.simpleDataTable_view,name="simpleDataTable"),
     
-    path("inactiveUsers",views.inactiveUsers_view,name="inactiveUsers"),
+
+
+
+
+
+
+
+
+
     
     
     
     
-    #normal user apis**************
+    #normal user apis normal_user_equip_views.py
     
     path("api/normal_user/assigned_equipments/", normal_user_equip_views.normal_user_assigned_equipments_api, name="normal_user_assigned_equipments_api"),
     

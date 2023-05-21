@@ -1,4 +1,4 @@
-from .models import equipment, CustomUser
+from ..models import equipment, CustomUser
 from django.shortcuts import render, redirect
 from myapp.models import CustomUser, equipment
 from myapp.forms import UserRegistrationForm
@@ -36,9 +36,9 @@ def reg_normal_user_view(request):
         else:
             print(form.errors)
             print("Form is not valid")
-            return render(request, 'register.html', {'form': form})
+            return render(request, 'COMMON/register.html', {'form': form})
     else:
-        return render(request, 'register.html')
+        return render(request, 'COMMON/register.html')
     
     
 def inactiveUsers_view(request):
@@ -46,8 +46,7 @@ def inactiveUsers_view(request):
     context = {
         'users': users
     }
-    return render(request, 'normal_user_management.html', context)
-
+    return render(request, 'STAFF_USER/normal_user_management.html', context)
 
 
 def inactive_users_api(request):

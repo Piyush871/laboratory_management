@@ -1,4 +1,5 @@
 {% extends 'STAFF_USER/base_staff_user.html' %} {% block content %}
+ {% load static %}
 <div id="layoutSidenav_content">
   <main>
     <div class="container-fluid px-4">
@@ -154,7 +155,54 @@
           </div>
         </div>
       </div>
-      <div class="card mb-4">
+      
+
+      <!--here we will display the allocation requests-->
+      <div class="req_container">
+        <div class="search-bar d-flex align-items-center">
+  <input
+    type="text"
+    id="search"
+    class="form-control"
+    placeholder="Search..."
+  />
+  <div class="d-flex align-items-center">
+    <button class="btn btn-primary me-2" id="addStaffUser">
+      Alloc.Req
+    </button>
+    <button class="btn btn-primary" id="addStaffUser">
+      Delloc.Req
+    </button>
+  </div>
+</div>
+        </div>
+        <div class="keep-cards">
+          <div class="row">
+            {% for allocation_request in allocation_requests %}
+            <div class="col-md-4">
+              <div
+                class="card card-1"
+                style="background-image: url({% static allocation_request.image %})"
+              >
+              <h3>Steve</h3>
+              <div class="card-body">
+               <h5 class="card-title">10101</h5>
+               <p class="card-text">Microscope</p>
+               <p class="card-text">25-12-2024</p>
+               <button class="btn btn-primary" onclick="handleRequest(1010, 'approve')">Approve</button>
+               <button class="btn btn-danger" onclick="handleRequest(${item.id}, 'reject')">Reject</button>
+                <button class="btn btn-warning" onclick="handleRequest(${item.id}, 'reject')">Details</button>
+             </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="card mb-4 mt-4">
         <div class="card-header">
           <i class="fas fa-table me-1"></i>
           Item Table
@@ -262,10 +310,11 @@
 {% endblock content %}
 
 {% block staticFiles %}
-<style link={% static 'css/homeStyle.css' %}></style>
+<!-- home.html -->
+
+<link rel="stylesheet" href="{% static 'css/homeStyle.css' %}">
 <script src={% static 'js/homeScript.js' %}></script>
 {% endblock staticFiles %}
-
 
 
 

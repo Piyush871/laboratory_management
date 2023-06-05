@@ -231,6 +231,7 @@ def add_equipment(request):
             date_of_purchase = request.POST['date_of_purchase']
             location = request.POST['location']
             image_file = request.FILES['image']
+            requested_by = request.user
 
             new_equipment = equipment(
                 equipment_id=equipment_id,
@@ -238,6 +239,7 @@ def add_equipment(request):
                 category=category,
                 date_of_purchase=date_of_purchase,
                 location=location,
+                requested_by=requested_by
             )
             new_equipment.image.save(image_file.name, image_file)
 

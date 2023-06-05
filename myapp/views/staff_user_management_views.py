@@ -1,4 +1,4 @@
-from ..models import equipment, CustomUser
+from ..models import equipment, CustomUser, AllocationRequest
 from django.shortcuts import render, redirect
 from myapp.models import CustomUser, equipment
 from myapp.forms import UserRegistrationForm
@@ -19,6 +19,10 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.base import ContentFile
 import base64
+# copilot we want to import random here
+import random
+from collections import namedtuple
+
 
 @login_required(login_url='reg_normal_user')
 def home_view(request):
@@ -28,13 +32,33 @@ def home_view(request):
         'user': request.user,
     }
     if request.user.is_authenticated:
+        allocation_requests = AllocationRequest.objects.filter(
+            request_type='ALLOCATION')
+        # print the number of allocation requests
+        print(len(allocation_requests))
+        bg_images = ["assets/img/cardbg1.png",
+                     "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
+        RequestWithImage = namedtuple(
+            'RequestWithImage', ['allocation_request', 'image'])
+        requests_with_images = []
+        for allocation_request in allocation_requests:
+            image = random.choice(bg_images)
+            request_with_image = RequestWithImage(
+                allocation_request=allocation_request, image=image)
+            requests_with_images.append(request_with_image)
+
+        for request_with_image in requests_with_images:
+            print(request_with_image.allocation_request.user.name)
         if (request.user.is_staff):
-            return render(request, 'STAFF_USER/home.html', context)
+            return render(request, 'STAFF_USER/home.html', {'allocation_requests': requests_with_images})
         elif (request.user.user_type == "superuser"):
-            return render(request, 'STAFF_USER/home.html', context)
+            return render(request, 'STAFF_USER/home.html', {'allocation_requests': requests_with_images})
         else:
             return render(request, 'NORMAL_USER/normalUserHome.html', context)
         user_name = request.user.name
+
+    # Add this line to return an HttpResponse object
+    return HttpResponse('Error: User is not authenticated')
 
 
 def login_view(request):
@@ -54,9 +78,24 @@ def login_view(request):
             print("error")
             messages.error(request, 'Invalid email or password!')
             return render(request, 'COMMON/register.html')
-        
+    else:
+        return render(request, 'COMMON/register.html')
+
+
 def logout_view(request):
     print("in the logout view")
     logout(request)
     # Replace 'login' with the name of your login view in the urls.py
     return HttpResponseRedirect(reverse('reg_normal_user'))
+
+
+def staff_user_management_view(request):
+    # get the user who are staff users
+    staff_users = CustomUser.objects.filter(is_staff=True)
+    bg_images = ["assets/img/cardbg1.png",
+                 "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
+    staff_users_with_images = []
+    for user in staff_users:
+        user.image = random.choice(bg_images)
+        staff_users_with_images.append(user)
+    return render(request, 'STAFF_USER/staff_user_management.html', {'staff_users_with_images': staff_users_with_images})

@@ -1,10 +1,10 @@
-from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
+from django.contrib.auth import get_user_model
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
-from django.utils import timezone
-from django.contrib.auth import get_user_model
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.utils import timezone
 
 
 class CustomUserManager(BaseUserManager):
@@ -76,7 +76,7 @@ class equipment(models.Model):
     location = models.CharField(max_length=100)
     image = models.ImageField(upload_to='equipment_images')
     assigned_user = models.ForeignKey(
-        get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
+        CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
     last_assigned_date = models.DateField(null=True, blank=True)
     allocation_status = models.BooleanField(default=False)
 
@@ -93,6 +93,9 @@ def set_equipment_unassigned(sender, instance, **kwargs):
 class requested_equipments(models.Model):
     equipment_id = models.CharField(max_length=20, unique=True)
     equipment_name = models.CharField(max_length=100)
+    # add the user who requested for the adding of the equipment
+    requested_by = models.ForeignKey(
+        CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
     category = models.CharField(max_length=100, default="Others")
     date_of_purchase = models.DateField(default=timezone.now)
     location = models.CharField(max_length=100)

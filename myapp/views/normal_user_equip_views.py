@@ -48,6 +48,11 @@ def normal_user_assigned_equipments_api(request):
         print(data)
         response_data = {'data': data}
         return JsonResponse(response_data)
+    #else we want to return the error:
+    else:
+        error_data = {'error': 'Invalid request method!'}
+        return JsonResponse(error_data, status=400)
+    
 
 
 def normal_user_all_equipments_api(request):
@@ -80,6 +85,9 @@ def normal_user_all_equipments_api(request):
         print(data)
         response_data = {'data': data}
         return JsonResponse(response_data)
+    else:
+        error_data = {'error': 'Invalid request method!'}
+        return JsonResponse(error_data, status=400)
 
 
 def normal_user_available_equipments_api(request):
@@ -102,6 +110,9 @@ def normal_user_available_equipments_api(request):
         print(data)
         response_data = {'data': data}
         return JsonResponse(response_data)
+    else:
+        error_data = {'error': 'Invalid request method!'}
+        return JsonResponse(error_data, status=400)
 
 
 def normal_user_add_equipment_api(request):
@@ -193,3 +204,6 @@ def normal_user_request_equipment_api(request):
 
         # Send a response back to the client.
         return JsonResponse({"message": "Request processed successfully"})
+    else:
+        error_data = {'error': 'Invalid request method!'}
+        return JsonResponse(error_data, status=400)

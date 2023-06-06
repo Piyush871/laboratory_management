@@ -19,7 +19,7 @@
         .keep-cards {
           border: 5px solid #dfd;
           border-radius: 10px;
-          max-height: 100vh; /* Adjust this value to fit the maximum height you want */
+          max-height: 80vh; /* Adjust this value to fit the maximum height you want */
           overflow-y: scroll;
       }
         .card-subtitle {
@@ -63,11 +63,11 @@
         }
 
 
-        @media (max-width: 990px) {
+        {% comment %} @media (max-width: 990px) {
           .card {
             margin: 20px;
           }
-        }
+        } {% endcomment %}
     </style>
   </head>
   <body>

@@ -3,7 +3,7 @@ from django.urls import path
 from django.urls.conf import include
 from myapp.views import staff_user_management_views
 from myapp import views
-from myapp.views import normal_user_equip_views, normal_user_managemet_views, staff_user_equipment_views
+from myapp.views import normal_user_equip_views, normal_user_managemet_views, staff_user_equipment_views,staff_user_request_views
 from myapp import File_Views
 
 urlpatterns = [
@@ -50,6 +50,10 @@ urlpatterns = [
          name="allEquipments_api"),
     path('api/addEquipment/', staff_user_equipment_views.add_equipment,
          name='add_equipment'),
+    
+    #staff user request views
+    path("requests", staff_user_request_views.requests_view, name="requests"),
+    
 
 
 

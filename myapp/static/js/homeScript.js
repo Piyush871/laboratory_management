@@ -2,13 +2,17 @@ function checkEquipmentAssignment(event) {
   event.preventDefault(); // prevents the form from being submitted
   const equipmentId = document.querySelector("#equipment_id").value;
   const employeeId = document.querySelector("#employee_id").value;
+  console.log(equipmentId);
+  console.log(employeeId);
 
   fetch(`/get_names?equipment_id=${equipmentId}&employee_id=${employeeId}`)
     .then((response) => response.json())
     .then((data) => {
       const DetailsElement = document.querySelector("#details_1");
+      console.log(data);
+      console.log(data.responseText);
       DetailsElement.innerHTML =
-        data.equipment_name + " will be assigned to " + data.employee_name;
+        data.responseText;
     });
 }
 
@@ -44,6 +48,7 @@ function assignEquipment(event) {
     })
     .then((data) => {
       alert(data.message);
+      fetchData();
     })
     .catch((error) => {
       console.log(error);
@@ -66,9 +71,7 @@ function checkEquipmentDeassignment(event) {
     .then((data) => {
       const DetailsElement = document.querySelector("#details_2");
       DetailsElement.innerHTML =
-        data.equipment_name + "is assigned to " + data.employee_name;
-      const LocationElement = document.querySelector("#location_deassign_text");
-      LocationElement.innerHTML = "Location: " + data.location;
+        data.responseText;
     });
 }
 
@@ -83,12 +86,11 @@ function deassignEquipment(event) {
   console.log("deassigning equipment");
   const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
   const equipmentId = document.querySelector("#equipment_id_deassign").value;
-  const location = document.querySelector("#location_deassign_input").value;
+  const location = document.querySelector("#location_deassign").value;
 
   const formData = new FormData();
   formData.append("equipment_id", equipmentId);
   formData.append("location", location);
-
   fetch("/deassign_equipment", {
     method: "POST",
     headers: { "X-CSRFToken": csrftoken },

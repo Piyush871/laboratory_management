@@ -108,6 +108,8 @@ document.addEventListener("DOMContentLoaded", function () {
       );
       formData.append("location", document.getElementById("location").value);
       formData.append("image", document.getElementById("image").files[0]);
+      formData.append("purchase_receipt", document.getElementById("purchaseReceipt").files[0]);
+      console.log(formData);
 
       fetch("/api/normal_user/addEquipment/", {
         method: "POST",

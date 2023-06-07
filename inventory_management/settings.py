@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 
@@ -133,5 +134,6 @@ AUTH_USER_MODEL = 'myapp.CustomUser'
 
 # settings.py
 
-MEDIA_URL = ''
-MEDIA_ROOT = BASE_DIR / ''
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
+
+MEDIA_URL = '/images/'

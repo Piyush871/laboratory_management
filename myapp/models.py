@@ -6,7 +6,6 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, employee_id, contact_no, employee_designation, password=None, user_type="normal", is_active=False):
         """
@@ -75,6 +74,7 @@ class equipment(models.Model):
     date_of_purchase = models.DateField(default=timezone.now)
     location = models.CharField(max_length=100)
     image = models.ImageField(upload_to='equipment_images')
+    purchase_receipt = models.ImageField(upload_to='purchase_receipts')
     assigned_user = models.ForeignKey(
         CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
     last_assigned_date = models.DateField(null=True, blank=True)
@@ -100,6 +100,7 @@ class requested_equipments(models.Model):
     date_of_purchase = models.DateField(default=timezone.now)
     location = models.CharField(max_length=100)
     image = models.ImageField(upload_to='equipment_images')
+    purchase_receipt = models.ImageField(upload_to='purchase_receipts')
 
     def __str__(self):
         return self.equipment_name

@@ -19,33 +19,55 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.base import ContentFile
 import base64
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_names_view(request):
     equipment_id = request.GET.get("equipment_id")
     employee_id = request.GET.get("employee_id")
-
-    equipment_name = equipment.objects.get(id=equipment_id).equipment_name
-    employee_name = CustomUser.objects.get(id=employee_id).name
+    equipment_name = equipment.objects.get(equipment_id=equipment_id).equipment_name
+    employee_name = CustomUser.objects.get(employee_id=employee_id).name
     print(equipment_name)
     print(employee_name)
-
-    return JsonResponse({"equipment_name": equipment_name, "employee_name": employee_name})
+    #if equipment is already assigned to someone else then return the name of the person to whom it is assigned
+    if(equipment.objects.get(equipment_id=equipment_id).allocation_status == True):
+        assign_user_emp_id = equipment.objects.get(equipment_id=equipment_id).assigned_user.employee_id
+        if(assign_user_emp_id==employee_id):
+            return JsonResponse({"responseText": "Equipment is already assigned to this user"})
+        else:
+            return JsonResponse({"responseText": "Equipment is already assigned to "+CustomUser.objects.get(employee_id=assign_user_emp_id).name})
+    else:
+        return JsonResponse({"responseText": equipment_name+"will be assigned to "+employee_name})
+            
+            
+            
+            
+      
+                        
 
 
 @login_required(login_url='reg_normal_user')
 def assign_equipment_view(request):
+    #if the equipment is already assigned then do not assign it again
+    if(equipment.objects.get(equipment_id=request.POST.get("equipment_id")).allocation_status == True):
+        return JsonResponse({'message': 'equipment is already assigned!'})
     equipment_id = request.POST.get("equipment_id")
     employee_id = request.POST.get("employee_id")
+    #add condition if location is null then do not update
     location = request.POST.get("location")
+    if(request.POST.get("location") == ""):
+        location = None
 
     # Get the equipment and user objects
-    eq = equipment.objects.get(id=equipment_id)
-    user = CustomUser.objects.get(id=employee_id)
+    eq = equipment.objects.get(equipment_id=equipment_id)
+    user = CustomUser.objects.get(employee_id=employee_id)
 
     # Update the equipment object with the user and location
     eq.assigned_user = user
-    eq.location = location
+    #add condition if location is null then do not update
+    if(location is not None):
+        eq.location = location
     eq.last_assigned_date = timezone.now()
     eq.allocation_status = True
     eq.save()
@@ -55,34 +77,37 @@ def assign_equipment_view(request):
 @login_required(login_url='reg_normal_user')
 def check_equipment_deassign_view(request):
     equipment_id = request.GET.get("equipment_id")
-    print(equipment_id)
+    if not equipment_id:
+        return JsonResponse({'responseText': 'equipment id is not provided!'}, status=400)
     try:
         eq = equipment.objects.get(equipment_id=equipment_id)
-        if eq.assigned_user is None:
-            raise ValueError("equipment is not currently assigned to anyone")
+    except ObjectDoesNotExist:
+        return JsonResponse({'responseText': 'equipment does not exist!'})
+    
+    if eq.assigned_user is None:
+        responseText = "Equipment is not assigned to anyone"
+        return JsonResponse({"responseText": responseText}, status=400)
 
-        user = eq.assigned_user
-        print(user.name)
-        data = {
-            "equipment_name": eq.equipment_name,
-            "employee_name": user.name,
-            "location": eq.location,
-        }
-        return JsonResponse(data)
-    except Exception as e:
-        data = {"error": str(e)}
-        return JsonResponse(data, status=400)
+    user = eq.assigned_user
+    print(user.name)
+    responseText = "Equipment is assigned to " + user.name + "it is located at " + eq.location
+    return JsonResponse({"responseText": responseText})
 
 
 def deassign_equipment_view(request):
     print("deassigning equipment")
     equipment_id = request.POST.get("equipment_id")
     print(equipment_id)
-    eq = equipment.objects.get(equipment_id=equipment_id)
+    try:
+        eq = equipment.objects.get(equipment_id=equipment_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({'message': "Equipment does not exist!"})
+
     eq.assigned_user = None
-    if (request.POST.get("location") == " "):
-        eq.location = " "
-    eq.location = request.POST.get("location")
+    #if the location is null then do not update
+    if(request.POST.get("location") != ""):
+        eq.location = request.POST.get("location")
+    
     eq.last_assigned_date = None
     eq.allocation_status = False
     eq.save()

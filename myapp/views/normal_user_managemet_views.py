@@ -57,11 +57,13 @@ def inactive_users_api(request):
             Q(name__icontains=search) |
             Q(employee_id__icontains=search) |
             Q(email__icontains=search) |
-            Q(user_type__icontains=search)
+            Q(user_type__icontains=search),
+            is_active=False,
+            is_staff=False
         )
     else:
         queryset = CustomUser.objects.filter(
-            is_active=False, user_type='normal')
+            is_active=False, is_staff=False)
 
     data = []
     for item in queryset:
@@ -107,11 +109,11 @@ def active_users_api(request):
             Q(email__icontains=search) |
             Q(user_type__icontains=search),
             is_active=True,
-            user_type='normal'
+            is_staff=False
         )
     else:
         queryset = CustomUser.objects.filter(
-            is_active=True, user_type='normal')
+            is_active=True, is_staff=False)
 
     data = []
     for item in queryset:

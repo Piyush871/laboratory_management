@@ -6,7 +6,7 @@
 <div id="layoutSidenav_content">
     <main>
         <div class="container-fluid px-4">
-            <div class="part-1 " >
+            {% comment %} <div class="part-1 " >
                 <h2 class="mt-4">Welcome! {{user.name}}</h2>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item active"></li>
@@ -160,8 +160,71 @@
                           </div>
                     </div>
                 </div>
-            </div>
+            </div> {% endcomment %}
+            <div class="part-1 " >
+              <h2 class="welcome-message mt-4">Welcome! {{user.name}}</h2>
+              <ol class="breadcrumb mb-4">
+                  <li class="breadcrumb-item active"></li>
+              </ol>
+              <div class="row">
+                  <!-- ASSIGN ITEM FORM Section -->
+                  <div class="col-xl-6 col-lg-6">
+                      <div class="card mb-4 card-design">
+                          <div class="card-header text-center">
+                            <i class="fas fa-chart-area me-1"></i>
+                            ASSIGN ITEM FORM
+                          </div>
+                          <form id="assign-equipment-form" class="form-styling">
+                            {% csrf_token %}
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Item ID</span>
+                                <input type="text" class="form-control" placeholder="Enter the id of the Item" id="equipment_id" name="equipment_id">
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Location</span>
+                                <input type="text" class="form-control" placeholder="If Location change needed" id="location" name="location">
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Employee ID</span>
+                                <input type="text" class="form-control" placeholder="Enter the id of the employee" id="employee_id" name="employee_id">
+                            </div>
+                            <p id="details_1" class="form-info">Item name and the employee name will appear here</p>
+                            <div class="d-flex justify-content-between">
+                              <button id="check_button_assign" onclick="checkEquipmentAssignment()" type="button" class="btn btn-primary">Check</button>
+                              <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                          </form>
+                        </div>
+                  </div>
+                  <!-- DE-ASSIGN ITEM FORM Section -->
+                  <!-- DE-ASSIGN ITEM FORM Section -->
+              <div class="col-xl-6 col-lg-6">
+                <div class="card mb-4 card-design">
+                    <div class="card-header text-center">
+                        <i class="fas fa-chart-area me-1"></i>
+                        DE-ASSIGN ITEM FORM
+                    </div>
+                    <form id="deassign-equipment-form" class="form-styling">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Item ID</span>
+                            <input type="text" class="form-control" placeholder="Enter the id of the Item" id="equipment_id_deassign" name="equipment_id_deassign">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Location</span>
+                            <input type="text" class="form-control" placeholder="If Location change needed" id="location_deassign" name="location_deassign">
+                        </div>
+                        <p id="details_2" class="form-info">Item name and the employee name will appear here</p>
+                        <div class="d-flex justify-content-between">
+                            <button id="check_button_deassign" class="btn btn-primary" type="button">Check</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+              </div>
 
+              </div>
+          </div>
             <!--Horizontal line finish-->
             <hr  class= "mb-4" style="border-top: 6px solid red; margin: 20px 0;">
             <!-- Item Table Section -->

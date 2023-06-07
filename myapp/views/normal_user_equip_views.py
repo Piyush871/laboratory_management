@@ -118,6 +118,8 @@ def normal_user_available_equipments_api(request):
 def normal_user_add_equipment_api(request):
     if request.method == 'POST':
         try:
+            print(request.POST)
+            print(request.FILES)
             print("int the add equipment")
             equipment_id = request.POST['equipment_id']
             equipment_name = request.POST['equipment_name']
@@ -125,7 +127,8 @@ def normal_user_add_equipment_api(request):
             date_of_purchase = request.POST['date_of_purchase']
             location = request.POST['location']
             image_file = request.FILES['image']
-
+            purchase_receipt_file = request.FILES['purchase_receipt']
+            
             new_equipment = requested_equipments(
                 equipment_id=equipment_id,
                 equipment_name=equipment_name,
@@ -133,7 +136,9 @@ def normal_user_add_equipment_api(request):
                 date_of_purchase=date_of_purchase,
                 location=location,
             )
+            
             new_equipment.image.save(image_file.name, image_file)
+            new_equipment.purchase_receipt.save(purchase_receipt_file.name, purchase_receipt_file)
             new_equipment.save()
             return JsonResponse({'status': 'ok'}, status=200)
         except Exception as e:

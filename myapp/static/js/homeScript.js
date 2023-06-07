@@ -145,6 +145,9 @@ window.showEquipmentDetails = function (equipmentId) {
         document.querySelector("#equipment_image_d").src = data.image_url;
         // Store the equipmentId for later use
         document.querySelector("#equipment_id").dataset.id = equipmentId;
+        // Where you're setting the modal data
+        document.getElementById('purchase_receipt_d').href = data.purchase_receipt_url;
+
       } else {
         console.error("Error fetching equipment details:", data.error);
       }

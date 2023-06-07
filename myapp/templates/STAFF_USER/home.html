@@ -6,161 +6,6 @@
 <div id="layoutSidenav_content">
     <main>
         <div class="container-fluid px-4">
-            {% comment %} <div class="part-1 " >
-                <h2 class="mt-4">Welcome! {{user.name}}</h2>
-                <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active"></li>
-                </ol>
-                <div class="row">
-                    <!-- ASSINGN ITEM FORM Section -->
-                    <div class="col-xl-6 col-lg-6">
-                        <div class="card mb-4">
-                            <div class="card-header text-center">
-                              <i class="fas fa-chart-area me-1"></i>
-                              ASSINGN ITEM FORM
-                            </div>
-                            <form id="assign-equipment-form">
-                              {% csrf_token %}
-                              <div class="mb-1 mt-3 px-5">
-                                <div class="mb-3 mt-3">
-                                  <div class="d-flex align-items-center">
-                                    <p class="m-0 me-2 mr-3">ITEM.ID</p>
-                                    <input
-                                      type="text"
-                                      class="form-control flex-grow-1"
-                                      placeholder="enter the id of the Item"
-                                      id="equipment_id"
-                                      name="equipment_id"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                
-                              <div class="mb-1 mt-3 px-5">
-                                <div class="mb-3 mt-3">
-                                  <div class="d-flex align-items-center">
-                                    <p class="m-0 me-2 mr-3">LOCATION</p>
-                                    <input
-                                      type="text"
-                                      class="form-control flex-grow-1"
-                                      placeholder="enter the location of the Item"
-                                      id="location"
-                                      name="location"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                
-                              <div class="mb-4 mt-3 px-5">
-                                <div class="mb-3 mt-3">
-                                  <div class="d-flex align-items-center">
-                                    <p class="m-0 me-2 mr-3">EMPLOYEE.ID</p>
-                                    <input
-                                      type="text"
-                                      class="form-control flex-grow-1"
-                                      placeholder="enter the id of the Item"
-                                      id="employee_id"
-                                      name="employee_id"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="mb-2 px-5">
-                                <p
-                                  style="display: inline-block; margin-left: 5px"
-                                  id="details_1"
-                                >
-                                  Item name and the employee name will appear here
-                                </p>
-                              </div>
-                              <div class="d-flex justify-content-between px-5">
-                                <button
-                                  id="check_button_assign"
-                                  onclick="checkEquipmentAssignment()"
-                                  type="button"
-                                  class="btn btn-primary"
-                                >
-                                  Check Button
-                                </button>
-                                <button type="submit" class="btn btn-primary ml-autop">
-                                  Submit Button
-                                </button>
-                              </div>
-                            </form>
-                          </div>
-                    </div>
-                    <!-- DE-ASSINGN ITEM FORM Section -->
-                    <div class="col-xl-6 col-lg-6">
-                        <div class="card mb-4">
-                            <div class="card-header text-center">
-                              <i class="fas fa-chart-area me-1"></i>
-                              DE-ASSINGN ITEM FORM
-                            </div>
-                            <form id="deassign-equipment-form">
-                              {% csrf_token %}
-                              <div class="mb-4 mt-3 px-5">
-                                <div class="mb-3 mt-3">
-                                  <div class="d-flex align-items-center">
-                                    <p class="m-0 me-2 mr-3">ITEM.ID</p>
-                                    <input
-                                      type="text"
-                                      class="form-control flex-grow-1"
-                                      placeholder="enter the id of the Item"
-                                      id="equipment_id_deassign"
-                                      name="employee_id_deassign"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                
-                              <div class="mb-4 mt-3 px-5">
-                                <div class="mb-3 mt-3">
-                                  <div class="d-flex align-items-center">
-                                    <p class="m-0 me-2 mr-3">LOCATION</p>
-                                    <input
-                                      type="text"
-                                      class="form-control flex-grow-1"
-                                      placeholder="enter the location of the Item"
-                                      id="location_deassign_input"
-                                      name="location_deassign_input"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                
-                              <div class="mb-1 px-5">
-                                <p
-                                  style="display: inline-block; margin-left: 5px"
-                                  id="details_2"
-                                >
-                                  Item name and the employee name will appear here
-                                </p>
-                              </div>
-                              <div class="mb-2 px-5">
-                                <p
-                                  style="display: inline-block; margin-left: 5px"
-                                  id="location_deassign_text"
-                                >
-                                  location of the Item will appear here
-                                </p>
-                              </div>
-                              <div class="d-flex justify-content-between px-5">
-                                <button
-                                  id="check_button_deassign"
-                                  class="btn btn-primary"
-                                  type="button"
-                                >
-                                  Check Button
-                                </button>
-                                <button type="submit" class="btn btn-primary ml-autop">
-                                  Submit Button
-                                </button>
-                              </div>
-                            </form>
-                          </div>
-                    </div>
-                </div>
-            </div> {% endcomment %}
             <div class="part-1 " >
               <h2 class="welcome-message mt-4">Welcome! {{user.name}}</h2>
               <ol class="breadcrumb mb-4">
@@ -315,16 +160,21 @@
                                 <input type="text" class="form-control" id="location_d" readonly>
                               </div>
                             </div>
+                            <div class="form-group row mt-2">
+                              <label class="col-sm-4 col-form-label"><strong>Purchase Receipt:</strong></label>
+                              <div class="col-sm-8">
+                                <!-- Here, a link is provided to show the receipt in a new tab. Adjust it according to your needs. -->
+                                <a href=""  id="purchase_receipt_d" target="_blank">View Receipt</a>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button id="editButton" type="button" class="btn btn-primary" onclick="editEquipment()">Edit</button>
                         <button id="saveButton" type="button" class="btn btn-success" onclick="saveEquipment()" style="display:none;">Save</button>
                       </div>
-                
                     </div>             
                   </div>
             </div>

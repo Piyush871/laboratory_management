@@ -205,6 +205,7 @@ def equipment_details_api(request):
                 'last_assigned': equipment_obj.last_assigned_date.strftime('%Y-%m-%d') if equipment_obj.last_assigned_date else None,
                 'location': equipment_obj.location,
                 'image_url': equipment_obj.image.url if equipment_obj.image else None,
+                'purchase_receipt_url': equipment_obj.purchase_receipt.url if equipment_obj.purchase_receipt else None,
                 'status': True
             }
         except equipment.DoesNotExist:

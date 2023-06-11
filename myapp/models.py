@@ -43,9 +43,9 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser):
+    employee_id = models.AutoField(primary_key=True)
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
-    employee_id = models.CharField(max_length=20, unique=True)
     contact_no = models.CharField(max_length=15)
     employee_designation = models.CharField(max_length=100)
     is_staff = models.BooleanField(default=False)
@@ -68,7 +68,7 @@ class CustomUser(AbstractBaseUser):
 
 
 class equipment(models.Model):
-    equipment_id = models.CharField(max_length=20, unique=True)
+    equipment_id = models.AutoField(primary_key=True)
     equipment_name = models.CharField(max_length=100)
     category = models.CharField(max_length=100, default="Others")
     date_of_purchase = models.DateField(default=timezone.now)
@@ -91,7 +91,6 @@ def set_equipment_unassigned(sender, instance, **kwargs):
 
 
 class requested_equipments(models.Model):
-    equipment_id = models.CharField(max_length=20, unique=True)
     equipment_name = models.CharField(max_length=100)
     # add the user who requested for the adding of the equipment
     requested_by = models.ForeignKey(
@@ -126,3 +125,19 @@ class AllocationRequest(models.Model):
 
     def __str__(self):
         return f"{self.user} requested {self.request_type} of {self.equipment}"
+
+
+class Part(models.Model):
+    name = models.CharField(max_length=100)
+
+class Vendor(models.Model):
+    vendor_id = models.AutoField(primary_key=True)
+    parts = models.ManyToManyField(Part)
+    vendor_email = models.EmailField(unique=True)
+    vendor_contact_no = models.CharField(max_length=15)
+    vendor_address = models.CharField(max_length=100, null=True, blank=True)
+    website_link = models.CharField(max_length=100, null=True, blank=True)
+    
+
+    def __str__(self):
+        return self.vendor_name

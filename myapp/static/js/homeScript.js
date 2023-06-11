@@ -117,18 +117,6 @@ document
   .addEventListener("submit", deassignEquipment);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //&equipment details
 
 window.showEquipmentDetails = function (equipmentId) {
@@ -142,7 +130,7 @@ window.showEquipmentDetails = function (equipmentId) {
         document.querySelector("#assigned_user_d").value = data.assigned_user;
         document.querySelector("#last_assigned_d").value = data.last_assigned;
         document.querySelector("#location_d").value = data.location;
-        document.querySelector("#equipment_image_d").src = data.image_url;
+        document.querySelector("#equipment_image_d").href = data.image_url;
         // Store the equipmentId for later use
         document.querySelector("#equipment_id").dataset.id = equipmentId;
         // Where you're setting the modal data
@@ -170,10 +158,12 @@ window.editEquipment = function () {
 
   // Show the Save button and the image file input
   document.querySelector("#saveButton").style.display = "inline-block";
-  document.querySelector("#new_image").style.display = "block";
 
   // Hide the Edit button
   document.querySelector("#editButton").style.display = "none";
+  // Show the Save button and the image file input
+  document.querySelector("#equipment_image_upload").style.display = "block";
+  document.querySelector("#purchase_receipt_upload").style.display = "block";
 };
 
 window.saveEquipment = function () {
@@ -241,16 +231,6 @@ modal.addEventListener('hidden.bs.modal', function (event) {
   document.querySelector("#last_assigned_d").readOnly = true;
   document.querySelector("#location_d").readOnly = true;
 });
-
-
-
-
-
-
-
-
-
-
 
 
 //&table details

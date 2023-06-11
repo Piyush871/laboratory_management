@@ -93,9 +93,9 @@
                   class="card card-1"
                   style="background-image: url({% static user.image %})"
                 >
-                  <h3>{{ user.name }}</h3>
-                  <h5 class="card-subtitle text-muted">{{ user.email }}</h5>
-                  <div class="card-body px-0">
+                  <h3 class="searchable">{{ user.name }}</h3>
+                  <h5 class=" searchable card-subtitle text-muted">{{ user.email }}</h5>
+                  <div class="searchable card-body px-0">
                     <h5 class="card-title">
                       Employee ID: {{user.employee_id}}
                     </h5>
@@ -129,4 +129,7 @@
   </body>
 </html>
 {% endblock %}
+{% block staticFiles %} {% load static %}
+<script src="{% static 'js/staff_user_managementScript.js' %}"></script>
 
+{% endblock staticFiles %}

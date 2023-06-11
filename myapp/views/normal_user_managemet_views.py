@@ -32,7 +32,8 @@ def reg_normal_user_view(request):
         if form.is_valid():
             print("Form is valid")
             form.save()
-            return HttpResponse('<script>alert("User registered successfully!");window.location.href="/";</script>')
+            messages.success(request, "User registered successfully! Wait for the id to be activated.")
+            return redirect('login')
         else:
             print(form.errors)
             print("Form is not valid")

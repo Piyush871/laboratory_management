@@ -5,7 +5,7 @@
       <h1 class="mt-4">Tables</h1>
       <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-        <li class="breadcrumb-item active" id="template heading">
+        <li class="breadcrumb-item active" id="template_heading">
           Inactive Users
         </li>
       </ol>
@@ -47,7 +47,7 @@
           <button type="button" class="btn btn-primary" id="activeButton">
             Activate
           </button>
-          <button type="button" class="btn btn-danger" id="deleteButtonActiveUser">
+          <button type="button" class="btn btn-danger" id="deleteButton">
             Delete
           </button>
         </div>
@@ -97,7 +97,8 @@
   </main>
 </div>
 
-{% endblock content %} {% block staticFiles %} {% load static %}
+{% endblock content %}
+ {% block staticFiles %} {% load static %}
 <script src="{% static 'js/normal_user_managementScript.js' %}"></script>
 
 {% endblock staticFiles %}

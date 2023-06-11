@@ -87,10 +87,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
   document
-    .querySelector("#deleteButton")
+    .querySelector("#inactiveContainer #deleteButton")
     .addEventListener("click", function () {
       const checkboxes = document.querySelectorAll(
-        "input.user-checkbox:checked"
+        "#inactiveContainer input.user-checkbox:checked"
       );
       console.log("Checked checkboxes:", checkboxes);
 
@@ -110,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (data.status === "success") {
               alert(data.message);
+
               // Reload the table data
               fetchData();
             } else {
@@ -132,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("activeContainer").style.display = "none";
       this.classList.add("btn-primary");
       document.getElementById("showActive").classList.remove("btn-primary");
-      document.getElementById("template heading").innerText=InactiveUsers
+      document.getElementById("template_heading").innerText="InactiveUsers"
     });
 
   document.getElementById("showActive").addEventListener("click", function () {
@@ -140,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("activeContainer").style.display = "block";
     this.classList.add("btn-primary");
     document.getElementById("showInactive").classList.remove("btn-primary");
-    document.getElementById("template heading").innerHTML=ActiveUsers
+    document.getElementById("template_heading").innerText="ActiveUsers"
   });
   
 

@@ -5,6 +5,9 @@ from myapp.views import staff_user_management_views
 from myapp import views
 from myapp.views import normal_user_equip_views, normal_user_managemet_views, staff_user_equipment_views,staff_user_request_views
 from myapp import File_Views
+from django.contrib.auth import views as auth_views
+from django.core.mail import get_connection
+from django.conf import settings
 
 urlpatterns = [
 
@@ -76,10 +79,40 @@ urlpatterns = [
     path("api/normal_user/request_equipment/", normal_user_equip_views.normal_user_request_equipment_api,
          name="normal_user_request_equipment_api"),
 
+     #paths for password reset
+     path('password-reset/',
+         auth_views.PasswordResetView.as_view(
+             template_name='registration/password_reset_form.html',
+             email_template_name='registration/password_reset_email.html',
+             subject_template_name='registration/password_reset_subject.txt'
+         ),
+         name='password_reset'),
+
+    path('password-reset/done/',
+         auth_views.PasswordResetDoneView.as_view(
+             template_name='registration/password_reset_done.html'
+         ),
+         name='password_reset_done'),
+
+    path('password-reset-confirm/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(
+             template_name='registration/password_reset_confirm.html'
+         ),
+         name='password_reset_confirm'),
+
+    path('password-reset-complete/',
+         auth_views.PasswordResetCompleteView.as_view(
+             template_name='registration/password_reset_complete.html'
+         ),
+         name='password_reset_complete'),
 
 
     # this were for the testing purpose
     # path("dataTable",staff_user_equipment_views.dataTable_view,name="dataTable"),
     # path("simpleDataTable",staff_user_equipment_views.simpleDataTable_view,name="simpleDataTable"),
     path("test", File_Views.test_view, name="test"),
+    
+   
+    
 ]
+

@@ -217,6 +217,7 @@ def equipment_details_api(request):
     return JsonResponse(data)
 
 
+
 def update_equipment_api(request):
     if request.method == 'POST':
         equipment_id = request.POST.get('equipment_id')

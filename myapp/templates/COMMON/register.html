@@ -9,7 +9,7 @@
   <link rel="stylesheet" href={% static 'css/registerCSS.css' %}>
 
 
-  <style>
+  <style> 
 	.header {
 		display: flex;
 		align-items: center;
@@ -79,7 +79,7 @@
 			<span>or use your account</span>
 			<input type="email" placeholder="Email" name="email" />
 			<input type="password" placeholder="Password" name="password"/>
-			<a href="#">Forgot your password?</a>
+			<a href="password-reset">Forgot your password?</a>
 			<button type="submit" >Sign In</button>
 		</form>
 	</div>
@@ -98,6 +98,14 @@
 		</div>
 	</div>
 </div>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <!-- partial -->
   <script  src={% static 'js/registerScript.js' %}></script>
 

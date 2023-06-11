@@ -52,6 +52,9 @@ def login_view(request):
         print(email, password)
         user = authenticate(request, email=email, password=password)
         if user is not None:
+            if (user.is_active == False):   
+                messages.error(request, 'Your account is not activated yet! Please wait for admin to activate your account.')
+                return render(request, 'COMMON/register.html')
             login(request, user)
             messages.success(request, 'Login successful!')
             print("Login successful!")
@@ -59,7 +62,7 @@ def login_view(request):
             return redirect('home')
         else:
             print("error")
-            messages.error(request, 'Invalid email or password!')
+            messages.error(request, 'Invalid email or password!OR your account will be activated by admin')
             return render(request, 'COMMON/register.html')
     else:
         return render(request, 'COMMON/register.html')

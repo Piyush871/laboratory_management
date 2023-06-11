@@ -2,7 +2,6 @@
 {% extends 'STAFF_USER/base_staff_user.html' %}
 {% load static %}
 {% block content %}
-
 <div id="layoutSidenav_content">
     <main>
         <div class="container-fluid px-4">
@@ -117,64 +116,87 @@
                         </button>
                       </div>
                 
-                      <div class="modal-body" >
-                        <div class="row">
-                          <div class="col-md-6 ">
-                            <p><strong>Image:</strong> <img style="width: 500px; height: 500px" id="equipment_image_d" src="" alt=""><input type="file" id="new_image" style="display:none;"></p>
-                          </div>
-                          
-                          <div class="col-md-6">
-                            <div class="form-group row mt-2">
-                              <label class="col-sm-4 col-form-label"><strong>Item ID:</strong></label>
-                              <div class="col-sm-8">
+                      <div class="modal-body">
+                        <div class="form-group row mt-2">
+                            <label class="col-sm-4 col-form-label"><strong>Item ID:</strong></label>
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control" id="equipment_id_d" readonly>
-                              </div>
                             </div>
-                            <div class="form-group row mt-2">
-                              <label class="col-sm-4 col-form-label"><strong>Name:</strong></label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="equipment_name_d" readonly>
-                              </div>
-                            </div>
-                            <div class="form-group row mt-2">
-                              <label class="col-sm-4 col-form-label"><strong>Category:</strong></label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="category_d" readonly>
-                              </div>
-                            </div>
-                            <div class="form-group row mt-2">
-                              <label class="col-sm-4 col-form-label"><strong>Assigned User:</strong></label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="assigned_user_d" readonly>
-                              </div>
-                            </div>
-                            <div class="form-group row mt-2">
-                              <label class="col-sm-4 col-form-label"><strong>Last Assigned Date:</strong></label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="last_assigned_d" readonly>
-                              </div>
-                            </div>
-                            <div class="form-group row mt-2">
-                              <label class="col-sm-4 col-form-label"><strong>Location:</strong></label>
-                              <div class="col-sm-8">
-                                <input type="text" class="form-control" id="location_d" readonly>
-                              </div>
-                            </div>
-                            <div class="form-group row mt-2">
-                              <label class="col-sm-4 col-form-label"><strong>Purchase Receipt:</strong></label>
-                              <div class="col-sm-8">
-                                <!-- Here, a link is provided to show the receipt in a new tab. Adjust it according to your needs. -->
-                                <a href=""  id="purchase_receipt_d" target="_blank">View Receipt</a>
-                              </div>
-                            </div>
-                          </div>
                         </div>
-                      </div>
-                      <div class="modal-footer">
+                        <div class="form-group row mt-2">
+                            <label class="col-sm-4 col-form-label"><strong>Name:</strong></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="equipment_name_d" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-2">
+                            <label class="col-sm-4 col-form-label"><strong>Category:</strong></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="category_d" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-2">
+                            <label class="col-sm-4 col-form-label"><strong>Assigned User:</strong></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="assigned_user_d" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-2">
+                            <label class="col-sm-4 col-form-label"><strong>Last Assigned Date:</strong></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="last_assigned_d" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-2">
+                            <label class="col-sm-4 col-form-label"><strong>Location:</strong></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="location_d" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-2">
+                            <label class="col-sm-4 col-form-label"><strong>Image Link:</strong></label>
+                            <div class="col-sm-8">
+                                <a href="" id="equipment_image_d" target="_blank">View Image</a>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-2">
+                            <label class="col-sm-4 col-form-label"><strong>Purchase Receipt:</strong></label>
+                            <div class="col-sm-8">
+                                <a href="" id="purchase_receipt_d" target="_blank">View Receipt</a>
+                            </div>
+                        </div>
+                        <!-- Equipment Image upload -->
+                       
+                        <div class="form-group mt-2" id="equipment_image_upload" style="display: none;">
+                            <div class="row">
+                            <label for="equipment_image_file" class="col-sm-4 col-form-label"><strong>Upload Equipment Image:</strong></label>
+                            <div class="col-sm-8">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="equipment_image_file">
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <!-- Purchase Receipt upload -->
+                        <div class="form-group mt-2" id="purchase_receipt_upload" style="display: none;">
+                            <div class="row">
+                            <label for="purchase_receipt_file" class="col-sm-4 col-form-label"><strong>Upload Purchase Receipt:</strong></label>
+                            <div class="col-sm-8">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="purchase_receipt_file">
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+  
+                    </div>
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button id="editButton" type="button" class="btn btn-primary" onclick="editEquipment()">Edit</button>
                         <button id="saveButton" type="button" class="btn btn-success" onclick="saveEquipment()" style="display:none;">Save</button>
-                      </div>
+                    </div>
+                    
                     </div>             
                   </div>
             </div>

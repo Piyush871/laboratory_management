@@ -7,7 +7,7 @@ class UserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'name', 'employee_id', 'contact_no',
+        fields = ['email', 'name', 'contact_no',
                   'employee_designation', 'password', 'user_type']
 
     def save(self, commit=True):

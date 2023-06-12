@@ -33,6 +33,10 @@ urlpatterns = [
     path("staff_user_management", staff_user_management_views.staff_user_management_view,
          name="staff_user_management_view"),
 
+    path("api/staff_users/", staff_user_management_views.create_staff_user,name="create_staff_user"),
+
+
+
     # staff user_equipment_views.py
     path("get_names", staff_user_equipment_views.get_names_view, name="get_names"),
     path("assign_equipment", staff_user_equipment_views.assign_equipment_view,

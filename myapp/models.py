@@ -7,34 +7,34 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, name, employee_id, contact_no, employee_designation, password=None, user_type="normal", is_active=False):
+    def create_user(self, email, name, contact_no, employee_designation, password=None, user_type="normal", is_active=False):
         """
         Creates and saves a new user with the given email, password, and user type.
         """
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email, name=name, employee_id=employee_id, contact_no=contact_no,
+        user = self.model(email=email, name=name, contact_no=contact_no,
                           employee_designation=employee_designation, user_type=user_type, is_active=is_active)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_staffuser(self, email, name, employee_id, contact_no, employee_designation, password=None, user_type="staff"):
+    def create_staffuser(self, email, name, contact_no, employee_designation, password=None, user_type="staff"):
         """
         Creates and saves a new staff user with the given email, password, and user type.
         """
-        user = self.create_user(email=email, name=name, employee_id=employee_id, contact_no=contact_no,
+        user = self.create_user(email=email, name=name,  contact_no=contact_no,
                                 employee_designation=employee_designation, password=password, user_type=user_type)
         user.is_staff = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, employee_id, contact_no, employee_designation, password=None, user_type="superuser"):
+    def create_superuser(self, email, name,  contact_no, employee_designation, password=None, user_type="superuser"):
         """
         Creates and saves a new superuser with the given email, password, and user type.
         """
-        user = self.create_user(email=email, name=name, employee_id=employee_id, contact_no=contact_no,
+        user = self.create_user(email=email, name=name,  contact_no=contact_no,
                                 employee_designation=employee_designation, password=password, user_type=user_type)
         user.is_staff = True
         user.is_superuser = True

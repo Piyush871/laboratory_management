@@ -85,3 +85,22 @@ def staff_user_management_view(request):
         user.image = random.choice(bg_images)
         staff_users_with_images.append(user)
     return render(request, 'STAFF_USER/staff_user_management.html', {'staff_users_with_images': staff_users_with_images})
+
+
+
+
+def create_staff_user(request):
+    data = json.loads(request.body)
+    email = data.get('email')
+    name = data.get('name')
+    contact_no = data.get('contact_no')
+    employee_designation = data.get('employee_designation')
+    password = data.get('password')
+    
+    if CustomUser.objects.filter(email=email).exists():
+        return JsonResponse({'error_message': 'User with this email already exists.'}, status=400)
+
+    user = CustomUser.objects.create_staffuser(email=email, password=password, name=name, contact_no=contact_no, employee_designation=employee_designation)
+    # Return the url where you want to redirect
+    redirect_url = reverse('staff_user_management_view')
+    return JsonResponse({'message': 'User created successfully!', 'redirect_url': redirect_url}, status=201)

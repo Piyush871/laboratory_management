@@ -104,3 +104,50 @@ def create_staff_user(request):
     # Return the url where you want to redirect
     redirect_url = reverse('staff_user_management_view')
     return JsonResponse({'message': 'User created successfully!', 'redirect_url': redirect_url}, status=201)
+
+
+
+def get_staff_user(request, user_id):
+    try:
+        user = CustomUser.objects.get(employee_id=user_id)
+        user_data = {
+            "email": user.email,
+            "name": user.name,
+            "contact_no": user.contact_no,
+            "employee_designation": user.employee_designation,
+        }
+        return JsonResponse(user_data)
+    except CustomUser.DoesNotExist:
+        return JsonResponse({"error_message": "User not found"}, status=404)
+    
+    
+def update_staff_user(request, user_id):
+    try:
+        user = CustomUser.objects.get(employee_id=user_id)
+
+        data = json.loads(request.body)
+        user.email = data.get("email", user.email)
+        user.name = data.get("name", user.name)
+        user.contact_no = data.get("contact_no", user.contact_no)
+        user.employee_designation = data.get("employee_designation", user.employee_designation)
+
+        user.save()
+
+        return JsonResponse({"message": "User updated successfully", "redirect_url": "/"}, status=200)
+    except CustomUser.DoesNotExist:
+        return JsonResponse({"error_message": "User not found"}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error_message": "Invalid data"}, status=400)
+    
+def delete_staff_user(request, user_id):
+    if request.method == "DELETE":
+        print("inside delete")
+        try:
+            user = CustomUser.objects.get(employee_id=user_id)
+            user.delete()
+            return JsonResponse({"message": "User deleted successfully"}, status=200)
+        except CustomUser.DoesNotExist:
+            return JsonResponse({"error_message": "User not found"}, status=404)
+    else:
+        print("error")
+        return JsonResponse({"error_message": "Invalid HTTP method"}, status=400)

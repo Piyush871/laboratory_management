@@ -35,6 +35,12 @@ urlpatterns = [
 
     path("api/staff_users/", staff_user_management_views.create_staff_user,name="create_staff_user"),
 
+    path('api/staff_user_get/<int:user_id>/', staff_user_management_views.get_staff_user, name='get_staff_user'),
+    path('api/staff_user_update/<int:user_id>/', staff_user_management_views.update_staff_user, name='update_staff_user'),
+     path('api/staff_user_delete/<int:user_id>/', staff_user_management_views.delete_staff_user, name='delete_staff_user'),
+    
+
+
 
 
     # staff user_equipment_views.py

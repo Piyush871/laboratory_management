@@ -1,6 +1,5 @@
-{% extends 'STAFF_USER/base_staff_user.html' %}
-{% load static %}
-{% block content %} 
+{% extends 'STAFF_USER/base_staff_user.html' %} {% load static %} 
+{% block content %}
 
 <div id="layoutSidenav_content">
   <main>
@@ -42,8 +41,8 @@
                 </button>
 
                 <button
-                  class="btn btn-danger py-0"
-                  onclick="handleRequest(${item.id}, 'reject')"
+                  class="btn btn-danger py-0 deleteStaffUserButton"
+                  data-id="{{ user.employee_id }}"
                 >
                   delete
                 </button>
@@ -64,7 +63,7 @@
       aria-labelledby="addStaffUserModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <div class="modal-dialog">2
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="addStaffUserModalLabel">
@@ -102,12 +101,10 @@
                 <input type="text" class="form-control" id="staffDesignation" />
               </div>
               <div class="form-group">
-                <label for="staffPassword">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="staffPassword"
-                />
+                <label for="staffPassword" id="staffPasswordLabel"
+                  >Password</label
+                >
+                <input type="password" class="form-control" />
               </div>
               <div class="form-group">
                 <label for="confirmStaffPassword">Confirm Password</label>
@@ -148,6 +145,48 @@
         </div>
       </div>
     </div>
+
+   <!-- Edit Staff User Modal -->
+  <div class="modal fade" id="editStaffUserModal" tabindex="-1" aria-labelledby="editStaffUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editStaffUserModalLabel">Edit Staff User</h5>
+          <button type="button" class="close" data-dismiss="modal" id="closeEditStaffUserModalIcon" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editStaffUserForm">
+            <input type="hidden" id="editStaffUserId">
+            <div class="form-group">
+              <label for="editStaffEmail">Email address</label>
+              <input type="email" class="form-control" id="editStaffEmail" />
+            </div>
+            <div class="form-group">
+              <label for="editStaffName">Name</label>
+              <input type="text" class="form-control" id="editStaffName" />
+            </div>
+            <div class="form-group">
+              <label for="editStaffContactNo">Contact Number</label>
+              <input type="text" class="form-control" id="editStaffContactNo" />
+            </div>
+            <div class="form-group">
+              <label for="editStaffDesignation">Designation</label>
+              <input type="text" class="form-control" id="editStaffDesignation" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeEditStaffUserModalButton">Close</button>
+          <button type="button" class="btn btn-primary" id="submitEditStaffUserForm">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
   </main>
 </div>
 

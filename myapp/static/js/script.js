@@ -44,87 +44,136 @@ window.getCookie = function (name) {
 
 
 
-//*methods for fetching data for datatables
-window.generateDataTableConfig = (columns) => (data) => ({
-    data: data,
-    columns: columns,
-});
 
-
-window.fetchData = function (
-    tableId,
-    url,
-    searchUrl,
-    columns,
-    query = ""
-) {
-    console.log("fetching data");
-    fetch(`${url}?search=${query}`)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log("table refreshed");
-            const myTable = document.querySelector(tableId);
-            let dataTable;
-            if (dataTable) {
-                dataTable.destroy();
-            }
-            dataTable = new simpleDatatables.DataTable(
-                myTable,
-                generateDataTableConfig(columns)(data)
-            );
-            document
-                .querySelector(".datatable-input")
-                .addEventListener("keydown", (event) => {
-                    if (event.key === "Enter") {
-                        const query = event.target.value;
-                        if (query.length >= 1 || query.length === 0) {
-                            window.fetchData(tableId, searchUrl, searchUrl, columns, query);
-                        }
-                    }
-                });
-        })
-        .catch((error) => {
-            console.error("Error fetching data:", error);
-        });
-}
-
+// window.fetchData = function (
+//     tableId,
+//     url,
+//     searchUrl,
+//     columns,
+//     query = ""
+// ) {
+//     console.log("fetching data");
+//     fetch(`${url}?search=${query}`)
+//         .then((response) => response.json())
+//         .then((data) => {
+//             console.log("table refreshed");
+//             const myTable = document.querySelector(tableId);
+//             let dataTable ;
+//             if (dataTable) {
+//                 dataTable.destroy();
+//             }
+//             dataTable = new simpleDatatables.DataTable(
+//                 myTable,
+//                 window.generateDataTableConfig(columns)(data)
+//             );
+//             document
+//                 .querySelector(".datatable-input")
+//                 .addEventListener("keydown", (event) => {
+//                     if (event.key === "Enter") {
+//                         const query = event.target.value;
+//                         if (query.length >= 1 || query.length === 0) {
+//                             window.fetchData(tableId, searchUrl, searchUrl, columns, query);
+//                         }
+//                     }
+//                 });
+//         })
+//         .catch((error) => {
+//             console.error("Error fetching data:", error);
+//         });
+// }
 
 //methods for fetching data using fetch api
-window.makeRequest = function({ url, method, body, onSuccess, onNetError, onErrorMessage }) {
-    const csrftoken = window.getCookie('csrftoken');
-  
-    return fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrftoken
-      },
-      body: body,
+window.makeRequest = function ({
+  url,
+  method,
+  body,
+  onSuccess,
+  onNetError,
+  onErrorMessage,
+}) {
+  const csrftoken = window.getCookie("csrftoken");
+
+  return fetch(url, {
+    method: method,
+    headers: {
+      "X-CSRFToken": csrftoken,
+    },
+    body: body,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((error) => {
+          console.log(error);
+          if (error.message) {
+            if (onErrorMessage) onErrorMessage(error.message);
+            return Promise.resolve();
+          } else {
+            throw new Error("Something went wrong");
+          }
+        });
+      } else {
+        return response.json();
+      }
     })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then((error) => {
-            console.log(error);
-            if (error.message) {
-              if (onErrorMessage) onErrorMessage(error.message);
-              return Promise.resolve();
-            } else {
-              throw new Error("Something went wrong");
+    .then((data) => {
+      if (onSuccess) onSuccess(data);
+    })
+    .catch((error) => {
+      console.log(error);
+      if (onNetError) onNetError(error);
+    });
+};
+
+//*methods for fetching data for datatables
+window.dataTables = {};
+window.generateDataTableConfig = (columns) => (data) => ({
+  data: data,
+  columns: columns,
+});
+
+window.fetchData = function (
+  tableId,
+  myTable,
+  url,
+  searchUrl,
+  columns,
+  query = ""
+) {
+  console.log("fetching data");
+  fetch(`${url}?search=${query}`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("table refreshed");
+
+      console.log(window.dataTables[tableId]);
+      if (window.dataTables[tableId]) {
+        console.log("destroying table");
+        window.dataTables[tableId].destroy();
+        delete window.dataTables[tableId];
+      }
+      window.dataTables[tableId] = new simpleDatatables.DataTable(
+        myTable,
+        window.generateDataTableConfig(columns)(data)
+      );
+      document
+        .querySelector(".datatable-input")
+        .addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            const query = event.target.value;
+            if (query.length >= 1 || query.length === 0) {
+              window.fetchData(
+                tableId,
+                myTable,
+                searchUrl,
+                searchUrl,
+                columns,
+                query
+              );
             }
-          });
-        } else {
-          return response.json();
-        }
-      })
-      .then((data) => {
-        if (onSuccess) onSuccess(data);
-      })
-      .catch((error) => {
-        console.log(error);
-        if (onNetError) onNetError(error);
-      });
-  }
-  
-
-
-
+          }
+        });
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+};

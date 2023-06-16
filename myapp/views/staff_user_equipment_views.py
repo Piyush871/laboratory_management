@@ -24,10 +24,21 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_names_view(request):
-    equipment_id = request.GET.get("equipment_id")
-    employee_id = request.GET.get("employee_id")
-    equipment_name = equipment.objects.get(equipment_id=equipment_id).equipment_name
+    equipment_id = int(request.GET.get("equipment_id"))
+    employee_id = int(request.GET.get("employee_id"))
+    print(equipment_id)
+    print(employee_id)
+    
+    if(not equipment.objects.filter(equipment_id=equipment_id).exists()):
+        return JsonResponse({"message":"Equipment does not exist"},status=400)
+    if(not CustomUser.objects.filter(employee_id=employee_id).exists()):
+        return JsonResponse({"message":"Employee does not exist"},status=400)
+        
+    
+    equipment_name=equipment.objects.get(equipment_id=equipment_id).equipment_name
+    
     employee_name = CustomUser.objects.get(employee_id=employee_id).name
+    
     print(equipment_name)
     print(employee_name)
     #if equipment is already assigned to someone else then return the name of the person to whom it is assigned
@@ -42,10 +53,9 @@ def get_names_view(request):
             
             
             
-            
-      
-                        
 
+      
+                    
 
 @login_required(login_url='reg_normal_user')
 def assign_equipment_view(request):

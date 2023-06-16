@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CustomUser, equipment, requested_equipments, AllocationRequest
+from .models import CustomUser, equipment, requested_equipments, AllocationRequest, Vendor, Part
 # Register your models here.
 
 admin.site.site_header = " SMSS Admin"
@@ -41,3 +41,17 @@ admin.site.register(AllocationRequest)
 class AllocationRequestAdmin(admin.ModelAdmin):
     list_display = ('user', 'equipment', 'status', 'timestamp')
     list_filter = ('status', 'timestamp')
+
+
+admin.site.register(Vendor)
+
+class VendorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'address', 'contact_no')
+    list_filter = ('name', 'email', 'address', 'contact_no')
+
+admin.site.register(Part)
+
+class PartAdmin(admin.ModelAdmin):
+    list_display = ('name')
+    list_filter = ('name')
+    

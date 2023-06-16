@@ -5,20 +5,68 @@ function checkEquipmentAssignment(event) {
   console.log(equipmentId);
   console.log(employeeId);
 
-  fetch(`/get_names?equipment_id=${equipmentId}&employee_id=${employeeId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      const DetailsElement = document.querySelector("#details_1");
-      console.log(data);
-      console.log(data.responseText);
-      DetailsElement.innerHTML =
-        data.responseText;
+  // Get CSRF token
+  const csrftoken = getCookie('csrftoken');
+
+  fetch(`/get_names?equipment_id=${equipmentId}&employee_id=${employeeId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrftoken
+    },
+  })
+    .then((response) => {
+      if(!response.ok){
+        return response.json().then((error)=>
+        {
+          console.log(error);
+          if(error.message)
+          {
+          showAlert("message_div_assign_form","warning",error.message);
+          return Promise.resolve();
+          }
+          else
+          {
+            throw new Error("Something went wrong");
+          }
+
+        })
+      }
+      else
+      {
+        return response.json();
+      }
+    }).then((data) => {
+      if(data)
+      {
+        const DetailsElement = document.querySelector("#details_1");
+        console.log(data);
+        DetailsElement.innerHTML = data.responseText;
+      }
+}).catch((error) => {
+      console.log(error);
+      document.getElementById("message_div_assign_form").innerHTML = "Something went wrong";
     });
 }
 
-document
-  .querySelector("#check_button_assign")
-  .addEventListener("click", checkEquipmentAssignment);
+// Function to get CSRF token
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+
 
 //&&&&&&&&&&&&&&&&&&&&& method for assigning the eq
 function assignEquipment(event) {
@@ -40,10 +88,25 @@ function assignEquipment(event) {
     body: formData,
   })
     .then((response) => {
-      if (response.ok) {
+      if(!response.ok){
+        return response.json().then((error)=>
+        {
+          console.log(error);
+          if(error.message)
+          {
+          showAlert("message_div_assign_form","warning",error.message);
+          return Promise.resolve();
+          }
+          else
+          {
+            throw new Error("Something went wrong");
+          }
+
+        })
+      }
+      else
+      {
         return response.json();
-      } else {
-        throw new Error("Something went wrong");
       }
     })
     .then((data) => {
@@ -52,13 +115,15 @@ function assignEquipment(event) {
     })
     .catch((error) => {
       console.log(error);
-      alert("An error occurred while assigning the equipment.");
+      document.getElementById("message_div_deassign_form").innerHTML = "Something went wrong";
     });
 }
 
-document
-  .querySelector("#assign-equipment-form")
-  .addEventListener("submit", assignEquipment);
+
+document.addEventListener('DOMContentLoaded', (event) => {
+  document.querySelector("#check_button_assign").addEventListener('click', checkEquipmentAssignment);
+});
+
 
 //&&deal with cheking when  deassigning the eq
 

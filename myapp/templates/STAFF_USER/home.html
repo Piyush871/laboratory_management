@@ -34,9 +34,14 @@
                             </div>
                             <p id="details_1" class="form-info">Item name and the employee name will appear here</p>
                             <div class="d-flex justify-content-between">
-                              <button id="check_button_assign" onclick="checkEquipmentAssignment()" type="button" class="btn btn-primary">Check</button>
+                              <button id="check_button_assign"  type="button" class="btn btn-primary">Check</button>
                               <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
+                            <div id="message_div_assign_form" class="custom-alert" style="display:none;">
+                                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                                <p id="customAlertText"></p>
+                              </div>
+                            
                           </form>
                         </div>
                   </div>
@@ -63,6 +68,10 @@
                             <button id="check_button_deassign" class="btn btn-primary" type="button">Check</button>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
+                        <div id="message_div_deassign_form" class="custom-alert" style="display:none;">
+                            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                            <p id="customAlertText"></p>
+                          </div>
                     </form>
                 </div>
               </div>

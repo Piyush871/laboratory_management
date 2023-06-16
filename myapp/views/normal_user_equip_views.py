@@ -27,7 +27,7 @@ from ..models import CustomUser, equipment
 
 def normal_user_assigned_equipments_api(request):
     if request.method == "GET":
-        user_id = request.user.id
+        user_id = request.user.employee_id
         queryset = equipment.objects.filter(
             assigned_user_id=user_id
         )

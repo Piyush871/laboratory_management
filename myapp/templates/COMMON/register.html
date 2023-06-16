@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Online Lab Assitant</title>
-  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css'>
+  {% comment %} <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css'> {% endcomment %}
     {% load static %}
   <link rel="stylesheet" href={% static 'css/registerCSS.css' %}>
 
@@ -23,28 +23,9 @@
 		height: 100px; /* adjust as needed */
 		margin-right: 10px;
 	}
-	{% comment %} body {
-		background-image: url('{% static "assets/img/backgroundRegiter.jpeg" %}');
-		background-repeat: no-repeat;
-		background-size: cover;
-		min-height: 100vh;
-	  }  {% endcomment %}
-	 
-
-
-
 </style>
-<script>
-    function validateForm() {
-      var password = document.forms["registerForm"]["password"].value;
-      var confirmPassword = document.forms["registerForm"]["confirm_password"].value;
 
-      if (password != confirmPassword) {
-        alert("Passwords do not match.");
-        return false;
-      }
-    }
-  </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
 <body>
@@ -55,24 +36,23 @@
 	<img src={% static 'assets/img/logo.png' %} alt="logo" class="logo">
 	<h1>SMSS LABORATORY IIT KANPUR</h1>
 </div>
-<!-- partial:index.partial.html -->
-{% comment %} <h2>Welcome to our Lab</h2> {% endcomment %}
 <div class="container" id="container" style="margin-top:20px">
 	<div class="form-container sign-up-container">
-		<form action="reg_normal_user" method="Post" name="registerForm" onsubmit="return validateForm()">
+		<form  name="registerForm"  >
             {% csrf_token %}
 			<h1>Create Account</h1>
-            <input type="email" placeholder="Email" name="email" />
-            <input type="text" placeholder="Name" name="name" />
-            <input type="text" placeholder="Contact_no" name="contact_no" />
-            <input type="text" placeholder="Employee_designation" name="employee_designation" />
-            <input type="password" placeholder="Password" name="password" />
-			<input type="password" placeholder="Confirm Password" name="confirm_password" />
+			{% comment %} required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" {% endcomment %}
+			<input type="email" id="email" placeholder="Email" name="email"  required>
+			<input type="text" placeholder="Name" name="name" required />
+            <input type="text" placeholder="Contact_no" name="contact_no" required />
+            <input type="text" placeholder="Employee_designation" name="employee_designation" required/>
+			<input type="password" placeholder="Password" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required/>
+			<input type="password" placeholder="Confirm Password" name="confirm_password" required/>
 			<button>Sign Up</button>
 		</form>
 	</div>
 	<div class="form-container sign-in-container">
-		<form action="login" method="POST">
+		<form  name="loginForm" >
 			{% csrf_token %}
 			<h1>Sign in</h1>
 			<span>or use your account</span>
@@ -97,15 +77,13 @@
 		</div>
 	</div>
 </div>
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
 
+<div id="message_div" style="font-size: 16px;" class="mt-4">
+</div>
 <!-- partial -->
+
+
+
   <script  src={% static 'js/registerScript.js' %}></script>
 
 </body>

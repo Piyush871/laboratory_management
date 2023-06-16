@@ -3,11 +3,13 @@ from django.urls import path
 from django.urls.conf import include
 from myapp.views import staff_user_management_views
 from myapp import views
-from myapp.views import normal_user_equip_views, normal_user_managemet_views, staff_user_equipment_views,staff_user_request_views
+from myapp.views import normal_user_equip_views, normal_user_managemet_views, staff_user_equipment_views, staff_user_request_views
+from myapp.views import staff_user_vendor_views
 from myapp import File_Views
 from django.contrib.auth import views as auth_views
 from django.core.mail import get_connection
 from django.conf import settings
+
 
 urlpatterns = [
 
@@ -25,6 +27,9 @@ urlpatterns = [
          name="reg_normal_user"),
     path("api/active_users/", normal_user_managemet_views.active_users_api,
          name="active_users_api"),
+    
+    
+    
 
     # staff_user_management_views.py
     path("", staff_user_management_views.home_view, name="home"),
@@ -32,19 +37,33 @@ urlpatterns = [
     path("logout", staff_user_management_views.logout_view, name="logout"),
     path("staff_user_management", staff_user_management_views.staff_user_management_view,
          name="staff_user_management_view"),
-
-    path("api/staff_users/", staff_user_management_views.create_staff_user,name="create_staff_user"),
-
-    path('api/staff_user_get/<int:user_id>/', staff_user_management_views.get_staff_user, name='get_staff_user'),
-    path('api/staff_user_update/<int:user_id>/', staff_user_management_views.update_staff_user, name='update_staff_user'),
-     path('api/staff_user_delete/<int:user_id>/', staff_user_management_views.delete_staff_user, name='delete_staff_user'),
+    path("api/staff_users/", staff_user_management_views.create_staff_user,
+         name="create_staff_user"),
+    path('api/staff_user_get/<int:user_id>/',
+         staff_user_management_views.get_staff_user, name='get_staff_user'),
+    path('api/staff_user_update/<int:user_id>/',
+         staff_user_management_views.update_staff_user, name='update_staff_user'),
+    path('api/staff_user_delete/<int:user_id>/',
+         staff_user_management_views.delete_staff_user, name='delete_staff_user'),
+    
     
 
 
 
+    # staff_user_vendor_views.py
+    path("allVendors/", staff_user_vendor_views.allVendors_view, name="allVendors"),
+    path("api/vendors/", staff_user_vendor_views.get_all_vendors,
+         name="get_all_vendors"),
+     path("api/vendor_details/", staff_user_vendor_views.get_vendor_details, name="get_vendor_details"),
+     path("api/update_vendor/", staff_user_vendor_views.update_vendor, name="update_vendor"),
+     path("api/delete_vendors/",staff_user_vendor_views.delete_vendors,name="delete_vendors"),
+     path("api/addVendor/", staff_user_vendor_views.add_vendor, name="add_vendor"),
+     
+     
+     
 
     # staff user_equipment_views.py
-    path("get_names", staff_user_equipment_views.get_names_view, name="get_names"),
+    path("get_names/", staff_user_equipment_views.get_names_view, name="get_names"),
     path("assign_equipment", staff_user_equipment_views.assign_equipment_view,
          name="assign_equipment"),
     path('check_equipment_deassign', staff_user_equipment_views.check_equipment_deassign_view,
@@ -63,10 +82,10 @@ urlpatterns = [
          name="allEquipments_api"),
     path('api/addEquipment/', staff_user_equipment_views.add_equipment,
          name='add_equipment'),
-    
-    #staff user request views
+
+    # staff user request views
     path("requests", staff_user_request_views.requests_view, name="requests"),
-    
+
 
 
 
@@ -89,8 +108,8 @@ urlpatterns = [
     path("api/normal_user/request_equipment/", normal_user_equip_views.normal_user_request_equipment_api,
          name="normal_user_request_equipment_api"),
 
-     #paths for password reset
-     path('password-reset/',
+    # paths for password reset
+    path('password-reset/',
          auth_views.PasswordResetView.as_view(
              template_name='registration/password_reset_form.html',
              email_template_name='registration/password_reset_email.html',
@@ -121,8 +140,7 @@ urlpatterns = [
     # path("dataTable",staff_user_equipment_views.dataTable_view,name="dataTable"),
     # path("simpleDataTable",staff_user_equipment_views.simpleDataTable_view,name="simpleDataTable"),
     path("test", File_Views.test_view, name="test"),
-    
-   
-    
-]
 
+
+
+]

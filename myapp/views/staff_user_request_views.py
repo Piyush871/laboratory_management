@@ -23,24 +23,6 @@ import base64
 import random
 from collections import namedtuple
 
-# def requests_view(request):
-#     allocation_requests = AllocationRequest.objects.filter(request_type='ALLOCATION')
-#     # print the number of allocation requests
-#     print(len(allocation_requests))
-#     bg_images = ["assets/img/cardbg1.png",
-#                  "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
-#     RequestWithImage = namedtuple(
-#         'RequestWithImage', ['allocation_request', 'image'])
-#     requests_with_images = []
-#     for allocation_request in allocation_requests:
-#         image = random.choice(bg_images)
-#         request_with_image = RequestWithImage(
-#             allocation_request=allocation_request, image=image)
-#         requests_with_images.append(request_with_image)
-#     for request_with_image in requests_with_images:
-#                 print(request_with_image.allocation_request.user.name)
-#     return render(request, 'STAFF_USER/requests.html', {'allocation_requests': requests_with_images})
-
 
 def requests_view(request):
     allocation_requests = AllocationRequest.objects.filter(request_type='ALLOCATION')

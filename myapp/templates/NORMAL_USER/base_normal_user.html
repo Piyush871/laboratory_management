@@ -14,37 +14,52 @@
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <div class="container-fluid pb-4">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark " >
             <!-- Navbar Brand-->
             <a class="navbar-brand ps-3" href="http://localhost:8000/">Online Lab Assistant</a>
             <!-- Sidebar Toggle-->
-            {% comment %} <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button> {% endcomment %}
             <!-- Navbar Search-->
             <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-                {% comment %} <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
-                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                </div> {% endcomment %}
+
+                <a class="btn " style="color:white" id="LoadEquipments">Home</a>
+                <a class="btn " style="color:white" id="LoadVendors" >Vendors</a>
+
             </form>
             <!-- Navbar-->
             <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        {% comment %} <li><a class="dropdown-item" href="#!">Settings</a></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                        <li><hr class="dropdown-divider" /></li> {% endcomment %}
-                        <li><a class="dropdown-item" href="logout">Logout</a></li>
+                        
+                        <li><a class="dropdown-item" href="/logout">Logout</a></li>
                     </ul>
                 </li>
             </ul>
         </nav>
+        </div>
+
+            
             {% block content %}{% endblock content %}
 
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById("LoadVendors").addEventListener('click', function() {
+                    //go to vendor page
+                    window.location.href = "/allVendors";
+                    console.log("clicked");
+                });
+                document.getElementById("LoadEquipments").addEventListener('click', function() {
+                    //go to vendor page
+                    window.location.href = "/";
+                    console.log("clicked");
+                });
+            });
+            
+        </script>
         
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src={% static 'js/script.js' %}></script>
-        {% comment %} <script src={% static 'js/datatables-simple-demo.js' %}></script> {% endcomment %}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>        <script src={% static 'js/script.js' %}></script>
+
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script> 
 

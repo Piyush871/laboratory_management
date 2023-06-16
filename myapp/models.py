@@ -6,6 +6,7 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, contact_no, employee_designation, password=None, user_type="normal", is_active=False):
         """
@@ -26,6 +27,7 @@ class CustomUserManager(BaseUserManager):
         """
         user = self.create_user(email=email, name=name,  contact_no=contact_no,
                                 employee_designation=employee_designation, password=password, user_type=user_type)
+        user.is_active = True
         user.is_staff = True
         user.save(using=self._db)
         return user
@@ -36,6 +38,7 @@ class CustomUserManager(BaseUserManager):
         """
         user = self.create_user(email=email, name=name,  contact_no=contact_no,
                                 employee_designation=employee_designation, password=password, user_type=user_type)
+        user.is_active = True
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -52,8 +55,7 @@ class CustomUser(AbstractBaseUser):
     user_type = models.CharField(max_length=100, default="normal")
     is_active = models.BooleanField(default=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'employee_id',
-                       'contact_no', 'employee_designation']
+    REQUIRED_FIELDS = ['name', 'contact_no', 'employee_designation']
 
     objects = CustomUserManager()
 
@@ -128,16 +130,17 @@ class AllocationRequest(models.Model):
 
 
 class Part(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,unique=True)
+
 
 class Vendor(models.Model):
     vendor_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, default="Vendor")
     parts = models.ManyToManyField(Part)
-    vendor_email = models.EmailField(unique=True)
-    vendor_contact_no = models.CharField(max_length=15)
-    vendor_address = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    contact_no = models.CharField(max_length=15, null=True, blank=True)
+    address = models.CharField(max_length=100, null=True, blank=True)
     website_link = models.CharField(max_length=100, null=True, blank=True)
-    
 
     def __str__(self):
-        return self.vendor_name
+        return self.name

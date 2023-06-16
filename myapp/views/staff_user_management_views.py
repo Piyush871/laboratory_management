@@ -53,19 +53,14 @@ def login_view(request):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             if (user.is_active == False):   
-                messages.error(request, 'Your account is not activated yet! Please wait for admin to activate your account.')
-                return render(request, 'COMMON/register.html')
+                return JsonResponse ({'message': 'Your account is not activated by admin'},status=400)
             login(request, user)
-            messages.success(request, 'Login successful!')
-            print("Login successful!")
-            # send user to home page and send his details
-            return redirect('home')
+            print("Login successful!") 
+            return JsonResponse ({'message': 'Login successful!', 'redirect': reverse('home')})
         else:
             print("error")
-            messages.error(request, 'Invalid email or password!OR your account will be activated by admin')
-            return render(request, 'COMMON/register.html')
-    else:
-        return render(request, 'COMMON/register.html')
+            return JsonResponse ({'message': 'Invalid credentials!Or account is not activated yet'},status=400)
+
 
 
 def logout_view(request):
@@ -147,7 +142,9 @@ def delete_staff_user(request, user_id):
             user.delete()
             return JsonResponse({"message": "User deleted successfully"}, status=200)
         except CustomUser.DoesNotExist:
+            
             return JsonResponse({"error_message": "User not found"}, status=404)
     else:
+        
         print("error")
         return JsonResponse({"error_message": "Invalid HTTP method"}, status=400)

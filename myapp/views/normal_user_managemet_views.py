@@ -22,25 +22,23 @@ import base64
 
 def reg_normal_user_view(request):
     if request.method == 'POST':
-        # get the data from the user form
         form_data = request.POST.copy()
-        print(form_data)
-        # set user_type directly from form data
         form_data['user_type'] = 'normal'
         form_data['is_active'] = False
         form = UserRegistrationForm(form_data)
+        #check if email already exists
+        if(CustomUser.objects.filter(email=form_data['email']).exists()):
+            return JsonResponse({'message': 'Email already exists!'}, status=400)
         if form.is_valid():
-            print("Form is valid")
             form.save()
-            messages.success(request, "User registered successfully! Wait for the id to be activated.")
-            return redirect('login')
+            return JsonResponse ({'message':'User created successfully!Wait for the account to be activated by Admin'})
         else:
-            print(form.errors)
-            print("Form is not valid")
-            return render(request, 'COMMON/register.html', {'form': form})
+            print("form error",form.errors)
+            return JsonResponse({'message': 'Invalid form data!'}, status=400)
     else:
         return render(request, 'COMMON/register.html')
-    
+
+
     
 def inactiveUsers_view(request):
     users = CustomUser.objects.filter(is_active=False)

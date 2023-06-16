@@ -1,50 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
   const myTable = document.querySelector("#inactive_users_table");
+  const columns = [
+    { select: 0, sort: "asc", title: "employee_id" },
+    { select: 1, title: "Name" },
+    { select: 2, title: "Employee_designation" },
+    { select: 3, title: "Email" },
+    { select: 4, title: "Contact_number" },
+    { select: 5, title: "CheckBox", html: true },
+  ];
 
-  const generateDataTableConfig = (data) => ({
-    data: data,
-    columns: [
-      { select: 0, sort: "asc", title: "employee_id" },
-      { select: 1, title: "Name" },
-      { select: 2, title: "Employee_designation" },
-      { select: 3, title: "Email" },
-      { select: 4, title: "Contact_number" },
-      { select: 5, title: "CheckBox", html: true },
-    ],
-  });
+  window.fetchData("inactive_users_table",myTable, "/api/inactive_users/", "/api/inactive_users/", columns);
 
-  let dataTable;
-  function fetchData(query = "") {
-    console.log("fetching data");
-    fetch(`api/inactive_users/?search=${query}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (dataTable) {
-          dataTable.destroy();
-        }
-        console.log("Data:", data);
-
-        dataTable = new simpleDatatables.DataTable(
-          myTable,
-          generateDataTableConfig(data)
-        );
-        document
-          .querySelector(".datatable-input")
-          .addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-              const query = event.target.value;
-              if (query.length >= 1 || query.length === 0) {
-                fetchData(query);
-              }
-            }
-          });
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }
-
-  fetchData();
 
   document
     .querySelector("#activeButton")
@@ -150,41 +116,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-
-
   //code for the active users table
   const myActiveTable = document.querySelector("#active_user_table");
-  let activeDataTable;
-  function fetchActiveData(query = "") {
-    console.log("fetching active users data");
-    fetch(`api/active_users/?search=${query}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (activeDataTable) {
-          activeDataTable.destroy();
-        }
-        console.log("Active Data:", data);
-  
-        activeDataTable = new simpleDatatables.DataTable(
-          myActiveTable,
-          generateDataTableConfig(data)
-        );
-        document
-          .querySelector(".datatable-input")
-          .addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-              const query = event.target.value;
-              if (query.length >= 1 || query.length === 0) {
-                fetchActiveData(query);
-              }
-            }
-          });
-      })
-      .catch((error) => {
-        console.error("Error fetching active users data:", error);
-      });
-  }
-  fetchActiveData();
+
+  window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns);
+
+
   document.querySelector("#activeContainer #deleteButton").addEventListener("click", function () {
     const checkboxes = document.querySelectorAll(
       "#active_user_table input.user-checkbox:checked"

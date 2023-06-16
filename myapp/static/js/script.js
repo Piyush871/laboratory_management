@@ -42,9 +42,6 @@ window.getCookie = function (name) {
   return cookieValue;
 };
 
-
-
-
 // window.fetchData = function (
 //     tableId,
 //     url,
@@ -123,7 +120,6 @@ window.makeRequest = function ({
       if (onNetError) onNetError(error);
     });
 };
-
 //*methods for fetching data for datatables
 window.dataTables = {};
 window.generateDataTableConfig = (columns) => (data) => ({
@@ -155,9 +151,12 @@ window.fetchData = function (
         myTable,
         window.generateDataTableConfig(columns)(data)
       );
-      document
-        .querySelector(".datatable-input")
-        .addEventListener("keydown", (event) => {
+
+      var element = document.querySelector(
+        `input[aria-controls=${tableId}].datatable-input`
+      );
+      if (element) {
+        element.addEventListener("keydown", (event) => {
           if (event.key === "Enter") {
             const query = event.target.value;
             if (query.length >= 1 || query.length === 0) {
@@ -172,6 +171,7 @@ window.fetchData = function (
             }
           }
         });
+      }
     })
     .catch((error) => {
       console.error("Error fetching data:", error);

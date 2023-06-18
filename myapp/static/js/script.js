@@ -136,6 +136,7 @@ window.fetchData = function (
   query = ""
 ) {
   console.log("fetching data");
+  console.log(url);
   fetch(`${url}?search=${query}`)
     .then((response) => response.json())
     .then((data) => {
@@ -169,6 +170,74 @@ window.fetchData = function (
                 query
               );
             }
+          }
+          else{
+            console.log("element not found");
+          }
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+};
+
+window.fetchDataFilter = function (
+  tableId,
+  myTable,
+  url,
+  searchUrl,
+  columns,
+  filters = {}
+) {
+  console.log("fetching data");
+  console.log(url);
+
+  let params = new URLSearchParams();
+  for (let key in filters) {
+    if (filters[key]) {
+      params.append(key, filters[key]);
+    }
+  }
+  console.log(`${url}?${params.toString()}`);
+  fetch(`${url}?${params.toString()}`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("table refreshed");
+
+      console.log(window.dataTables[tableId]);
+      if (window.dataTables[tableId]) {
+        console.log("destroying table");
+        window.dataTables[tableId].destroy();
+        delete window.dataTables[tableId];
+      }
+
+      window.dataTables[tableId] = new simpleDatatables.DataTable(
+        myTable,
+        window.generateDataTableConfig(columns)(data)
+      );
+
+      var element = document.querySelector(
+        `input[aria-controls=${tableId}].datatable-input`
+      );
+      if (element) {
+        element.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            const query = event.target.value;
+            if (query.length >= 1 || query.length === 0) {
+              filters.search = query;  // Add the search query to the filters
+              window.fetchData(
+                tableId,
+                myTable,
+                searchUrl,
+                searchUrl,
+                columns,
+                filters
+              );
+            }
+          }
+          else{
+            console.log("element not found");
           }
         });
       }

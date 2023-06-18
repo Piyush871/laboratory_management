@@ -39,24 +39,55 @@
             <tbody></tbody>
           </table>
         </div>
-        <div class="card-header">
-          <i class="fas fa-table me-1"></i>
-          Functions
-          <button type="button" class="btn btn-info" id="activeButton">
-            filters
-          </button>
-          <button
-            type="button"
-            class="btn btn-warning"
-            id="addEquipmentButton"
-            data-bs-toggle="modal"
-            data-bs-target="#addEquipmentModal"
-          >
-            Add Item
-          </button>
-          <button type="button" class="btn btn-danger" id="deleteButton">
-            Delete Selected
-          </button>
+        <div class="card-header d-flex justify-content-between">
+          <div class="button-group">
+            <button
+              type="button"
+              class="btn btn-warning me-2"
+              id="addEquipmentButton"
+              data-bs-toggle="modal"
+              data-bs-target="#addEquipmentModal"
+            >
+              Add Item
+            </button>
+            <button type="button" class="btn btn-danger" id="deleteButton">
+              Delete Selected
+            </button>
+          </div>
+          
+          <div class="dropdown">
+            <button class="btn btn-info dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+               Filters
+            </button>
+            <div id="filters" class="dropdown-menu p-4" aria-labelledby="filterDropdown">
+              <div class="d-flex flex-column align-items-start">
+                <div class="d-flex align-items-center mb-2">
+                  <i class="fas fa-filter me-2"></i>
+                  <label for="dateBefore" class="form-label me-2">Assigned Before</label>
+                  <input type="date" class="form-control" id="dateBefore" />
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                  <label for="dateAfter" class="form-label me-2">Assigned After</label>
+                  <input type="date" class="form-control" id="dateAfter" />
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                  <label for="assignedStatus" class="form-label me-2">Assigned Status</label>
+                  <select id="assignedStatus" class="form-select">
+                    <option value="">All</option>
+                    <option value="true">Assigned</option>
+                    <option value="false">Not Assigned</option>
+                  </select>
+                </div>
+                <div class="button-group">
+                  <button class="filter-btn" id="apply-filter">Apply Filter</button>
+                  <button class="filter-btn" id="clear-filter">Clear Filter</button>
+                </div>                
+              </div>
+            </div>
+          </div>
+        </div>
+        
+          
         </div>
       </div>
     </div>
@@ -140,5 +171,6 @@
 
 {% endblock content %} {% block staticFiles %} {% load static %}
 <script src="{% static 'js/allEquipmentsScript.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/allEquipmentsStyle.css' %}" />
 
 {% endblock staticFiles %}

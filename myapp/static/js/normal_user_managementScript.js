@@ -11,86 +11,92 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.fetchData("inactive_users_table",myTable, "/api/inactive_users/", "/api/inactive_users/", columns);
 
-
   document
-    .querySelector("#activeButton")
-    .addEventListener("click", function () {
-      const checkboxes = document.querySelectorAll(
-        "input.user-checkbox:checked"
-      );
-      console.log("Checked checkboxes:", checkboxes);
+  .querySelector("#activeButton")
+  .addEventListener("click", function () {
+    const checkboxes = document.querySelectorAll(
+      "input.user-checkbox:checked"
+    );
+    console.log("Checked checkboxes:", checkboxes);
 
-      const ids = Array.from(checkboxes).map((checkbox) => {
-        console.log("Checkbox:", checkbox);
-        return checkbox.dataset.id;
-      });
-
-      // Call your activate API endpoint with ids array
-      console.log("Activate user ids:", ids);
-
-      if (ids.length > 0) {
-        fetch(`api/activate_users/?ids[]=${ids.join("&ids[]=")}`)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-
-            if (data.status === "success") {
-              alert(data.message);
-              // Reload the table data
-              fetchData();
-              fetchActiveData();
-            } else {
-              alert("Error: " + data.message);
-            }
-          })
-          .catch((error) => {
-            console.error("Error activating users:", error);
-            alert("Error activating users. Please try again.");
-          });
-      } else {
-        alert("Please select at least one user to activate.");
-      }
+    const ids = Array.from(checkboxes).map((checkbox) => {
+      console.log("Checkbox:", checkbox);
+      return checkbox.dataset.id;
     });
 
-  document
-    .querySelector("#inactiveContainer #deleteButton")
-    .addEventListener("click", function () {
-      const checkboxes = document.querySelectorAll(
-        "#inactiveContainer input.user-checkbox:checked"
-      );
-      console.log("Checked checkboxes:", checkboxes);
+    // Call your activate API endpoint with ids array
+    console.log("Activate user ids:", ids);
 
-      const ids = Array.from(checkboxes).map((checkbox) => {
-        console.log("Checkbox:", checkbox);
-        return checkbox.dataset.id;
+    if (ids.length > 0) {
+      window.makeRequest({
+        url: `api/activate_users/?ids[]=${ids.join("&ids[]=")}`,
+        method: "GET",
+        onSuccess: (data) => {
+          console.log(data);
+          if (data.status === "success") {
+            alert(data.message);
+            // Reload the table data
+            console.log("reloading both the tables");
+            window.fetchData("inactive_users_table",myTable, "/api/inactive_users/", "/api/inactive_users/", columns);
+            window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns);
+
+          } else {
+            alert("Error: " + data.message);
+          }
+        },
+        onNetError: (error) => {
+          console.error("Error activating users:", error);
+          alert("Error activating users. Please try again.");
+        }
       });
+    } else {
+      alert("Please select at least one user to activate.");
+    }
+  });
 
-      // Call your activate API endpoint with ids array
-      console.log("Delete user ids:", ids);
+  document
+  .querySelector("#inactiveContainer #deleteButton")
+  .addEventListener("click", function () {
+    const checkboxes = document.querySelectorAll(
+      "#inactiveContainer input.user-checkbox:checked"
+    );
+    console.log("Checked checkboxes:", checkboxes);
 
-      if (ids.length > 0) {
-        fetch(`api/delete_users/?ids[]=${ids.join("&ids[]=")}`)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-
-            if (data.status === "success") {
-              alert(data.message);
-
-              // Reload the table data
-              fetchData();
-            } else {
-              alert("Error: " + data.message);
-            }
-          })
-          .catch((error) => {
-            console.error("Error deleting  users:", error);
-            alert("Error activating users. Please try again.");
-          });
-      } else {
-        alert("Please select at least one user to activate.");
-      }
+    const ids = Array.from(checkboxes).map((checkbox) => {
+      console.log("Checkbox:", checkbox);
+      return checkbox.dataset.id;
     });
+
+    // Call your delete API endpoint with ids array
+    console.log("Delete user ids:", ids);
+
+    if (ids.length > 0) {
+      window.makeRequest({
+        url: `api/delete_users/?ids[]=${ids.join("&ids[]=")}`,
+        method: "GET",
+        onSuccess: (data) => {
+          console.log(data);
+          if (data.status === "success") {
+            alert(data.message);
+            // Reload the table data
+            window.fetchData("inactive_users_table",myTable, "/api/inactive_users/", "/api/inactive_users/", columns);
+          } else {
+            alert("Error: " + data.message);
+          }
+        },
+        onNetError: (error) => {
+          console.error("Error deleting users:", error);
+          alert("Error deleting users. Please try again.");
+        },
+        onErrorMessage: (message) => {
+          console.error("Server returned error:", message);
+        }
+      });
+    } else {
+      alert("Please select at least one user to delete.");
+    }
+  });
+
 
   document
     .getElementById("showInactive")
@@ -110,12 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("template_heading").innerText="ActiveUsers"
   });
   
-
-
-
-
-
-
   //code for the active users table
   const myActiveTable = document.querySelector("#active_user_table");
 
@@ -137,26 +137,31 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Delete active user ids:", ids);
   
     if (ids.length > 0) {
-      fetch(`api/delete_users/?ids[]=${ids.join("&ids[]=")}`)
-        .then((response) => response.json())
-        .then((data) => {
+      window.makeRequest({
+        url: `api/delete_users/?ids[]=${ids.join("&ids[]=")}`,
+        method: "GET",
+        onSuccess: (data) => {
           console.log(data);
-  
           if (data.status === "success") {
             alert(data.message);
             // Reload the active users table data
-            fetchActiveData();
+            window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns);
           } else {
             alert("Error: " + data.message);
           }
-        })
-        .catch((error) => {
+        },
+        onNetError: (error) => {
           console.error("Error deleting active users:", error);
           alert("Error deleting users. Please try again.");
-        });
+        },
+        onErrorMessage: (message) => {
+          console.error("Server returned error:", message);
+        }
+      });
     } else {
       alert("Please select at least one active user to delete.");
     }
   });
+  
   
 });

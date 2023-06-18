@@ -1,115 +1,95 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const myTable = document.querySelector("#datatablesSimple");
+  const dateBeforeInput = document.getElementById("dateBefore");
+  const dateAfterInput = document.getElementById("dateAfter");
+  const assignedStatusSelect = document.getElementById("assignedStatus");
+  const applyFiltersButton = document.getElementById("apply-filter");
+  const clearFiltersButton = document.getElementById("clear-filter");
 
-  const generateDataTableConfig = (data) => ({
-    data: data,
-    columns: [
-      { select: 0, sort: "asc", title: "equipment_id" },
-      { select: 1, title: "equipment_name" },
-      { select: 2, title: "category" },
-      { select: 3, title: "assigned_user" },
-      { select: 4, title: "last_assigned" },
-      {
-        select: 5,
-        title: "viewDetails",
-        render: function (data, cell, _dataIndex, _cellIndex) {
-          console.log(cell.childNodes[0].data);
-          const equipmentId = cell.childNodes[0].data;
-          return `<a href="#" data-bs-toggle="modal" data-bs-target="#equipmentModal" onclick="showEquipmentDetails(${equipmentId})">View Details</a>`;
-        },
+  // Call fetchData on page load with empty filters
+  const tableId = "datatablesSimple";
+  const myTable = document.getElementById(tableId);
+  const url = "/api/equipment_filter/";
+  const searchUrl = "/api/equipment_filter/";
+  const columns = [
+    { select: 0, sort: "asc", title: "equipment_id" },
+    { select: 1, title: "equipment_name" },
+    { select: 2, title: "category" },
+    { select: 3, title: "assigned_user" },
+    { select: 4, title: "last_assigned" },
+    {
+      select: 5,
+      title: "viewDetails",
+      render: function (data, cell, _dataIndex, _cellIndex) {
+        console.log(cell.childNodes[0].data);
+        const equipmentId = cell.childNodes[0].data;
+        return `<a href="#" data-bs-toggle="modal" data-bs-target="#equipmentModal" onclick="showEquipmentDetails(${equipmentId})">View Details</a>`;
       },
-      { select: 6, title: "CheckBox", html: true },
-    ],
+    },
+    { select: 6, title: "CheckBox", html: true },
+  ];
+  window.fetchDataFilter(tableId, myTable, url, searchUrl, columns, {});
+
+  // "Apply Filters" button click event
+  applyFiltersButton.addEventListener("click", () => {
+    const filters = {
+      date_before: dateBeforeInput.value,
+      date_after: dateAfterInput.value,
+      assigned_status: assignedStatusSelect.value,
+    };
+    console.log(filters);
+    window.fetchDataFilter(tableId, myTable, url, searchUrl, columns, filters);
   });
 
-  let dataTable;
+  // "Clear Filters" button click event
+  clearFiltersButton.addEventListener("click", () => {
+    // Clear the filter form inputs
+    dateBeforeInput.value = "";
+    dateAfterInput.value = "";
+    assignedStatusSelect.value = "";
 
-  function fetchData(query = "") {
-    console.log("fetching data");
-    fetch(`/api/allEquipments/?search=${query}`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        if (dataTable) {
-          dataTable.destroy();
-        }
-        dataTable = new simpleDatatables.DataTable(
-          myTable,
-          generateDataTableConfig(data)
-        );
-        document
-          .querySelector(".datatable-input")
-          .addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-              const query = event.target.value;
-              if (query.length >= 3 || query.length === 0) {
-                fetchData(query);
-              }
-            }
-          });
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }
+    // Call fetchData with empty filters
+    window.fetchDataFilter(tableId, myTable, url, searchUrl, columns, {});
+  });
 
-  fetchData();
-});
+  document
+    .getElementById("addEquipmentForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
 
-document
-  .getElementById("addEquipmentForm")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
+      var formData = new FormData();
+      formData.append(
+        "equipment_id",
+        document.getElementById("equipmentId").value
+      );
+      formData.append(
+        "equipment_name",
+        document.getElementById("equipmentName").value
+      );
+      formData.append("category", document.getElementById("category").value);
+      formData.append(
+        "date_of_purchase",
+        document.getElementById("dateOfPurchase").value
+      );
+      formData.append("location", document.getElementById("location").value);
+      formData.append("image", document.getElementById("image").files[0]);
 
-    var formData = new FormData();
-    formData.append(
-      "equipment_id",
-      document.getElementById("equipmentId").value
-    );
-    formData.append(
-      "equipment_name",
-      document.getElementById("equipmentName").value
-    );
-    formData.append("category", document.getElementById("category").value);
-    formData.append(
-      "date_of_purchase",
-      document.getElementById("dateOfPurchase").value
-    );
-    formData.append("location", document.getElementById("location").value);
-    formData.append("image", document.getElementById("image").files[0]);
-
-    fetch("/api/addEquipment/", {
-      method: "POST",
-      body: formData,
-      headers: {
-        "X-CSRFToken": getCookie("csrftoken"), // function to get the cookie value
-      },
-    })
-      .then(function (response) {
-        if (response.ok) {
+      window.makeRequest({
+        url: "/api/addEquipment/",
+        method: "POST",
+        body: formData,
+        onSuccess: (data) => {
           alert("Equipment added successfully");
           $("#addEquipmentModal").modal("hide");
-          fetchData();
-        } else {
-          alert("Error: " + response.statusText);
-        }
-      })
-      .catch(function (error) {
-        alert("Error: " + error);
+          window.fetchDataFilter(tableId, myTable, url, searchUrl, columns, {});
+        },
+        onNetError: (error) => {
+          alert("Error: " + error);
+        },
+        onErrorMessage: (errorMessage) => {
+          alert("Error: " + errorMessage);
+        },
       });
-  });
-function getCookie(name) {
-  var cookieValue = null;
-  if (document.cookie && document.cookie !== "") {
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = jQuery.trim(cookies[i]);
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) === name + "=") {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
+    });
+
+  
+});

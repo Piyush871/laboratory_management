@@ -77,7 +77,9 @@ $(document).ready(function () {
     $.ajax({
       type: "POST",
       url: "/login",
+      dataType: "json",
       data: $(this).serialize(),
+
 	  beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", csrftoken);
     },

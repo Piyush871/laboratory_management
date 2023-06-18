@@ -3,12 +3,15 @@ from django.urls import path
 from django.urls.conf import include
 from myapp.views import staff_user_management_views
 from myapp import views
-from myapp.views import normal_user_equip_views, normal_user_managemet_views, staff_user_equipment_views, staff_user_request_views
+from myapp.views import normal_user_equip_views, normal_user_managemet_views,  staff_user_request_views
 from myapp.views import staff_user_vendor_views
+from myapp.views import staff_user_equipment_views
+from myapp.views.staff_user_equipment_views import EquipmentApiView
 from myapp import File_Views
 from django.contrib.auth import views as auth_views
 from django.core.mail import get_connection
 from django.conf import settings
+from django.views.generic.base import View
 
 
 urlpatterns = [
@@ -29,11 +32,10 @@ urlpatterns = [
          name="active_users_api"),
     
     
-    
 
     # staff_user_management_views.py
     path("", staff_user_management_views.home_view, name="home"),
-    path("login", staff_user_management_views.login_view, name="login"),
+    path("login", staff_user_management_views.login_view, name="login_view"), # type: ignore
     path("logout", staff_user_management_views.logout_view, name="logout"),
     path("staff_user_management", staff_user_management_views.staff_user_management_view,
          name="staff_user_management_view"),
@@ -48,18 +50,17 @@ urlpatterns = [
     
     
 
+     #normal_user_vendor_views.py
 
 
     # staff_user_vendor_views.py
-    path("allVendors/", staff_user_vendor_views.allVendors_view, name="allVendors"),
+    path("allVendors", staff_user_vendor_views.allVendors_view, name="allVendors"),
     path("api/vendors/", staff_user_vendor_views.get_all_vendors,
          name="get_all_vendors"),
      path("api/vendor_details/", staff_user_vendor_views.get_vendor_details, name="get_vendor_details"),
      path("api/update_vendor/", staff_user_vendor_views.update_vendor, name="update_vendor"),
      path("api/delete_vendors/",staff_user_vendor_views.delete_vendors,name="delete_vendors"),
      path("api/addVendor/", staff_user_vendor_views.add_vendor, name="add_vendor"),
-     
-     
      
 
     # staff user_equipment_views.py
@@ -70,8 +71,8 @@ urlpatterns = [
          name='check_equipment_assignment'),
     path('deassign_equipment', staff_user_equipment_views.deassign_equipment_view,
          name='deassign_equipment'),
-    path('api/equipment/', staff_user_equipment_views.equipment_api,
-         name='equipment_api'),
+    path('api/equipment/', staff_user_equipment_views.equipment_api, name='equipment_api'),
+    path('api/equipment_filter/', EquipmentApiView.as_view(), name='equipment_api_filter'),
     path('api/equipment_details/',
          staff_user_equipment_views.equipment_details_api, name="equipment_api"),
     path('api/update_equipment/', staff_user_equipment_views.update_equipment_api,

@@ -1,0 +1,58 @@
+.keep-cards {
+    border: 5px solid #dfd;
+    border-radius: 10px;
+    max-height: 80vh;
+    /* Adjust this value to fit the maximum height you want */
+    overflow-y: scroll;
+    font-family: 'Nunito', sans-serif;
+}
+
+
+
+.card {
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, .08), 0 0 6px rgba(0, 0, 0, .05);
+    transition: .3s transform cubic-bezier(.155, 1.105, .295, 1.12), .3s box-shadow, .3s -webkit-transform cubic-bezier(.155, 1.105, .295, 1.12);
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: 80px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
+}
+
+.card h3 {
+    font-weight: 600;
+}
+
+.card img {
+    position: absolute;
+    top: 20px;
+    right: 15px;
+    max-height: 120px;
+}
+
+@media(max-width: 990px) {
+    .card {
+        margin: 20px;
+    }
+}
+
+.till-forms {
+    background-color: aqua;
+}
+
+#search {
+    margin-right: 10px;
+  }
+#AllocReqButton {
+    margin-right: 10px;
+  }
+#user_name {
+    padding-top: 4%;
+
+  }

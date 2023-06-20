@@ -1,0 +1,33 @@
+.custom-alert {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f44336; /* Red */
+    color: white;
+    opacity: 1;
+    transition: opacity 0.6s;
+    padding: 10px;
+}
+
+.custom-alert p {
+    display: inline;
+}
+
+.custom-alert.success {background-color: #4CAF50;} /* Green */
+.custom-alert.info {background-color: #2196F3;} /* Blue */
+.custom-alert.warning {background-color: #F25700;} /* Orange */
+
+.custom-alert .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.custom-alert .closebtn:hover {
+    color: black;
+}

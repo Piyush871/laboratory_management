@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-$1&cfgy#q@l5y7pfg_h^(q-7-275tu)9y^s9rtnm8q!cdrjm8v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['sea-lion-app-gv4p8.ondigitalocean.app ']
 
 # Application definition
 
@@ -117,6 +117,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

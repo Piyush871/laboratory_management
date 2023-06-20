@@ -24,7 +24,7 @@ h11==0.14.0
 idna==3.4
 keyboard==0.13.5
 MarkupPy==1.14
-MouseInfo==0.1.3 b 
+MouseInfo==0.1.3
 multidict==6.0.4
 odfpy==1.4.1
 openai==0.27.7

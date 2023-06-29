@@ -31,10 +31,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // "Apply Filters" button click event
   applyFiltersButton.addEventListener("click", () => {
+    //get the search values
+    let search = document.querySelector(
+      `input[aria-controls=${tableId}].datatable-input`
+    );
     const filters = {
       date_before: dateBeforeInput.value,
       date_after: dateAfterInput.value,
       assigned_status: assignedStatusSelect.value,
+      search: search.value,
     };
     console.log(filters);
     window.fetchDataFilter(tableId, myTable, url, searchUrl, columns, filters);

@@ -141,7 +141,6 @@ window.fetchData = function (
     .then((response) => response.json())
     .then((data) => {
       console.log("table refreshed");
-
       console.log(window.dataTables[tableId]);
       if (window.dataTables[tableId]) {
         console.log("destroying table");
@@ -192,13 +191,19 @@ window.fetchDataFilter = function (
 ) {
   console.log("fetching data");
   console.log(url);
-
+  console.log(filters);
   let params = new URLSearchParams();
   for (let key in filters) {
     if (filters[key]) {
-      params.append(key, filters[key]);
+      let value = filters[key];
+      // If the value is an object, convert it to a JSON string
+      if (typeof value === 'object' && value !== null) {
+        value = JSON.stringify(value);
+      }
+      params.append(key, value);
     }
   }
+  
   console.log(`${url}?${params.toString()}`);
   fetch(`${url}?${params.toString()}`)
     .then((response) => response.json())
@@ -224,9 +229,11 @@ window.fetchDataFilter = function (
         element.addEventListener("keydown", (event) => {
           if (event.key === "Enter") {
             const query = event.target.value;
+            console.log(query);
             if (query.length >= 1 || query.length === 0) {
               filters.search = query;  // Add the search query to the filters
-              window.fetchData(
+              console.log('filters', filters)
+              window.fetchDataFilter(
                 tableId,
                 myTable,
                 searchUrl,

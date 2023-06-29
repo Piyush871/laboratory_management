@@ -209,10 +209,13 @@ class EquipmentApiView(View):
         date_before = self.request.GET.get('date_before', None)
         date_after = self.request.GET.get('date_after', None)
         assigned_status = self.request.GET.get('assigned_status', None)
+        search = self.request.GET.get('search', None) 
+        #console all this data
+        print(date_before, date_after, assigned_status,search)
 
-        print(date_before, date_after, assigned_status)
 
         equipments = equipment.objects.all()
+        
 
         if date_before:
             date_before = datetime.strptime(date_before, '%Y-%m-%d').date()
@@ -225,7 +228,18 @@ class EquipmentApiView(View):
         if assigned_status is not None:
             assigned_status = assigned_status.lower() in ['true', '1', 'yes']
             equipments = equipments.filter(allocation_status=assigned_status)
-
+        
+        if search:
+            equipments = equipments.filter(
+            Q(equipment_id__icontains=search) |
+            Q(equipment_name__icontains=search) |
+            Q(category__icontains=search) |
+            Q(date_of_purchase__icontains=search) |
+            Q(location__icontains=search) |
+            Q(assigned_user__name__icontains=search) |
+            Q(assigned_user__employee_id__icontains=search)
+        )
+        
         data = []
         for item in equipments:
             row = [

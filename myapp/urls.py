@@ -48,8 +48,6 @@ urlpatterns = [
     path('api/staff_user_delete/<int:user_id>/',
          staff_user_management_views.delete_staff_user, name='delete_staff_user'),
     
-    
-
      #normal_user_vendor_views.py
 
 

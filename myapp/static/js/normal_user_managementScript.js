@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Reload the table data
             console.log("reloading both the tables");
             window.fetchData("inactive_users_table",myTable, "/api/inactive_users/", "/api/inactive_users/", columns);
-            window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns);
+            window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns,"",2);
 
           } else {
             alert("Error: " + data.message);
@@ -67,9 +67,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return checkbox.dataset.id;
     });
 
-    // Call your delete API endpoint with ids array
-    console.log("Delete user ids:", ids);
-
+    //should not be able to delete more than 5 users at a time
+    if (ids.length > 5) {
+      alert("You cannot delete more than 5 users at a time");
+      return;
+    }
     if (ids.length > 0) {
       window.makeRequest({
         url: `api/delete_users/?ids[]=${ids.join("&ids[]=")}`,
@@ -119,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
   //code for the active users table
   const myActiveTable = document.querySelector("#active_user_table");
 
-  window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns);
+  window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns,"",2);
 
 
   document.querySelector("#activeContainer #deleteButton").addEventListener("click", function () {
@@ -145,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (data.status === "success") {
             alert(data.message);
             // Reload the active users table data
-            window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns);
+            window.fetchData("active_user_table",myActiveTable, "/api/active_users/", "/api/active_users/", columns,"",2);
           } else {
             alert("Error: " + data.message);
           }

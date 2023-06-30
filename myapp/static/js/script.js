@@ -16,13 +16,12 @@ window.addEventListener("DOMContentLoaded", (event) => {
 window.removeAlert = function (id) {
   let alertDiv = document.getElementById(id);
   let alertText = alertDiv.querySelector("#customAlertText");
-  
+
   // Set the text
   alertText.textContent = "";
   alertDiv.style.display = "none";
   alertDiv.classList.remove("success", "info", "warning");
 };
-
 
 window.showAlert = function (id, type, message) {
   let alertDiv = document.getElementById(id);
@@ -114,7 +113,7 @@ window.makeRequest = function ({
           if (error.message) {
             if (onErrorMessage) onErrorMessage(error.message);
           }
-          return Promise.reject(new Error('HTTP response was not OK'));  // Reject the promise instead of throwing an error
+          return Promise.reject(new Error("HTTP response was not OK")); // Reject the promise instead of throwing an error
         });
       } else {
         return response.json().then((data) => {
@@ -124,13 +123,11 @@ window.makeRequest = function ({
     })
     .catch((error) => {
       // Check if the error is a network error (i.e., not an application error)
-      if (error.message !== 'HTTP response was not OK') {
+      if (error.message !== "HTTP response was not OK") {
         if (onNetError) onNetError(error);
       }
     });
 };
-
-
 
 //*methods for fetching data for datatables
 window.dataTables = {};
@@ -145,7 +142,8 @@ window.fetchData = function (
   url,
   searchUrl,
   columns,
-  query = ""
+  query = "",
+  tablenum = 1
 ) {
   console.log("fetching data");
   console.log(url);
@@ -167,6 +165,9 @@ window.fetchData = function (
       var element = document.querySelector(
         `input[aria-controls=${tableId}].datatable-input`
       );
+      if (!element) {
+        element = document.querySelectorAll(".datatable-input")[tablenum - 1];
+      }
       if (element) {
         element.addEventListener("keydown", (event) => {
           if (event.key === "Enter") {
@@ -178,12 +179,10 @@ window.fetchData = function (
                 searchUrl,
                 searchUrl,
                 columns,
-                query
+                query,
+                tablenum
               );
             }
-          }
-          else{
-            console.log("element not found");
           }
         });
       }
@@ -209,13 +208,13 @@ window.fetchDataFilter = function (
     if (filters[key]) {
       let value = filters[key];
       // If the value is an object, convert it to a JSON string
-      if (typeof value === 'object' && value !== null) {
+      if (typeof value === "object" && value !== null) {
         value = JSON.stringify(value);
       }
       params.append(key, value);
     }
   }
-  
+
   console.log(`${url}?${params.toString()}`);
   fetch(`${url}?${params.toString()}`)
     .then((response) => response.json())
@@ -243,8 +242,8 @@ window.fetchDataFilter = function (
             const query = event.target.value;
             console.log(query);
             if (query.length >= 1 || query.length === 0) {
-              filters.search = query;  // Add the search query to the filters
-              console.log('filters', filters)
+              filters.search = query; // Add the search query to the filters
+              console.log("filters", filters);
               window.fetchDataFilter(
                 tableId,
                 myTable,
@@ -254,8 +253,7 @@ window.fetchDataFilter = function (
                 filters
               );
             }
-          }
-          else{
+          } else {
             console.log("element not found");
           }
         });

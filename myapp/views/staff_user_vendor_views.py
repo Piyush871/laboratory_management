@@ -147,6 +147,7 @@ def add_vendor(request):
         contact_no = request.POST.get('contact_no')
         address = request.POST.get('address')
         website_link = request.POST.get('website_link')
+        print(name, parts, email, contact_no, address, website_link)
 
         parts_list = []
         for part_name in parts:
@@ -155,7 +156,12 @@ def add_vendor(request):
 
         try:
             vendor = Vendor(name=name, email=email, contact_no=contact_no, address=address, website_link=website_link)
-            vendor.save()
+            print(vendor.__dict__)
+            try:
+                vendor.save()
+            except Exception as e:
+                 print("Vendor save failed:", str(e))
+
             vendor.parts.add(*parts_list)
             return JsonResponse({"status": "success", "message": "Vendor added successfully."})
         except Exception as e:

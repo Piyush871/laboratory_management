@@ -23,13 +23,13 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.base import View
 from datetime import datetime, timedelta
+from django.core.exceptions import ValidationError
+
 
 
 def get_names_view(request):
     equipment_id = int(request.GET.get("equipment_id"))
     emp_id = request.GET.get("employee_id")
-    print(equipment_id)
-    print(emp_id)
 
     if (not equipment.objects.filter(equipment_id=equipment_id).exists()):
         return JsonResponse({"message": "Equipment does not exist"}, status=400)
@@ -39,9 +39,6 @@ def get_names_view(request):
     equipment_name = equipment.objects.get(
         equipment_id=equipment_id).equipment_name
     employee_name = CustomUser.objects.get(employee_id=int(emp_id)).name
-
-    print(equipment_name)
-    print(employee_name)
     # if equipment is already assigned to someone else then return the name of the person to whom it is assigned
     if (equipment.objects.get(equipment_id=equipment_id).allocation_status == True):
         equipment_obj = equipment.objects.get(equipment_id=equipment_id)
@@ -51,7 +48,7 @@ def get_names_view(request):
             if (assign_user_emp_id == int(emp_id)):
                 return JsonResponse({"responseText": "Equipment is already assigned to this user"})
             else:
-                return JsonResponse({"responseText": "Equipment is already assigned to "+CustomUser.objects.get(emp_id=assign_user_emp_id).name})
+                return JsonResponse({"responseText": "Equipment is already assigned to "+CustomUser.objects.get(employee_id=assign_user_emp_id).name})
         else:
             return JsonResponse({"responseText": "No user assigned to this equipment"})
     else:
@@ -60,70 +57,88 @@ def get_names_view(request):
 
 @login_required(login_url='reg_normal_user')
 def assign_equipment_view(request):
-    # if the equipment is already assigned then do not assign it again
-    if (equipment.objects.get(equipment_id=request.POST.get("equipment_id")).allocation_status == True):
-        return JsonResponse({'message': 'equipment is already assigned!'})
-    equipment_id = request.POST.get("equipment_id")
-    employee_id = request.POST.get("employee_id")
-    # add condition if location is null then do not update
-    location = request.POST.get("location")
-    if (request.POST.get("location") == ""):
-        location = None
+    print("assign equipment view")
+    body_unicode = request.body.decode('utf-8')
+    body_data = json.loads(body_unicode)  
+    equipment_id = body_data.get("equipment_id")
+    employee_id = body_data.get("employee_id")
+    location = body_data.get("location")
+    try:
+        eq = equipment.objects.get(equipment_id=equipment_id)
+        user = CustomUser.objects.get(employee_id=employee_id)
+    except ObjectDoesNotExist:
+        return JsonResponse({'message': 'equipment or user does not exist'})
 
-    # Get the equipment and user objects
-    eq = equipment.objects.get(equipment_id=equipment_id)
-    user = CustomUser.objects.get(employee_id=employee_id)
+    # Check if the equipment is already assigned
+    if eq.allocation_status == True:
+        return JsonResponse({'message': 'equipment is already assigned!'})
+
+    # Check if location update is needed
+    if location == "":
+        location = None
 
     # Update the equipment object with the user and location
     eq.assigned_user = user
-    # add condition if location is null then do not update
-    if (location is not None):
+    if location is not None:
         eq.location = location
     eq.last_assigned_date = timezone.now()
     eq.allocation_status = True
     eq.save()
+
     return JsonResponse({'message': 'equipment assigned successfully!'})
+
+
 
 
 @login_required(login_url='reg_normal_user')
 def check_equipment_deassign_view(request):
     equipment_id = request.GET.get("equipment_id")
+
     if not equipment_id:
-        return JsonResponse({'responseText': 'equipment id is not provided!'}, status=400)
+        return JsonResponse({'message': 'equipment id is not provided!'}, status=400)
     try:
         eq = equipment.objects.get(equipment_id=equipment_id)
     except ObjectDoesNotExist:
-        return JsonResponse({'responseText': 'equipment does not exist!'})
+        return JsonResponse({'message': 'equipment does not exist!'},status=400)
 
     if eq.assigned_user is None:
         responseText = "Equipment is not assigned to anyone"
-        return JsonResponse({"responseText": responseText}, status=400)
+        return JsonResponse({"message": responseText}, status=400)
 
     user = eq.assigned_user
-    print(user.name)
-    responseText = "Equipment is assigned to " + \
-        user.name + "it is located at " + eq.location
+    
+    responseText = "Equipment is assigned to " + user.name if user.name else " Unknown user"
+    responseText += " and it is located at " 
+    responseText += eq.location if eq.location else " Unknown location"
     return JsonResponse({"responseText": responseText})
 
 
 def deassign_equipment_view(request):
-    print("deassigning equipment")
-    equipment_id = request.POST.get("equipment_id")
-    print(equipment_id)
+    body_unicode = request.body.decode('utf-8')
+    body_data = json.loads(body_unicode)
+    
+    equipment_id = body_data.get("equipment_id")
+    location = body_data.get("location") 
     try:
         eq = equipment.objects.get(equipment_id=equipment_id)
     except ObjectDoesNotExist:
-        return JsonResponse({'message': "Equipment does not exist!"})
+        return JsonResponse({'message': "Equipment does not exist!"},status=400)
 
+    if eq.allocation_status == False:
+        return JsonResponse({'message': 'equipment is not assigned!'},status=400)
+        
     eq.assigned_user = None
-    # if the location is null then do not update
-    if (request.POST.get("location") != ""):
+
+    if location is not None:
         eq.location = request.POST.get("location")
 
     eq.last_assigned_date = None
     eq.allocation_status = False
     eq.save()
     return JsonResponse({'message': 'equipment deassigned successfully!'})
+
+
+
 
 
 def equipment_api(request):
@@ -214,7 +229,7 @@ class EquipmentApiView(View):
         print(date_before, date_after, assigned_status,search)
 
 
-        equipments = equipment.objects.all()
+        equipments = equipment.objects.all().order_by('-last_assigned_date')
         
 
         if date_before:
@@ -292,24 +307,37 @@ def update_equipment_api(request):
         category = request.POST.get('category')
         location = request.POST.get('location')
         image = request.FILES.get('image')
+        purchase_receipt = request.FILES.get('purchase_receipt')
 
         try:
             eq = equipment.objects.get(equipment_id=equipment_id)
         except equipment.DoesNotExist:
             return JsonResponse({"status": False, "error": "Equipment not found."})
 
+        # Validate the sizes of the uploaded files
+        max_size = 0.5 * 1024 * 1024  # 0.5 MB in bytes
+        if image and image.size > max_size:
+            return JsonResponse({"message": "The equipment image file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+        if purchase_receipt and purchase_receipt.size > max_size:
+            return JsonResponse({"message": "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+
         eq.equipment_name = equipment_name
         eq.category = category
         eq.location = location
         if image is not None:
             eq.image = image
-        eq.save()
+        if purchase_receipt is not None:
+            eq.purchase_receipt = purchase_receipt
+        try:
+            eq.save()
+        except ValidationError as e:
+            return JsonResponse({"message": str(e)},status=400)
 
-        return JsonResponse({"status": True, "message": "Equipment updated successfully."})
+        return JsonResponse({"message": "Equipment updated successfully."})
     else:
-        return JsonResponse({"status": False, "error": "Invalid request method."})
-
-
+        print("Invalid request method")
+        return JsonResponse({"message": "Invalid request method."},status=400)
+    
 def allEquipments_view(request):
     return render(request, 'STAFF_USER/allEquipments.html')
 

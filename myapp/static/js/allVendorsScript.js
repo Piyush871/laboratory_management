@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     { select: 6, title: "CheckBox", html: true },
   ];
   window.fetchData("datatablesSimple",myTable, "/api/vendors/", "/api/vendors/", columns);
-});
+
 
 showVendorDetails = (vendorId) => {
   window.makeRequest({
@@ -145,7 +145,9 @@ document
 
   console.log("Delete vendor ids:", ids);
 
-  if (ids.length > 0) {
+  if (ids.length > 5) {
+    alert("You cannot delete more than 5 vendors at a time.");
+  } else if (ids.length > 0) {
     window.makeRequest({
       url: `/api/delete_vendors/?ids[]=${ids.join("&ids[]=")}`,
       method: "DELETE",
@@ -154,7 +156,7 @@ document
   
         if (data.status === "success") {
           alert(data.message);
-          window.fetchData("datatablesSimple",myTable, "/api/vendors/", "/api/vendors/", columns);;
+          window.fetchData("datatablesSimple",myTable, "/api/vendors/", "/api/vendors/", columns);
         } else {
           alert("Error: " + data.message);
         }
@@ -173,6 +175,7 @@ document
   }
 });
 }
+
 
 document
   .getElementById("addVendorForm")
@@ -216,3 +219,4 @@ document
       }
     });
   });
+});

@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
-
+from django.core.validators import FileExtensionValidator
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, name, contact_no, employee_designation, password=None, user_type="normal", is_active=False):
@@ -74,9 +74,9 @@ class equipment(models.Model):
     equipment_name = models.CharField(max_length=100)
     category = models.CharField(max_length=100, default="Others")
     date_of_purchase = models.DateField(default=timezone.now)
-    location = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='equipment_images')
-    purchase_receipt = models.ImageField(upload_to='purchase_receipts')
+    location = models.CharField(max_length=100,null=True,blank=True)
+    image = models.ImageField(upload_to='equipment_images', validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])], null=True, blank=True)
+    purchase_receipt = models.ImageField(upload_to='purchase_receipts', validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])],null=True, blank=True)
     assigned_user = models.ForeignKey(
         CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
     last_assigned_date = models.DateField(null=True, blank=True)

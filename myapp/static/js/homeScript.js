@@ -1,6 +1,32 @@
 document.addEventListener("DOMContentLoaded", function () {
+  resetEquipmentModal = function () {
+    // Hide the Save button
+    document.querySelector("#saveButton").style.display = "none";
+    document.querySelector("#equipment_image_file").value = "";
+    document.querySelector("#purchase_receipt_file").value = "";
+    // Hide the image file input
+    document.querySelector("#equipment_image_upload").style.display = "none";
+    document.querySelector("#purchase_receipt_upload").style.display = "none";
+
+    //don't reset the values of the input fields
+
+    // Make all input fields read only again
+    document.querySelector("#equipment_name_d").readOnly = true;
+    document.querySelector("#category_d").readOnly = true;
+    document.querySelector("#location_d").readOnly = true;
+
+    //make edit button visible
+    document.querySelector("#editButton").style.display = "inline-block";
+  };
+
   function checkEquipmentAssignment(event) {
     event.preventDefault();
+    //remove the alert
+    window.removeAlert("message_div_assign_form");
+    //clear the details
+    const DetailsElement = document.querySelector("#details_1");
+    DetailsElement.innerHTML = "";
+
     const equipmentId = document.querySelector("#equipment_id").value;
     const employeeId = document.querySelector("#employee_id").value;
     console.log(equipmentId);
@@ -12,7 +38,6 @@ document.addEventListener("DOMContentLoaded", function () {
       onSuccess: (data) => {
         if (data) {
           const DetailsElement = document.querySelector("#details_1");
-          console.log(data);
           DetailsElement.innerHTML = data.responseText;
         }
       },
@@ -48,7 +73,13 @@ document.addEventListener("DOMContentLoaded", function () {
       body: body,
       onSuccess: (data) => {
         alert(data.message);
-        fetchData();
+        window.fetchData(
+          "datatablesSimple",
+          myTable,
+          "/api/equipment/",
+          "/api/equipment/",
+          columns
+        );
       },
       onErrorMessage: (errorMessage) => {
         window.showAlert("message_div_assign_form", "warning", errorMessage);
@@ -60,6 +91,9 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     });
   }
+  document
+    .getElementById("assign-equipment-form")
+    .addEventListener("submit", assignEquipment);
 
   document
     .querySelector("#check_button_assign")
@@ -68,14 +102,17 @@ document.addEventListener("DOMContentLoaded", function () {
   //&&deal with cheking when  deassigning the eq
 
   function checkEquipmentDeassignment(event) {
-    event.preventDefault(); // prevents the form from being submitted
-
+    event.preventDefault();
+    window.removeAlert("message_div_deassign_form");
+    //clear the message div
+    const DetailsElement = document.querySelector("#details_2");
+    DetailsElement.innerHTML = "";
     const equipmentId = document.querySelector("#equipment_id_deassign").value;
-
     window.makeRequest({
       url: `check_equipment_deassign?equipment_id=${equipmentId}`,
       method: "GET",
       onSuccess: (data) => {
+        console.log(data);
         const DetailsElement = document.querySelector("#details_2");
         DetailsElement.innerHTML = data.responseText;
       },
@@ -84,6 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       onErrorMessage: (errorMessage) => {
         console.log(errorMessage);
+        showAlert("message_div_deassign_form", "warning", errorMessage);
       },
     });
   }
@@ -105,21 +143,31 @@ document.addEventListener("DOMContentLoaded", function () {
       equipment_id: equipmentId,
       location: location,
     };
+    console.log("sending request");
 
     window.makeRequest({
       url: "/deassign_equipment",
       method: "POST",
       body: JSON.stringify(requestBody),
       onSuccess: (data) => {
+        console.log("success");
         alert(data.message);
-      },
-      onErrorMessage: (errorMessage) => {
-        console.log(errorMessage);
-        alert("An error occurred while deassigning the equipment.");
+        window.fetchData(
+          "datatablesSimple",
+          myTable,
+          "/api/equipment/",
+          "/api/equipment/",
+          columns
+        );
       },
       onNetError: (error) => {
+        console.log("OnNetError");
         console.log(error);
         alert("An error occurred while deassigning the equipment.");
+      },
+      onErrorMessage: (errorMessage) => {
+        console.log("on error message");
+        alert(errorMessage);
       },
     });
   }
@@ -185,7 +233,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //this cannot be converted to json because it has a file
   window.saveEquipment = function () {
+    console.log("saving Equipment");
     const data = new FormData();
+
+    // Retrieve the File objects for the images
+    const equipmentImageFile = document.querySelector("#equipment_image_file")
+      .files[0];
+    const purchaseReceiptFile = document.querySelector("#purchase_receipt_file")
+      .files[0];
+
+    // Check the sizes of the images
+    const maxSize = 0.5 * 1024 * 1024; // 0.5 MB in bytes
+
+    if (equipmentImageFile) {
+      // Check if the file size is less than 0.5 MB
+      if (equipmentImageFile.size > 0.5 * 1024 * 1024) {
+        alert(
+          "The equipment image file is too large. Please upload a file smaller than 0.5 MB."
+        );
+        return;
+      }
+      if (!equipmentImageFile.name.match(/\.(jpg|jpeg|png)$/)) {
+        alert(
+          "Invalid file type for equipment image. Please upload a .jpg or .png file."
+        );
+        return;
+      }
+      data.append("image", equipmentImageFile);
+    }
+
+    if (purchaseReceiptFile) {
+      // Check if the file size is less than 0.5 MB
+      if (purchaseReceiptFile.size > 0.5 * 1024 * 1024) {
+        alert(
+          "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."
+        );
+        return;
+      }
+      if (!purchaseReceiptFile.name.match(/\.(jpg|jpeg|png)$/)) {
+        alert(
+          "Invalid file type for purchase receipt. Please upload a .jpg or .png file."
+        );
+        return;
+      }
+      data.append("purchase_receipt", purchaseReceiptFile);
+    }
+
     data.append(
       "equipment_id",
       document.querySelector("#equipment_id_d").value
@@ -196,55 +289,30 @@ document.addEventListener("DOMContentLoaded", function () {
     );
     data.append("category", document.querySelector("#category_d").value);
     data.append("location", document.querySelector("#location_d").value);
-    data.append("image", document.querySelector("#new_image").files[0]);
 
     window.makeRequest({
       url: "/api/update_equipment/",
       method: "POST",
       body: data,
       onSuccess: (data) => {
-        if (data.status) {
-          console.log("Equipment updated successfully");
-          // Hide the Save button and the image file input
-          document.querySelector("#saveButton").style.display = "none";
-          document.querySelector("#new_image").style.display = "none";
-          // Show the Edit button
-          document.querySelector("#editButton").style.display = "inline-block";
-          // Make all input fields read only again
-          document.querySelector("#equipment_name_d").readOnly = true;
-          document.querySelector("#category_d").readOnly = true;
-          document.querySelector("#location_d").readOnly = true;
-          equipmentId = document.querySelector("#equipment_id_d").value;
-          showEquipmentDetails(equipmentId);
-        } else {
-          console.error("Error updating equipment:", data.error);
-        }
+        alert(data.message);
+        resetEquipmentModal();
+        equipmentId = document.querySelector("#equipment_id_d").value;
+        showEquipmentDetails(equipmentId);
       },
       onErrorMessage: (errorMessage) => {
-        console.error("Error updating equipment:", errorMessage);
+        alert(errorMessage);
       },
       onNetError: (error) => {
-        console.error("Error updating equipment:", error);
+        alert("Network error. Please try again later.");
       },
     });
   };
 
   var modal = document.getElementById("equipmentModal");
+
   modal.addEventListener("hidden.bs.modal", function (event) {
-    // Hide the Save button and the image file input
-    document.querySelector("#saveButton").style.display = "none";
-    document.querySelector("#new_image").style.display = "none";
-
-    // Show the Edit button
-    document.querySelector("#editButton").style.display = "inline-block";
-
-    // Make all input fields read only again
-    document.querySelector("#equipment_id_d").readOnly = true;
-    document.querySelector("#equipment_name_d").readOnly = true;
-    document.querySelector("#category_d").readOnly = true;
-    document.querySelector("#assigned_user_d").readOnly = true;
-    document.querySelector("#last_assigned_d").readOnly = true;
-    document.querySelector("#location_d").readOnly = true;
+    resetEquipmentModal();
   });
 
   //&table details

@@ -13,6 +13,17 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
 });
 
+window.removeAlert = function (id) {
+  let alertDiv = document.getElementById(id);
+  let alertText = alertDiv.querySelector("#customAlertText");
+  
+  // Set the text
+  alertText.textContent = "";
+  alertDiv.style.display = "none";
+  alertDiv.classList.remove("success", "info", "warning");
+};
+
+
 window.showAlert = function (id, type, message) {
   let alertDiv = document.getElementById(id);
   let alertText = alertDiv.querySelector("#customAlertText");
@@ -100,26 +111,27 @@ window.makeRequest = function ({
     .then((response) => {
       if (!response.ok) {
         return response.json().then((error) => {
-          console.log(error);
           if (error.message) {
             if (onErrorMessage) onErrorMessage(error.message);
-            return Promise.resolve();
-          } else {
-            throw new Error("Something went wrong");
           }
+          return Promise.reject(new Error('HTTP response was not OK'));  // Reject the promise instead of throwing an error
         });
       } else {
-        return response.json();
+        return response.json().then((data) => {
+          if (onSuccess) onSuccess(data);
+        });
       }
     })
-    .then((data) => {
-      if (onSuccess) onSuccess(data);
-    })
     .catch((error) => {
-      console.log(error);
-      if (onNetError) onNetError(error);
+      // Check if the error is a network error (i.e., not an application error)
+      if (error.message !== 'HTTP response was not OK') {
+        if (onNetError) onNetError(error);
+      }
     });
 };
+
+
+
 //*methods for fetching data for datatables
 window.dataTables = {};
 window.generateDataTableConfig = (columns) => (data) => ({

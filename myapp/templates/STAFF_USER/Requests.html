@@ -13,12 +13,12 @@
                         <div class="search-bar d-flex align-items-center mt-4">
                                 <input type="text" id="search" class="form-control"  placeholder="Search..."/>
                                 <button class="btn btn-primary" id="AllocReqButton" >AllocationReq</button>
-                                <button class="btn btn-primary" id="DeallocReqButton">DeallocationReq</button>
+                                <button class="btn " id="DeallocReqButton">DeallocationReq</button>
                         </div>
                         
                         
-                        <div class="keep-cards mt-4" id="allocation-requests-conatainer">
-                            <div class="row request-row">
+                        <div class="keep-cards mt-4" id="allocation_requests_container">
+                            <div class="row request-row">                        
                                 {% for allocation_request in allocation_requests %}
                                 <div class="col-md-4" data-name="{{allocation_request.allocation_request.user.name}}">
                                     <div class="card card-1" style="background-image: url({% static allocation_request.image %})">
@@ -27,9 +27,9 @@
                                             <h5 class="card-title">{{ allocation_request.allocation_request.equipment.id }}</h5>
                                             <p class="card-text">{{allocation_request.allocation_request.equipment.equipment_name}}</p>
                                             <p class="card-text">{{allocation_request.allocation_request.timestamp}}</p>
-                                            <button class="btn btn-primary" onclick="handleRequest(1010, 'approve')">Approve</button>
-                                            <button class="btn btn-danger" onclick="handleRequest(${item.id}, 'reject')">Reject</button>
-                                            <button class="btn btn-warning" onclick="handleRequest(${item.id}, 'reject')">Details</button>
+                                            <button class="btn btn-primary" onclick="handleRequest({{allocation_request.allocation_request.id}}, 'approve')">Approve</button>
+                                            <button class="btn btn-danger" onclick="handleRequest({{allocation_request.allocation_request.id}}, 'reject')">Reject</button>
+                                            <button class="btn btn-warning" onclick="handleRequest({{allocation_request.allocation_request.id}}, 'reject')">Details</button>
                                         </div>
                                     </div>
                                 </div>
@@ -37,7 +37,7 @@
                             </div>
                         </div>
                         
-                        <div class="keep-cards mt-4" id="deallocation-requests-container" style="display: none;">
+                        <div class="keep-cards mt-4" id="deallocation_requests_container" style="display: none;">
                             <div class="row request-row">
                                 {% for deallocation_request in deallocation_requests %}
                                 <div class="col-md-4" data-name="{{deallocation_request.allocation_request.user.name}}">

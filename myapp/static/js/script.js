@@ -14,27 +14,27 @@ window.addEventListener("DOMContentLoaded", (event) => {
 });
 
 window.removeAlert = function (id) {
-  let alertDiv = document.getElementById(id);
-  let alertText = alertDiv.querySelector("#customAlertText");
+  let alertDivGlobal = document.getElementById(id);
+  let alertText = alertDivGlobal.querySelector("#customAlertText");
 
   // Set the text
   alertText.textContent = "";
-  alertDiv.style.display = "none";
-  alertDiv.classList.remove("success", "info", "warning");
+  alertDivGlobal.style.display = "none";
+  alertDivGlobal.classList.remove("success", "info", "warning");
 };
 
 window.showAlert = function (id, type, message) {
-  let alertDiv = document.getElementById(id);
-  let alertText = alertDiv.querySelector("#customAlertText");
+  let alertDivGlobal = document.getElementById(id);
+  let alertText = alertDivGlobal.querySelector("#customAlertText");
 
   // Set the text
   alertText.textContent = message;
 
   // Add the relevant classes
-  alertDiv.classList.add(type); // type could be 'success', 'info', 'warning'
+  alertDivGlobal.classList.add(type); // type could be 'success', 'info', 'warning'
 
   // Make the alert visible
-  alertDiv.style.display = "block";
+  alertDivGlobal.style.display = "block";
 };
 
 window.getCookie = function (name) {
@@ -263,3 +263,101 @@ window.fetchDataFilter = function (
       console.error("Error fetching data:", error);
     });
 };
+window.createAlertDiv = function () {
+  // Create the overlay element
+  const overlay = document.createElement('div');
+  overlay.id = 'overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.backgroundColor = 'rgba(0,0,0,0.4)';
+  overlay.style.zIndex = '9998'; // Lower than alertDivGlobal
+  overlay.style.display = 'none'; // Initially hidden
+
+  // Create the alertDivGlobal element
+  const alertDivGlobal = document.createElement('div');
+  alertDivGlobal.id = 'alertDivGlobal';
+  alertDivGlobal.style.position = 'fixed';
+  alertDivGlobal.style.maxWidth = '50%';
+  alertDivGlobal.style.top = '50%';
+  alertDivGlobal.style.left = '50%';
+  alertDivGlobal.style.transform = 'translate(-50%, -50%)'; // Center on the page
+  alertDivGlobal.style.backgroundColor = '#f8f9fa';
+  alertDivGlobal.style.borderRadius = '5px';
+  alertDivGlobal.style.padding = '20px';
+  alertDivGlobal.style.zIndex = '9999'; // Higher than overlay
+  alertDivGlobal.style.display = 'none'; // Initially hidden
+  //add the border to the alertDivGlobal
+
+
+  // Create the alert message paragraph
+  const alertMessage = document.createElement('p');
+  alertMessage.id = 'alertMessage';
+  alertMessage.style.fontSize = '20px';
+
+  // Create the "OK" button
+  const okButton = document.createElement('button');
+  okButton.innerText = 'OK';
+  okButton.style.marginTop = '20px';
+  okButton.style.backgroundColor = 'green'; // Set the button color to brown
+  okButton.style.color = 'white'; // Set the button text color to white
+  okButton.style.border = 'none'; // Remove the default button border
+  okButton.style.padding = '5px 10px'; // Add some padding to the button
+  okButton.style.fontSize = '20px'; // Increase the font size
+  okButton.style.cursor = 'pointer'; // Change the cursor when hovering over the button
+  okButton.style.display = 'block'; // Make the button a block-level element
+  okButton.style.margin = '0 auto'; // Center the button
+
+  // Append all elements
+  alertDivGlobal.appendChild(alertMessage);
+  alertDivGlobal.appendChild(okButton);
+  document.body.appendChild(overlay);
+  document.body.appendChild(alertDivGlobal);
+
+  // Hide alert when 'OK' button is clicked
+  okButton.addEventListener('click', window.hideAlertGlobal);
+}
+
+
+window.showAlertGlobal = function (message,divtype) {
+  // Get the alertDivGlobal, alertMessage, and overlay elements
+  const alertDivGlobal = document.getElementById('alertDivGlobal');
+  const alertMessage = alertDivGlobal.querySelector('#alertMessage');
+  const overlay = document.getElementById('overlay');
+  if(divtype == 'error'){
+    //change the background color of the alertDivGlobal
+    alertDivGlobal.style.backgroundColor = '#F8D7D9';
+    //change the background color of the button to red
+    const okButton = document.querySelector('#alertDivGlobal button');
+    okButton.style.backgroundColor = '#FB617F';
+
+  }else{
+    alertDivGlobal.style.backgroundColor = '#D4EDD9';
+    //change the background color of the button to green
+    const okButton = document.querySelector('#alertDivGlobal button');
+    okButton.style.backgroundColor = 'green';
+
+  }
+
+  // Set the alert message and show the alertDivGlobal and overlay
+  alertMessage.innerText = message;
+  alertDivGlobal.style.display = 'block';
+  overlay.style.display = 'block';
+  
+}
+
+window.hideAlertGlobal = function () {
+  // Get the alertDivGlobal and overlay elements
+  const alertDivGlobal = document.getElementById('alertDivGlobal');
+  const overlay = document.getElementById('overlay');
+
+  // Hide the alertDivGlobal and overlay
+  alertDivGlobal.style.display = 'none';
+  overlay.style.display = 'none';
+}
+
+// First, create the alert div
+createAlertDiv();
+

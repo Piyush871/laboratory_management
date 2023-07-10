@@ -124,6 +124,9 @@ document.querySelectorAll(".editStaffUserButton").forEach((button) => {
 
         $("#editStaffUserModal").modal("show");
       },
+      onErrorMessage: function (message) {
+        alert(message);
+      },
       onNetError: function (error) {
         console.error("Error:", error);
       }

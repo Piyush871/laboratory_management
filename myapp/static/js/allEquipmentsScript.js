@@ -60,12 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
     .getElementById("addEquipmentForm")
     .addEventListener("submit", function (event) {
       event.preventDefault();
-
+      console.log("addEquipmentForm");
       var formData = new FormData();
-      formData.append(
-        "equipment_id",
-        document.getElementById("equipmentId").value
-      );
       formData.append(
         "equipment_name",
         document.getElementById("equipmentName").value
@@ -76,7 +72,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("dateOfPurchase").value
       );
       formData.append("location", document.getElementById("location").value);
-      formData.append("image", document.getElementById("image").files[0]);
+      formData.append("image", document.getElementById("equipment_image_file").files[0]);
+      formData.append("purchase_receipt",document.getElementById("purchase_receipt_file").files[0]);
 
       window.makeRequest({
         url: "/api/addEquipment/",

@@ -121,26 +121,32 @@ def normal_user_add_equipment_api(request):
             print(request.POST)
             print(request.FILES)
             print("int the add equipment")
-            equipment_id = request.POST['equipment_id']
             equipment_name = request.POST['equipment_name']
             category = request.POST['category']
             date_of_purchase = request.POST['date_of_purchase']
             location = request.POST['location']
+            max_size = 0.5 * 1024 * 1024
             image_file = request.FILES['image']
+            #add condition that image size should be lesser that 0.5 mb 
+            if(image_file.size > max_size):
+                return JsonResponse({'message': 'Image size should be lesser than 500kb'}, status=400)
+            
             purchase_receipt_file = request.FILES['purchase_receipt']
             
+            #add a condition that th purchase receipt size should be less than 0.5 mb
+            if(purchase_receipt_file.size > max_size):
+                return JsonResponse({'message': 'Purchase receipt size should be lesser than 500kb'}, status=400)
+            
             new_equipment = requested_equipments(
-                equipment_id=equipment_id,
                 equipment_name=equipment_name,
                 category=category,
                 date_of_purchase=date_of_purchase,
                 location=location,
             )
-            
             new_equipment.image.save(image_file.name, image_file)
             new_equipment.purchase_receipt.save(purchase_receipt_file.name, purchase_receipt_file)
             new_equipment.save()
-            return JsonResponse({'status': 'ok'}, status=200)
+            return JsonResponse({'message': 'equipment added successfully'}, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     else:

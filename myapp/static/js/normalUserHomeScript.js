@@ -87,50 +87,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
   fetchData();
 
-  document
-    .getElementById("addEquipmentForm")
-    .addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      var formData = new FormData();
-      formData.append(
-        "equipment_id",
-        document.getElementById("equipmentId").value
-      );
-      formData.append(
-        "equipment_name",
-        document.getElementById("equipmentName").value
-      );
-      formData.append("category", document.getElementById("category").value);
-      formData.append(
-        "date_of_purchase",
-        document.getElementById("dateOfPurchase").value
-      );
-      formData.append("location", document.getElementById("location").value);
-      formData.append("image", document.getElementById("image").files[0]);
-      formData.append("purchase_receipt", document.getElementById("purchaseReceipt").files[0]);
-      console.log(formData);
-
-      fetch("/api/normal_user/addEquipment/", {
-        method: "POST",
-        body: formData,
-        headers: {
-          "X-CSRFToken": getCookie("csrftoken"), // function to get the cookie value
-        },
-      })
-        .then(function (response) {
-          if (response.ok) {
-            alert("Equipment added successfully");
-            $("#addEquipmentModal").modal("hide");
-            fetchData();
-          } else {
-            alert("Error: " + response.statusText);
-          }
-        })
-        .catch(function (error) {
-          alert("Error: " + error);
-        });
+  document.getElementById("addEquipmentForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+  
+    var formData = new FormData();
+    formData.append("equipment_name", document.getElementById("equipmentName").value);
+    formData.append("category", document.getElementById("category").value);
+    formData.append("date_of_purchase", document.getElementById("dateOfPurchase").value);
+    formData.append("location", document.getElementById("location").value);
+    formData.append("image", document.getElementById("image").files[0]);
+    formData.append("purchase_receipt", document.getElementById("purchaseReceipt").files[0]);
+    console.log(formData);
+  
+    window.makeRequest({
+      url: "/api/normal_user/addEquipment/",
+      method: "POST",
+      body: formData,
+      onSuccess: function (data) {
+        alert("Equipment added successfully");
+        $("#addEquipmentModal").modal("hide");
+        fetchData();
+      },
+      onNetError: function (error) {
+        alert("Error: " + error);
+      },
+      onErrorMessage: function (message) {
+        alert("Error: " + message);
+      },
     });
+  });
+  
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== "") {

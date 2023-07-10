@@ -84,6 +84,9 @@ urlpatterns = [
 
     # staff user request views
     path("requests", staff_user_request_views.requests_view, name="requests"),
+    path('api/handleRequest/', staff_user_request_views.handle_request, name='handle_request'),
+    path('api/getRequest/Allocation/', staff_user_request_views.get_allocation_requests,name='get_allocation_requests'),
+     path('api/getRequest/DeAllocation/', staff_user_request_views.get_deallocation_requests,name='get_deallocation_requests'),
 
 
 

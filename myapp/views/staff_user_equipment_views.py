@@ -88,8 +88,6 @@ def assign_equipment_view(request):
     return JsonResponse({'message': 'equipment assigned successfully!'})
 
 
-
-
 @login_required(login_url='reg_normal_user')
 def check_equipment_deassign_view(request):
     equipment_id = request.GET.get("equipment_id")
@@ -347,24 +345,29 @@ def add_equipment(request):
     if request.method == 'POST':
         try:
             print("int the add equipment")
-            equipment_id = request.POST['equipment_id']
             equipment_name = request.POST['equipment_name']
             category = request.POST['category']
             date_of_purchase = request.POST['date_of_purchase']
             location = request.POST['location']
-            image_file = request.FILES['image']
-            requested_by = request.user
-
+            image_file = request.POST['image']
+            purchase_receipt=request.POST['purchase_receipt'] 
             new_equipment = equipment(
-                equipment_id=equipment_id,
                 equipment_name=equipment_name,
                 category=category,
                 date_of_purchase=date_of_purchase,
                 location=location,
-                requested_by=requested_by
             )
+            
+            #check the size of the image 
+            max_size = 0.5 * 1024 * 1024  # 0.5 MB in bytes
+            if image_file.size > max_size:
+                return JsonResponse({'message': 'The equipment image file is too large. Please upload a file smaller than 0.5 MB.'}, status=400)    
             new_equipment.image.save(image_file.name, image_file)
-
+            
+            if purchase_receipt.size > max_size:
+                return JsonResponse({'message': 'The purchase receipt file is too large. Please upload a file smaller than 0.5 MB.'}, status=400)
+            
+            new_equipment.purchase_receipt.save(purchase_receipt.name, purchase_receipt)
             new_equipment.save()
 
             return JsonResponse({'status': 'ok'}, status=200)

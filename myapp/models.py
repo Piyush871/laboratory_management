@@ -109,8 +109,8 @@ class requested_equipments(models.Model):
 
 class AllocationRequest(models.Model):
     REQUEST_CHOICES = [
-        ('ALLOCATION', 'Allocation'),
-        ('DEALLOCATION', 'Deallocation'),
+        ('Allocation', 'Allocation'),
+        ('Deallocation', 'Deallocation'),
     ]
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
@@ -120,7 +120,7 @@ class AllocationRequest(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     equipment = models.ForeignKey(equipment, on_delete=models.CASCADE)
     request_type = models.CharField(
-        max_length=12, choices=REQUEST_CHOICES, default='ALLOCATION')
+        max_length=12, choices=REQUEST_CHOICES, default='Allocation')
     status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default='PENDING')
     timestamp = models.DateTimeField(auto_now_add=True)

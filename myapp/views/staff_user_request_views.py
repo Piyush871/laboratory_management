@@ -1,4 +1,4 @@
-from ..models import equipment, CustomUser, AllocationRequest
+from ..models import equipment, CustomUser, AllocationRequest,requested_equipments
 from django.shortcuts import render, redirect
 from myapp.models import CustomUser, equipment
 from myapp.forms import UserRegistrationForm
@@ -23,7 +23,8 @@ import base64
 import random
 from collections import namedtuple
 from django.template.loader import render_to_string
-
+#import the ValidationError
+from django.core.exceptions import ValidationError
 
 def requests_view(request):
     allocation_requests = AllocationRequest.objects.filter(request_type='Allocation')
@@ -203,4 +204,214 @@ def handle_deallocation_request(allocation_request, action):
     
     else:
         return False, "Invalid action."
+    
+def item_requests_view(request):
+    return render(request, 'STAFF_USER/itemRequests.html')
+
+# def equipment_details_api(request):
+#     equipment_id = request.GET.get('equipment_id', None)
+#     if equipment_id is not None:
+#         try:
+#             equipment_obj = equipment.objects.get(equipment_id=equipment_id)
+#             data = {
+#                 'equipment_id': equipment_obj.equipment_id,
+#                 'equipment_name': equipment_obj.equipment_name,
+#                 'category': equipment_obj.category,
+#                 'assigned_user': equipment_obj.assigned_user.name if equipment_obj.assigned_user else None,
+#                 'last_assigned': equipment_obj.last_assigned_date.strftime('%Y-%m-%d') if equipment_obj.last_assigned_date else None,
+#                 'location': equipment_obj.location,
+#                 'image_url': equipment_obj.image.url if equipment_obj.image else None,
+#                 'purchase_receipt_url': equipment_obj.purchase_receipt.url if equipment_obj.purchase_receipt else None,
+#                 'status': True
+#             }
+#         except equipment.DoesNotExist:
+#             data = {'status': False, 'error': 'No equipment found with this ID'}
+#     else:
+#         data = {'status': False, 'error': 'No equipment ID provided'}
+#     print(data)
+
+#     return JsonResponse(data)
+
+
+# document.querySelector("#item_request_id_d").value = data.item_request_id;
+#     document.querySelector("#item_request_requested_by").value = data.item_request_requested_by;
+#     document.querySelector("#item_request_name_d").value = data.item_request_name;
+#     document.querySelector("#category_d").value = data.category;
+#     document.querySelector("#location_d").value = data.location;
+#     document.querySelector("#date_of_request_d").value = data.date_of_request;
+#     document.querySelector("#date_of_purchase_d").value = data.date_of_purchase;
+#     document.querySelector("#item_request_image_d").href = data.image_url;
+#     document.querySelector("#purchase_receipt_d").href = data.purchase_receipt_url;
+
+def item_requests_details_api(request):
+    itemRequestid= request.GET.get('item_request_id', None)
+    if itemRequestid is not None:
+        try:
+            itemRequest_obj = requested_equipments.objects.get(id=itemRequestid)
+            data = {
+                'item_request_id': itemRequest_obj.id, #type: ignore
+                'item_request_requested_by': itemRequest_obj.requested_by.name if itemRequest_obj.requested_by else None,
+                'item_request_name': itemRequest_obj.equipment_name,
+                'category': itemRequest_obj.category,
+                'location': itemRequest_obj.location,
+                'date_of_request': itemRequest_obj.date_of_request.strftime('%Y-%m-%d') if itemRequest_obj.date_of_request else None,
+                'date_of_purchase': itemRequest_obj.date_of_purchase.strftime('%Y-%m-%d') if itemRequest_obj.date_of_purchase else None,
+                'image_url': itemRequest_obj.image.url if itemRequest_obj.image else None,
+                'purchase_receipt_url': itemRequest_obj.purchase_receipt.url if itemRequest_obj.purchase_receipt else None,
+                'status': True
+            }
+        except requested_equipments.DoesNotExist:
+            data = {'status': False, 'error': 'No item request found with this ID'}
+    else:
+        data = {'status': False, 'error': 'No item request ID provided'}
+    
+    return JsonResponse(data)
+
+
+
+# class requested_equipments(models.Model):
+#     equipment_name = models.CharField(max_length=100)
+#     # add the user who requested for the adding of the equipment
+#     requested_by = models.ForeignKey(
+#         CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
+#     category = models.CharField(max_length=100, default="Others")
+#     date_of_purchase = models.DateField(default=timezone.now)
+#     location = models.CharField(max_length=100)
+#     image = models.ImageField(upload_to='equipment_images')
+#     purchase_receipt = models.ImageField(upload_to='purchase_receipts')
+
+#     def __str__(self):
+#         return self.equipment_name
+
+
+# <th>Request id</th>
+# <th>Request By</th>
+# <th>Item Name</th>
+# <th>category</th>
+# <th>viewDetails</th>
+# <th>checkbox</th>
+
+def equipment_requests_api(request):
+    search = request.GET.get('search', '')
+    print(search)
+
+    if search:
+        queryset = requested_equipments.objects.filter(
+            Q(id__icontains=search) |
+            Q(equipment_name__icontains=search) |
+            Q(requested_by__name__icontains=search) |
+            Q(category__icontains=search) |
+            Q(date_of_purchase__icontains=search) |
+            Q(location__icontains=search)
+        ).order_by('-id')
+        #order by the time of creation of the equipment
+    else:
+        queryset = requested_equipments.objects.all().order_by(
+            '-id')
+
+    data = []
+    for item in queryset:
+        row = [
+            item.id,# type: ignore
+            item.requested_by.name if item.requested_by else '',
+            item.equipment_name,
+            item.category if item.category else '',
+            item.date_of_request.strftime(
+                '%Y-%m-%d') if item.date_of_request else '',
+
+            # This column will be rendered in the frontend with the 'render' function
+            item.id, # type: ignore
+            f'<input type="checkbox" class="user-checkbox" data-id="{item.id}" />', # type: ignore
+        ]
+        data.append(row)
+
+    print(data)
+    response_data = {'data': data}
+    return JsonResponse(response_data)
+
+
+# def update_equipment_api(request):
+#     if request.method == 'POST':
+#         equipment_id = request.POST.get('equipment_id')
+#         equipment_name = request.POST.get('equipment_name')
+#         category = request.POST.get('category')
+#         location = request.POST.get('location')
+#         image = request.FILES.get('image')
+#         purchase_receipt = request.FILES.get('purchase_receipt')
+
+#         try:
+#             eq = equipment.objects.get(equipment_id=equipment_id)
+#         except equipment.DoesNotExist:
+#             return JsonResponse({"status": False, "error": "Equipment not found."})
+
+#         # Validate the sizes of the uploaded files
+#         max_size = 0.5 * 1024 * 1024  # 0.5 MB in bytes
+#         if image and image.size > max_size:
+#             return JsonResponse({"message": "The equipment image file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+#         if purchase_receipt and purchase_receipt.size > max_size:
+#             return JsonResponse({"message": "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+
+#         eq.equipment_name = equipment_name
+#         eq.category = category
+#         eq.location = location
+#         if image is not None:
+#             eq.image = image
+#         if purchase_receipt is not None:
+#             eq.purchase_receipt = purchase_receipt
+#         try:
+#             eq.save()
+#         except ValidationError as e:
+#             return JsonResponse({"message": str(e)},status=400)
+
+#         return JsonResponse({"message": "Equipment updated successfully."})
+#     else:
+#         print("Invalid request method")
+#         return JsonResponse({"message": "Invalid request method."},status=400)
+ 
+ 
+#image
+# id
+# equipment_name
+# category
+# location
+# date_of_purchase
+#purchase_receipt
+
+def update_itemRequest_api(request):
+    if request.method=="Post":
+        item_request_id = request.POST.get('id')
+        equipment_name = request.POST.get('equipment_name')
+        category = request.POST.get('category')
+        location = request.POST.get('location')
+        date_of_purchase = request.POST.get('date_of_purchase')
+        image = request.FILES.get('image')
+        purchase_receipt = request.FILES.get('purchase_receipt')
+        try:
+            eq = requested_equipments.objects.get(id=item_request_id)
+        except requested_equipments.DoesNotExist:
+            return JsonResponse({"status": False, "error": "Equipment not found."})
+
+        # Validate the sizes of the uploaded files
+        max_size = 0.5 * 1024 * 1024
+        if image and image.size > max_size:
+            return JsonResponse({"message": "The equipment image file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+        if purchase_receipt and purchase_receipt.size > max_size:
+            return JsonResponse({"message": "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+        
+        eq.equipment_name = equipment_name
+        eq.category = category
+        eq.location = location
+        eq.date_of_purchase = date_of_purchase
+        if image is not None:
+            eq.image = image
+        if purchase_receipt is not None:
+            eq.purchase_receipt = purchase_receipt
+        try:
+            eq.save()
+        except ValidationError as e:
+            return JsonResponse({"message": str(e)},status=400)
+    else:
+        print("Invalid request method")
+        return JsonResponse({"message": "Invalid request method."},status=400)
+        
     

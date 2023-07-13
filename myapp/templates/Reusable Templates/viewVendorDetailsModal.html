@@ -1,0 +1,137 @@
+ <!-- View Vendor Modal -->
+ <div class="modal" id="viewVendorModal" tabindex="-1" role="dialog">
+    <div
+      class="modal-dialog mw-100 w-75 modal-dialog-centered modal-lg"
+      role="document"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Vendor Details</h5>
+          <button
+            type="button"
+            class="close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group row mt-2">
+            <label class="col-sm-4 col-form-label"
+              ><strong>Vendor ID:</strong></label
+            >
+            <div class="col-sm-8">
+              <input
+                type="text"
+                class="form-control"
+                id="vendor_id_d"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label class="col-sm-4 col-form-label"
+              ><strong>Name:</strong></label
+            >
+            <div class="col-sm-8">
+              <input
+                type="text"
+                class="form-control"
+                id="Vendor_name_d"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label class="col-sm-4 col-form-label"
+              ><strong>Parts:</strong></label
+            >
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="Vendor_parts_d" readonly />
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label class="col-sm-4 col-form-label"
+              ><strong>Email:</strong></label
+            >
+            <div class="col-sm-8">
+              <input type="email" class="form-control" id="Vendor_email_d" readonly />
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label class="col-sm-4 col-form-label"
+              ><strong>Contact_no:</strong></label
+            >
+            <div class="col-sm-8">
+              <input
+                type="text"
+                class="form-control"
+                id="Vendor_contact_no_d"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label class="col-sm-4 col-form-label"
+              ><strong>Address:</strong></label
+            >
+            <div class="col-sm-8">
+              <input
+                type="text"
+                class="form-control"
+                id="Vendor_address_d"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="form-group row mt-2">
+            <label class="col-sm-4 col-form-label"
+              ><strong>Website Link:</strong></label
+            >
+            <div class="col-sm-8">
+              <input
+                type="text"
+                class="form-control"
+                id="Vendor_website_link_d"
+                readonly
+              />
+            </div>
+          </div>
+          {% if error %}
+          <div class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button
+            id="editButton"
+            type="button"
+            class="btn btn-primary"
+            onclick="editVendor()"
+          >
+            Edit
+          </button>
+          <button
+            id="saveButton"
+            type="button"
+            class="btn btn-success"
+            onclick="saveVendor()"
+            style="display: none"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

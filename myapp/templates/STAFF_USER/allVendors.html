@@ -1,5 +1,6 @@
 {% extends extend_template %}
 
+{% load split_string%}
 
 {% block content %}
 <div id="layoutSidenav_content">
@@ -11,37 +12,9 @@
         <li class="breadcrumb-item active">All Vendors</li>
       </ol>
       <div class="card mb-4">
-        <div class="card-header">
-          <i class="fas fa-table me-1"></i>
-          Vendor Table
-        </div>
-        <div class="card-body">
-          <table id="datatablesSimple">
-            <thead>
-              <tr>
-                <th>Vendor_id</th>
-                <th>Name</th>
-                <th>Parts</th>
-                <th>Contact_no</th>
-                <th>Website_link</th>
-                <th>viewDetails</th>
-                <th>checkbox</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th>Vendor_id</th>
-                <th>Name</th>
-                <th>Parts</th>
-                <th>Contact_no</th>
-                <th>Website_link</th>
-                <th>viewDetails</th>
-                <th>checkbox</th>
-              </tr>
-            </tfoot>
-            <tbody></tbody>
-          </table>
-        </div>
+        {%with "Vendor_Id,Name,Parts,Contact_no,Website_link,viewDetails,checkbox "|split_string:"," as headers%}
+        {% include 'Reusable Templates/databaseTable.html' with table_title='Vendor Table' table_id='datatablesSimple' headers=headers%}
+        {%endwith%}
         <div class="card-header">
           <i class="fas fa-table me-1"></i>
           Functions
@@ -63,218 +36,11 @@
       </div>
     </div>
 
-    <!-- Modal -->
-    <!-- View Vendor Modal -->
-    <div class="modal" id="viewVendorModal" tabindex="-1" role="dialog">
-      <div
-        class="modal-dialog mw-100 w-75 modal-dialog-centered modal-lg"
-        role="document"
-      >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Vendor Details</h5>
-            <button
-              type="button"
-              class="close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
+    <!-- view Vendor Modal -->
+   {% include 'Reusable Templates/viewVendorDetailsModal.html'%}
 
-          <div class="modal-body">
-            <div class="form-group row mt-2">
-              <label class="col-sm-4 col-form-label"
-                ><strong>Vendor ID:</strong></label
-              >
-              <div class="col-sm-8">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="vendor_id_d"
-                  readonly
-                />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label class="col-sm-4 col-form-label"
-                ><strong>Name:</strong></label
-              >
-              <div class="col-sm-8">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="Vendor_name_d"
-                  readonly
-                />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label class="col-sm-4 col-form-label"
-                ><strong>Parts:</strong></label
-              >
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="Vendor_parts_d" readonly />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label class="col-sm-4 col-form-label"
-                ><strong>Email:</strong></label
-              >
-              <div class="col-sm-8">
-                <input type="email" class="form-control" id="Vendor_email_d" readonly />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label class="col-sm-4 col-form-label"
-                ><strong>Contact_no:</strong></label
-              >
-              <div class="col-sm-8">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="Vendor_contact_no_d"
-                  readonly
-                />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label class="col-sm-4 col-form-label"
-                ><strong>Address:</strong></label
-              >
-              <div class="col-sm-8">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="Vendor_address_d"
-                  readonly
-                />
-              </div>
-            </div>
-            <div class="form-group row mt-2">
-              <label class="col-sm-4 col-form-label"
-                ><strong>Website Link:</strong></label
-              >
-              <div class="col-sm-8">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="Vendor_website_link_d"
-                  readonly
-                />
-              </div>
-            </div>
-            {% if error %}
-            <div class="alert alert-danger" role="alert">
-              {{ error }}
-            </div>
-            {% endif %}
-          </div>
-
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              id="editButton"
-              type="button"
-              class="btn btn-primary"
-              onclick="editVendor()"
-            >
-              Edit
-            </button>
-            <button
-              id="saveButton"
-              type="button"
-              class="btn btn-success"
-              onclick="saveVendor()"
-              style="display: none"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!--Add Vendor Modal-->
-    <div
-  class="modal fade"
-  id="addVendorModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="addVendorModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addVendorModalLabel">Add New Vendor</h5>
-        <button
-          type="button"
-          class="close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="addVendorForm">
-          <div class="form-group">
-            <label for="VendorName">Vendor Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="VendorName"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="Parts">Parts</label>
-            <input type="text" class="form-control" id="parts" required />
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="Contact_no">contactNumber</label>
-            <input type="text" class="form-control" id="contactNumber" required />
-          </div>
-          <div class="form-group">
-            <label for="Address">Address</label>
-            <input type="text" class="form-control" id="Address" required />
-          </div>
-          <div class="form-group">
-            <label for="Website link">Website Link</label>
-            <input type="Website link" class="form-control" id="Website_link" required />
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="submit" class="btn btn-primary">Add Vendor</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+   <!-- Add Vendor Modal -->
+  {% include 'Reusable Templates/addVendorModal.html' %}
 
   </main>
 </div>

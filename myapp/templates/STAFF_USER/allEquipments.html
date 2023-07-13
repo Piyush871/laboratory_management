@@ -1,4 +1,5 @@
 {% extends 'STAFF_USER/base_staff_user.html' %} {% block content %}
+{% load split_string %}
 <div id="layoutSidenav_content">
   <main>
     <div class="container-fluid px-4">
@@ -8,37 +9,9 @@
         <li class="breadcrumb-item active">All Items</li>
       </ol>
       <div class="card mb-4">
-        <div class="card-header">
-          <i class="fas fa-table me-1"></i>
-          Item Table
-        </div>
-        <div class="card-body">
-          <table id="datatablesSimple">
-            <thead>
-              <tr>
-                <th>Item_id</th>
-                <th>Item_name</th>
-                <th>category</th>
-                <th>assigned_user</th>
-                <th>last_assigned</th>
-                <th>viewDetails</th>
-                <th>checkbox</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th>Item_id</th>
-                <th>Item_name</th>
-                <th>category</th>
-                <th>assigned_user</th>
-                <th>last_assigned</th>
-                <th>viewDetails</th>
-                <th>checkbox</th>
-              </tr>
-            </tfoot>
-            <tbody></tbody>
-          </table>
-        </div>
+        {% with "Item_id,Item_name,category,assigned_user,last_assigned,viewDetails,checkbox"|split_string:"," as headers %}
+        {% include 'Reusable Templates/databaseTable.html' with table_title='Item Table' table_id='datatablesSimple' headers=headers %}
+    {% endwith %}
         <div class="card-header d-flex justify-content-between">
           <div class="button-group">
             <button
@@ -95,55 +68,22 @@
 </div>
 
 <!-- Modal -->
-<!-- Add Equipment Modal -->
-<div class="modal fade" id="addEquipmentModal" tabindex="-1" role="dialog" aria-labelledby="addEquipmentModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addEquipmentModalLabel">Add New Equipment</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="addEquipmentForm">
-          <div class="form-group">
-            <label for="equipmentName">Item Name</label>
-            <input type="text" class="form-control" id="equipmentName" required>
-          </div>
-          <div class="form-group">
-            <label for="category">Category</label>
-            <input type="text" class="form-control" id="category" required>
-          </div>
-          <div class="form-group">
-            <label for="dateOfPurchase">Date of Purchase</label>
-            <input type="date" class="form-control" id="dateOfPurchase" required>
-          </div>
-          <div class="form-group">
-            <label for="location">Location</label>
-            <input type="text" class="form-control" id="location" required>
-          </div>
-          <div class="form-group">
-            <label for="image">Image</label>
-            <input type="file" class="form-control" id="image" required>
-          </div>
-          <div class="form-group">
-            <label for="purchaseReceipt">Purchase Receipt</label>
-            <input type="file" class="form-control" id="purchaseReceipt" required>
-          </div>            
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Add Equipment</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 
+
+
+<!-- View Equipment Modal -->
+<!-- Modal Section -->
+{% include 'Reusable Templates/viewEquipmentDetails.html' %}
+
+<!-- Add Equipment Modal -->
+{% include 'Reusable Templates/addEquipmentModal.html'%}
 
 {% endblock content %} {% block staticFiles %} {% load static %}
 <script src="{% static 'js/allEquipmentsScript.js' %}"></script>
+<!-- View the equipment Script -->
+
+<!-- Add the equipment Script -->
+
 <link rel="stylesheet" href="{% static 'css/allEquipmentsStyle.css' %}" />
 
 {% endblock staticFiles %}

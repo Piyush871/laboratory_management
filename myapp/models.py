@@ -102,6 +102,7 @@ class requested_equipments(models.Model):
     location = models.CharField(max_length=100)
     image = models.ImageField(upload_to='equipment_images')
     purchase_receipt = models.ImageField(upload_to='purchase_receipts')
+    date_of_request = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.equipment_name

@@ -1,0 +1,26 @@
+    <div class="card-header">
+      <i class="fas fa-table me-1"></i>
+      {{ table_title }}
+    </div>
+    <div class="card-body">
+      <table id="{{ table_id }}">
+        <thead>
+          <tr>
+            {% for header in headers %}
+            <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            {% for header in headers %}
+            <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
+        </tfoot>
+        <tbody></tbody>
+      </table>
+    </div>
+    {% block tableFooter %}
+    {% endblock %}
+

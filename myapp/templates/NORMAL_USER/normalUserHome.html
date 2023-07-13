@@ -1,48 +1,14 @@
 <!--inherit base normal user template-->
-{% extends 'NORMAL_USER/base_normal_user.html' %} {% block content %}
-
+{% extends 'NORMAL_USER/base_normal_user.html' %} {% block content %} 
+{%load split_string%}
 <div id="layoutSidenav_content">
   <main>
     <div class="container-fluid px-4 py-5">
-      <h1 class="mt-4" style="color: darkblue">
-          Welcome to SMSS
-      </h1>
-      {% comment %}
-      <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-        <li class="breadcrumb-item active">All Items</li>
-      </ol>
-      {% endcomment %}
+      <h1 class="mt-4" style="color: darkblue">Welcome to SMSS</h1>
       <div class="card mb-4">
-        <div class="card-header">
-          <i class="fas fa-table me-1"></i>
-          Item Table
-        </div>
-        <div class="card-body">
-          <table id="datatablesSimple">
-            <thead>
-              <tr>
-                <th>Item_id</th>
-                <th>Item_name</th>
-                <th>category</th>
-                <th>availability_status</th>
-                <th>viewDetails</th>
-                <th>Select</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th>Item_id</th>
-                <th>Item_name</th>
-                <th>category</th>
-                <th>availability_status</th>
-                <th>viewDetails</th>
-                <th>Select</th>
-              </tr>
-            </tfoot>
-            <tbody></tbody>
-          </table>
-        </div>
+        {%with "Item Id,Item Name,Category,Availability Status,View Details,Select"|split_string:"," as headers%} 
+        {% include 'Reusable Templates/databaseTable.html' with table_title="Item Table" table_id="datatablesSimple" header=headers%} 
+        {%endwith%}
         <div class="card-header">
           <div class="d-flex align-items-center">
             <i class="fas fa-table me-1"></i>
@@ -67,9 +33,7 @@
                 <a class="dropdown-item" id="availableEquipmentsButton" href="#"
                   >Available Items</a
                 >
-                <a class="dropdown-item" id="allButton" href="#"
-                  >All Items</a
-                >
+                <a class="dropdown-item" id="allButton" href="#">All Items</a>
               </div>
             </div>
             <button
@@ -88,7 +52,11 @@
             >
               Req. Assignment
             </button>
-            <button type="button" class="btn btn-danger ms-2" id="deallocationButton">
+            <button
+              type="button"
+              class="btn btn-danger ms-2"
+              id="deallocationButton"
+            >
               Req. deallocation
             </button>
           </div>
@@ -97,53 +65,10 @@
     </div>
   </main>
 </div>
-
-
-<div class="modal fade" id="addEquipmentModal" tabindex="-1" role="dialog" aria-labelledby="addEquipmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addEquipmentModalLabel">Add New Equipment</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="addEquipmentForm">
-            <div class="form-group">
-              <label for="equipmentName">Item Name</label>
-              <input type="text" class="form-control" id="equipmentName" required>
-            </div>
-            <div class="form-group">
-              <label for="category">Category</label>
-              <input type="text" class="form-control" id="category" required>
-            </div>
-            <div class="form-group">
-              <label for="dateOfPurchase">Date of Purchase</label>
-              <input type="date" class="form-control" id="dateOfPurchase" required>
-            </div>
-            <div class="form-group">
-              <label for="location">Location</label>
-              <input type="text" class="form-control" id="location" required>
-            </div>
-            <div class="form-group">
-              <label for="image">Image</label>
-              <input type="file" class="form-control" id="image" required>
-            </div>
-            <div class="form-group">
-              <label for="purchaseReceipt">Purchase Receipt</label>
-              <input type="file" class="form-control" id="purchaseReceipt" required>
-            </div>            
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Add Equipment</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock content %} {% load static %} {% block staticFiles %}
+<!--Add Equipment Modal-->
+{% include 'Reusable Templates/RequestEquipmentModal.html' %}
+ {% endblock content %}
+  {% load static %} 
+  {% block staticFiles %}
 <script src="{% static 'js/normalUserHomeScript.js' %}"></script>
 {% endblock staticFiles %}

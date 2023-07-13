@@ -30,12 +30,10 @@ urlpatterns = [
          name="reg_normal_user"),
     path("api/active_users/", normal_user_managemet_views.active_users_api,
          name="active_users_api"),
-    
-    
 
     # staff_user_management_views.py
     path("", staff_user_management_views.home_view, name="home"),
-    path("login", staff_user_management_views.login_view, name="login_view"), # type: ignore
+    path("login", staff_user_management_views.login_view,name="login_view"),  # type: ignore
     path("logout", staff_user_management_views.logout_view, name="logout"),
     path("staff_user_management", staff_user_management_views.staff_user_management_view,
          name="staff_user_management_view"),
@@ -47,19 +45,22 @@ urlpatterns = [
          staff_user_management_views.update_staff_user, name='update_staff_user'),
     path('api/staff_user_delete/<int:user_id>/',
          staff_user_management_views.delete_staff_user, name='delete_staff_user'),
-    
-     #normal_user_vendor_views.py
+
+    # normal_user_vendor_views.py
 
 
     # staff_user_vendor_views.py
     path("allVendors", staff_user_vendor_views.allVendors_view, name="allVendors"),
     path("api/vendors/", staff_user_vendor_views.get_all_vendors,
          name="get_all_vendors"),
-     path("api/vendor_details/", staff_user_vendor_views.get_vendor_details, name="get_vendor_details"),
-     path("api/update_vendor/", staff_user_vendor_views.update_vendor, name="update_vendor"),
-     path("api/delete_vendors/",staff_user_vendor_views.delete_vendors,name="delete_vendors"),
-     path("api/addVendor/", staff_user_vendor_views.add_vendor, name="add_vendor"),
-     
+    path("api/vendor_details/", staff_user_vendor_views.get_vendor_details,
+         name="get_vendor_details"),
+    path("api/update_vendor/", staff_user_vendor_views.update_vendor,
+         name="update_vendor"),
+    path("api/delete_vendors/", staff_user_vendor_views.delete_vendors,
+         name="delete_vendors"),
+    path("api/addVendor/", staff_user_vendor_views.add_vendor, name="add_vendor"),
+
 
     # staff user_equipment_views.py
     path("get_names/", staff_user_equipment_views.get_names_view, name="get_names"),
@@ -69,8 +70,10 @@ urlpatterns = [
          name='check_equipment_assignment'),
     path('deassign_equipment', staff_user_equipment_views.deassign_equipment_view,
          name='deassign_equipment'),
-    path('api/equipment/', staff_user_equipment_views.equipment_api, name='equipment_api'),
-    path('api/equipment_filter/', EquipmentApiView.as_view(), name='equipment_api_filter'),
+    path('api/equipment/', staff_user_equipment_views.equipment_api,
+         name='equipment_api'),
+    path('api/equipment_filter/', EquipmentApiView.as_view(),
+         name='equipment_api_filter'),
     path('api/equipment_details/',
          staff_user_equipment_views.equipment_details_api, name="equipment_api"),
     path('api/update_equipment/', staff_user_equipment_views.update_equipment_api,
@@ -84,13 +87,19 @@ urlpatterns = [
 
     # staff user request views
     path("requests", staff_user_request_views.requests_view, name="requests"),
-    path('api/handleRequest/', staff_user_request_views.handle_request, name='handle_request'),
-    path('api/getRequest/Allocation/', staff_user_request_views.get_allocation_requests,name='get_allocation_requests'),
-     path('api/getRequest/DeAllocation/', staff_user_request_views.get_deallocation_requests,name='get_deallocation_requests'),
-
-
-
-
+    path('api/handleRequest/', staff_user_request_views.handle_request,
+         name='handle_request'),
+    path('api/getRequest/Allocation/',
+         staff_user_request_views.get_allocation_requests, name='get_allocation_requests'),
+    path('api/getRequest/DeAllocation/',
+         staff_user_request_views.get_deallocation_requests, name='get_deallocation_requests'),
+    path("item_requests", staff_user_request_views.item_requests_view,
+         name="item_requests"),
+    path("api/equipmentRequests/", staff_user_request_views.equipment_requests_api,
+         name="equipment_requests_api"),
+    path("api/item_requests_details/", staff_user_request_views.item_requests_details_api,
+         name="item_requests_details_api"),
+    path("api/update_itemRequest/", staff_user_request_views.update_itemRequest_api,name="update_itemRequest_api"),  # type: ignore
 
 
     # normal user apis normal_user_equip_views.py

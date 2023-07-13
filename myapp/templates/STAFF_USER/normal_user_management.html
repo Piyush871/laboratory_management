@@ -1,4 +1,6 @@
 {% extends 'STAFF_USER/base_staff_user.html' %} {% block content %}
+ {% load split_string %}
+{% load static %}
 <div id="layoutSidenav_content">
   <main>
     <div class="px-4">
@@ -13,7 +15,6 @@
     <div class="buttons px-4 mb-2">
       <!-- Inactive Users Button -->
       <button id="showInactive" class="btn btn-primary">Inactive Users</button>
-
       <!-- Active Users Button -->
       <button id="showActive" class="btn">Active Users</button>
     </div>
@@ -22,25 +23,9 @@
       <!-- Your existing code for inactive users table... -->
 
       <div class="card mb-4">
-        <div class="card-header">
-          <i class="fas fa-table me-1"></i>
-          Inactive Employee
-        </div>
-        <div class="card-body">
-          <table id="inactive_users_table">
-            <thead>
-              <tr>
-                <th>Employee_id</th>
-                <th>Name</th>
-                <th>Employee_designation</th>
-                <th>Email</th>
-                <th>Contact_number</th>
-                <th>CheckBox</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+        {% with "Employee Id,Name,Employee_designation,Email,Contact_number,CheckBox"|split_string:"," as headers %}
+           {% include 'Reusable Templates/databaseTable.html' with table_title="Inactive Employee" table_id="inactive_users_table" headers=headers %} 
+        {% endwith %}
         <div class="card-header">
           <i class="fas fa-table me-1"></i>
           Functions
@@ -61,33 +46,13 @@
       style="display: none"
     >
       <div class="card mb-4">
+       
+        {% with "Employee Id,Name,Employee_designation,Email,Contact_number,CheckBox"|split_string:"," as headers %}
+           {% include 'Reusable Templates/databaseTable.html' with table_title="Active Employee" table_id="active_user_table" headers=headers %} 
+        {% endwith %}
         <div class="card-header">
           <i class="fas fa-table me-1"></i>
-          Active Employee
-        </div>
-        <div class="card-body">
-          <table id="active_user_table">
-            <thead>
-              <tr>
-                <th>Employee_id</th>
-                <th>Name</th>
-                <th>Employee_designation</th>
-                <th>Email</th>
-                <th>Contact_number</th>
-                <th>CheckBox</th>
-              </tr>
-            </thead>
-
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="card-header">
-          <i class="fas fa-table me-1"></i>
-          Functions {% comment %}
-          <button type="button" class="btn btn-primary" id="activeButton">
-            Activate
-          </button>
-          {% endcomment %}
+          Functions 
           <button type="button" class="btn btn-danger" id="deleteButton">
             Delete
           </button>
@@ -97,8 +62,7 @@
   </main>
 </div>
 
-{% endblock content %}
- {% block staticFiles %} {% load static %}
+{% endblock content %} {% block staticFiles %} {% load static %}
 <script src="{% static 'js/normal_user_managementScript.js' %}"></script>
 
 {% endblock staticFiles %}

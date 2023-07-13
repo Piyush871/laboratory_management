@@ -1,0 +1,36 @@
+{% extends 'STAFF_USER/base_staff_user.html' %} {% block content %}
+{%load split_string%}
+<div id="layoutSidenav_content">
+  <main>
+    <div class="container-fluid px-4">
+      <h1 class="mt-4">Tables</h1>
+      <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+        <li class="breadcrumb-item active">All Items</li>
+      </ol>
+      <div class="card mb-4">
+        {%with "Request Id,Requested By,Item Name,Category,date of Request,viewDetails,checkbox"|split_string:"," as headers%}
+        {% include "Reusable Templates/databaseTable.html" with table_title="item Requests" table_id="datatablesSimple" header=headers%}
+        {%endwith%}
+        <div class="card-header">
+          <i class="fas fa-table me-1"></i>
+          Functions 
+          <button type="button" class="btn btn-success" id="activeButton">
+            Accept
+          </button>
+          
+          <button type="button" class="btn btn-danger" id="deleteButton">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- view ItemRequestsModal -->
+    {% include 'Reusable Templates/viewItemRequestModal.html'%}
+  </main>
+</div>
+{% endblock content %} {% block staticFiles %} {% load static %}
+<script src="{% static 'js/itemRequestsScript.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/itemRequestsStyle.css' %}" />
+
+{% endblock staticFiles %}

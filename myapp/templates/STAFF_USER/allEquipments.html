@@ -58,9 +58,7 @@
               </div>
             </div>
           </div>
-        </div>
-        
-          
+        </div>  
         </div>
       </div>
     </div>
@@ -76,14 +74,19 @@
 {% include 'Reusable Templates/viewEquipmentDetails.html' %}
 
 <!-- Add Equipment Modal -->
-{% include 'Reusable Templates/addEquipmentModal.html'%}
+{% include 'Reusable Templates/addEquipmentModal.html'%} 
+
 
 {% endblock content %} {% block staticFiles %} {% load static %}
 <script src="{% static 'js/allEquipmentsScript.js' %}"></script>
+
 <!-- View the equipment Script -->
+<script src="{% static 'js/Reusable_Javascript/viewEquipmentDetails.js' %}"></script>
+
 
 <!-- Add the equipment Script -->
-
+ <script src="{% static 'js/Reusable_Javascript/addEquipment.js' %}"></script>
+ 
 <link rel="stylesheet" href="{% static 'css/allEquipmentsStyle.css' %}" />
 
 {% endblock staticFiles %}

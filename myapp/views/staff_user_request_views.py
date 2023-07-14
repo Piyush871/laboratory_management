@@ -1,4 +1,4 @@
-from ..models import equipment, CustomUser, AllocationRequest,requested_equipments
+from ..models import equipment, CustomUser, AllocationRequest, requested_equipments
 from django.shortcuts import render, redirect
 from myapp.models import CustomUser, equipment
 from myapp.forms import UserRegistrationForm
@@ -23,53 +23,66 @@ import base64
 import random
 from collections import namedtuple
 from django.template.loader import render_to_string
-#import the ValidationError
+# import the ValidationError
 from django.core.exceptions import ValidationError
 
-def requests_view(request):
-    allocation_requests = AllocationRequest.objects.filter(request_type='Allocation')
-    deallocation_requests = AllocationRequest.objects.filter(request_type='Deallocation')
 
-    bg_images = ["assets/img/cardbg1.png", "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
+def requests_view(request):
+    allocation_requests = AllocationRequest.objects.filter(
+        request_type='Allocation')
+    deallocation_requests = AllocationRequest.objects.filter(
+        request_type='Deallocation')
+
+    bg_images = ["assets/img/cardbg1.png",
+                 "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
 
     # generate requests_with_images for allocation requests
-    allocation_requests_with_images = generate_requests_with_images(allocation_requests, bg_images)
+    allocation_requests_with_images = generate_requests_with_images(
+        allocation_requests, bg_images)
 
     # generate requests_with_images for deallocation requests
-    deallocation_requests_with_images = generate_requests_with_images(deallocation_requests, bg_images)
+    deallocation_requests_with_images = generate_requests_with_images(
+        deallocation_requests, bg_images)
 
     return render(request, 'STAFF_USER/requests.html', {'allocation_requests': allocation_requests_with_images, 'deallocation_requests': deallocation_requests_with_images})
 
+
 def generate_requests_with_images(requests, bg_images):
-    RequestWithImage = namedtuple('RequestWithImage', ['allocation_request', 'image'])
+    RequestWithImage = namedtuple(
+        'RequestWithImage', ['allocation_request', 'image'])
     requests_with_images = []
     for allocation_request in requests:
         image = random.choice(bg_images)
-        request_with_image = RequestWithImage(allocation_request=allocation_request, image=image)
+        request_with_image = RequestWithImage(
+            allocation_request=allocation_request, image=image)
         requests_with_images.append(request_with_image)
     return requests_with_images
 
 
 def get_allocation_requests(request):
-    allocation_requests = AllocationRequest.objects.filter(request_type='Allocation')
-    bg_images = ["assets/img/cardbg1.png", "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
-    
+    allocation_requests = AllocationRequest.objects.filter(
+        request_type='Allocation')
+    bg_images = ["assets/img/cardbg1.png",
+                 "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
+
     # generate requests_with_images for allocation requests
-    allocation_requests_with_images = generate_requests_with_images(allocation_requests, bg_images)
-    #return only the allocation requests
-    return JsonResponse({'allocation_requests':allocation_requests_with_images})
+    allocation_requests_with_images = generate_requests_with_images(
+        allocation_requests, bg_images)
+    # return only the allocation requests
+    return JsonResponse({'allocation_requests': allocation_requests_with_images})
+
 
 def get_deallocation_requests(request):
-    deallocation_requests = AllocationRequest.objects.filter(request_type='Deallocation')
-    bg_images = ["assets/img/cardbg1.png", "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
-    
+    deallocation_requests = AllocationRequest.objects.filter(
+        request_type='Deallocation')
+    bg_images = ["assets/img/cardbg1.png",
+                 "assets/img/cardbg2.png", "assets/img/cardbg3.png"]
+
     # generate requests_with_images for allocation requests
-    deallocation_requests_with_images = generate_requests_with_images(deallocation_requests, bg_images)
-    #return only the allocation requests
-    return JsonResponse({'deallocation_requests':deallocation_requests_with_images})
-
-
-
+    deallocation_requests_with_images = generate_requests_with_images(
+        deallocation_requests, bg_images)
+    # return only the allocation requests
+    return JsonResponse({'deallocation_requests': deallocation_requests_with_images})
 
 
 def handle_request(request):
@@ -78,45 +91,46 @@ def handle_request(request):
         action = request.POST.get("action")
         if request_id and action:
             try:
-                allocation_request = AllocationRequest.objects.get(id=request_id)
+                allocation_request = AllocationRequest.objects.get(
+                    id=request_id)
                 if (allocation_request.request_type == "Allocation"):
-                    is_valid, message = handle_allocation_request(allocation_request, action) 
+                    is_valid, message = handle_allocation_request(
+                        allocation_request, action)
                     if is_valid:
                         return JsonResponse({"message": message}, status=200)
                     else:
                         return JsonResponse({"message": message}, status=400)
-                elif(allocation_request.request_type == "Deallocation"):
-                    is_valid, message = handle_deallocation_request(allocation_request, action)
+                elif (allocation_request.request_type == "Deallocation"):
+                    is_valid, message = handle_deallocation_request(
+                        allocation_request, action)
                     if is_valid:
                         return JsonResponse({"message": message}, status=200)
                     else:
                         return JsonResponse({"message": message}, status=400)
                 else:
                     return JsonResponse({"message": "Invalid request type."}, status=400)
-                    
+
             except AllocationRequest.DoesNotExist:
-                return JsonResponse({"error": "Allocation request not found."}, status=404) 
-                    #get the request type 
+                return JsonResponse({"error": "Allocation request not found."}, status=404)
+                # get the request type
                 request_type = allocation_request.request_type
                 print(request_type)
-                
+
         else:
             return JsonResponse({"message": "Invalid request parameters."}, status=400)
     else:
         return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
-
-
-#validating the allocation request 
+# validating the allocation request
 
 
 def validate_allocation_request(allocationRequest):
     # Check if the user is already allocated the equipment
-    # get the equipment and the user 
+    # get the equipment and the user
     equipment = allocationRequest.equipment
     user = allocationRequest.user
-    
+
     if allocationRequest.request_type == "Allocation":
         if equipment.allocation_status:
             # check the user who has been allocated the equipment
@@ -129,12 +143,13 @@ def validate_allocation_request(allocationRequest):
     else:
         return False, "Invalid allocation request type."
 
+
 def validate_deallocation_request(allocationRequest):
     # Check if the user is already allocated the equipment
-    # get the equipment and the user 
+    # get the equipment and the user
     equipment = allocationRequest.equipment
     user = allocationRequest.user
-    
+
     if allocationRequest.request_type == "Deallocation":
         if equipment.allocation_status:
             # check the user who has been allocated the equipment
@@ -147,9 +162,10 @@ def validate_deallocation_request(allocationRequest):
     else:
         return False, "Invalid allocation request type."
 
+
 def allocate_equipment(equipment, user):
-    #change the last allocation date
-    equipment.last_assigned_date=timezone.now()
+    # change the last allocation date
+    equipment.last_assigned_date = timezone.now()
     equipment.allocation_status = True
     equipment.assigned_user = user
     equipment.save()
@@ -159,32 +175,35 @@ def deallocate_equipment(equipment):
     equipment.allocation_status = False
     equipment.assigned_user = None
     equipment.save()
-    
+
+
 def handle_allocation_request(allocation_request, action):
-    if (action=="approve"):
+    if (action == "approve"):
         # Check if the user is already allocated the equipment
         is_valid, message = validate_allocation_request(allocation_request)
         if is_valid:
             # Allocate the equipment
-            allocate_equipment(allocation_request.equipment, allocation_request.user)
+            allocate_equipment(allocation_request.equipment,
+                               allocation_request.user)
             # Update the allocation request status
             allocation_request.status = "Approved"
-            #delete the request
+            # delete the request
             allocation_request.delete()
             return True, "Allocation request approved successfully."
         else:
             return False, message
-    elif (action=="reject"):
+    elif (action == "reject"):
         # Update the allocation request status
         allocation_request.status = "Rejected"
-        #delete the request
+        # delete the request
         allocation_request.delete()
         return True, "Allocation request rejected successfully."
     else:
         return False, "Invalid action."
 
+
 def handle_deallocation_request(allocation_request, action):
-    if(action=="approve"):
+    if (action == "approve"):
         # Check if the user is already allocated the equipment
         is_valid, message = validate_deallocation_request(allocation_request)
         if is_valid:
@@ -192,64 +211,32 @@ def handle_deallocation_request(allocation_request, action):
             deallocate_equipment(allocation_request.equipment)
             # Update the allocation request status
             allocation_request.status = "Approved"
-            #delete the request
+            # delete the request
             allocation_request.delete()
             return True, "Deallocation request approved successfully."
         else:
             return False, message
-    elif (action=="reject"):
-        #delete the request
+    elif (action == "reject"):
+        # delete the request
         allocation_request.delete()
         return True, "Deallocation request rejected successfully."
-    
+
     else:
         return False, "Invalid action."
-    
+
+
 def item_requests_view(request):
     return render(request, 'STAFF_USER/itemRequests.html')
 
-# def equipment_details_api(request):
-#     equipment_id = request.GET.get('equipment_id', None)
-#     if equipment_id is not None:
-#         try:
-#             equipment_obj = equipment.objects.get(equipment_id=equipment_id)
-#             data = {
-#                 'equipment_id': equipment_obj.equipment_id,
-#                 'equipment_name': equipment_obj.equipment_name,
-#                 'category': equipment_obj.category,
-#                 'assigned_user': equipment_obj.assigned_user.name if equipment_obj.assigned_user else None,
-#                 'last_assigned': equipment_obj.last_assigned_date.strftime('%Y-%m-%d') if equipment_obj.last_assigned_date else None,
-#                 'location': equipment_obj.location,
-#                 'image_url': equipment_obj.image.url if equipment_obj.image else None,
-#                 'purchase_receipt_url': equipment_obj.purchase_receipt.url if equipment_obj.purchase_receipt else None,
-#                 'status': True
-#             }
-#         except equipment.DoesNotExist:
-#             data = {'status': False, 'error': 'No equipment found with this ID'}
-#     else:
-#         data = {'status': False, 'error': 'No equipment ID provided'}
-#     print(data)
-
-#     return JsonResponse(data)
-
-
-# document.querySelector("#item_request_id_d").value = data.item_request_id;
-#     document.querySelector("#item_request_requested_by").value = data.item_request_requested_by;
-#     document.querySelector("#item_request_name_d").value = data.item_request_name;
-#     document.querySelector("#category_d").value = data.category;
-#     document.querySelector("#location_d").value = data.location;
-#     document.querySelector("#date_of_request_d").value = data.date_of_request;
-#     document.querySelector("#date_of_purchase_d").value = data.date_of_purchase;
-#     document.querySelector("#item_request_image_d").href = data.image_url;
-#     document.querySelector("#purchase_receipt_d").href = data.purchase_receipt_url;
 
 def item_requests_details_api(request):
-    itemRequestid= request.GET.get('item_request_id', None)
+    itemRequestid = request.GET.get('item_request_id', None)
     if itemRequestid is not None:
         try:
-            itemRequest_obj = requested_equipments.objects.get(id=itemRequestid)
+            itemRequest_obj = requested_equipments.objects.get(
+                id=itemRequestid)
             data = {
-                'item_request_id': itemRequest_obj.id, #type: ignore
+                'item_request_id': itemRequest_obj.id,  # type: ignore
                 'item_request_requested_by': itemRequest_obj.requested_by.name if itemRequest_obj.requested_by else None,
                 'item_request_name': itemRequest_obj.equipment_name,
                 'category': itemRequest_obj.category,
@@ -261,35 +248,13 @@ def item_requests_details_api(request):
                 'status': True
             }
         except requested_equipments.DoesNotExist:
-            data = {'status': False, 'error': 'No item request found with this ID'}
+            data = {'status': False,
+                    'error': 'No item request found with this ID'}
     else:
         data = {'status': False, 'error': 'No item request ID provided'}
-    
+
     return JsonResponse(data)
 
-
-
-# class requested_equipments(models.Model):
-#     equipment_name = models.CharField(max_length=100)
-#     # add the user who requested for the adding of the equipment
-#     requested_by = models.ForeignKey(
-#         CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
-#     category = models.CharField(max_length=100, default="Others")
-#     date_of_purchase = models.DateField(default=timezone.now)
-#     location = models.CharField(max_length=100)
-#     image = models.ImageField(upload_to='equipment_images')
-#     purchase_receipt = models.ImageField(upload_to='purchase_receipts')
-
-#     def __str__(self):
-#         return self.equipment_name
-
-
-# <th>Request id</th>
-# <th>Request By</th>
-# <th>Item Name</th>
-# <th>category</th>
-# <th>viewDetails</th>
-# <th>checkbox</th>
 
 def equipment_requests_api(request):
     search = request.GET.get('search', '')
@@ -304,7 +269,7 @@ def equipment_requests_api(request):
             Q(date_of_purchase__icontains=search) |
             Q(location__icontains=search)
         ).order_by('-id')
-        #order by the time of creation of the equipment
+        # order by the time of creation of the equipment
     else:
         queryset = requested_equipments.objects.all().order_by(
             '-id')
@@ -312,7 +277,7 @@ def equipment_requests_api(request):
     data = []
     for item in queryset:
         row = [
-            item.id,# type: ignore
+            item.id,  # type: ignore
             item.requested_by.name if item.requested_by else '',
             item.equipment_name,
             item.category if item.category else '',
@@ -320,8 +285,9 @@ def equipment_requests_api(request):
                 '%Y-%m-%d') if item.date_of_request else '',
 
             # This column will be rendered in the frontend with the 'render' function
-            item.id, # type: ignore
-            f'<input type="checkbox" class="user-checkbox" data-id="{item.id}" />', # type: ignore
+            item.id,  # type: ignore
+            # type: ignore
+            f'<input type="checkbox" class="user-checkbox" data-id="{item.id}" />',
         ]
         data.append(row)
 
@@ -330,55 +296,8 @@ def equipment_requests_api(request):
     return JsonResponse(response_data)
 
 
-# def update_equipment_api(request):
-#     if request.method == 'POST':
-#         equipment_id = request.POST.get('equipment_id')
-#         equipment_name = request.POST.get('equipment_name')
-#         category = request.POST.get('category')
-#         location = request.POST.get('location')
-#         image = request.FILES.get('image')
-#         purchase_receipt = request.FILES.get('purchase_receipt')
-
-#         try:
-#             eq = equipment.objects.get(equipment_id=equipment_id)
-#         except equipment.DoesNotExist:
-#             return JsonResponse({"status": False, "error": "Equipment not found."})
-
-#         # Validate the sizes of the uploaded files
-#         max_size = 0.5 * 1024 * 1024  # 0.5 MB in bytes
-#         if image and image.size > max_size:
-#             return JsonResponse({"message": "The equipment image file is too large. Please upload a file smaller than 0.5 MB."},status=400)
-#         if purchase_receipt and purchase_receipt.size > max_size:
-#             return JsonResponse({"message": "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."},status=400)
-
-#         eq.equipment_name = equipment_name
-#         eq.category = category
-#         eq.location = location
-#         if image is not None:
-#             eq.image = image
-#         if purchase_receipt is not None:
-#             eq.purchase_receipt = purchase_receipt
-#         try:
-#             eq.save()
-#         except ValidationError as e:
-#             return JsonResponse({"message": str(e)},status=400)
-
-#         return JsonResponse({"message": "Equipment updated successfully."})
-#     else:
-#         print("Invalid request method")
-#         return JsonResponse({"message": "Invalid request method."},status=400)
- 
- 
-#image
-# id
-# equipment_name
-# category
-# location
-# date_of_purchase
-#purchase_receipt
-
 def update_itemRequest_api(request):
-    if request.method=="Post":
+    if request.method == "Post":
         item_request_id = request.POST.get('id')
         equipment_name = request.POST.get('equipment_name')
         category = request.POST.get('category')
@@ -394,10 +313,10 @@ def update_itemRequest_api(request):
         # Validate the sizes of the uploaded files
         max_size = 0.5 * 1024 * 1024
         if image and image.size > max_size:
-            return JsonResponse({"message": "The equipment image file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+            return JsonResponse({"message": "The equipment image file is too large. Please upload a file smaller than 0.5 MB."}, status=400)
         if purchase_receipt and purchase_receipt.size > max_size:
-            return JsonResponse({"message": "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."},status=400)
-        
+            return JsonResponse({"message": "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."}, status=400)
+
         eq.equipment_name = equipment_name
         eq.category = category
         eq.location = location
@@ -409,9 +328,20 @@ def update_itemRequest_api(request):
         try:
             eq.save()
         except ValidationError as e:
-            return JsonResponse({"message": str(e)},status=400)
+            return JsonResponse({"message": str(e)}, status=400)
     else:
         print("Invalid request method")
-        return JsonResponse({"message": "Invalid request method."},status=400)
-        
-    
+        return JsonResponse({"message": "Invalid request method."}, status=400)
+
+
+def delete_itemRequests_api(request):
+
+        # get the ids of the items to be delete
+        ids = request.GET.getlist('ids[]')
+        try:
+            requested_equipments.objects.filter(id__in=ids).delete()
+            
+        except requested_equipments.DoesNotExist:
+            return JsonResponse({"status": False, "message": "Equipment not found."})
+        return JsonResponse({"message": "Equipment deleted successfully."}, status=200)
+

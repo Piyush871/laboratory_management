@@ -1,0 +1,91 @@
+<!-- ADD Staff User Modal -->
+
+<div
+class="modal fade"
+id="addStaffUserModal"
+tabindex="-1"
+aria-labelledby="addStaffUserModalLabel"
+aria-hidden="true"
+>
+<div class="modal-dialog">2
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="addStaffUserModalLabel">
+        Add New Staff User
+      </h5>
+      <button
+        type="button"
+        id="closeAddStaffUserModalIcon"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="addStaffUserForm">
+        <div class="form-group">
+          <label for="staffEmail">Email address</label>
+          <input
+            type="email"
+            class="form-control"
+            id="staffEmail"
+            aria-describedby="emailHelp"
+          />
+        </div>
+        <div class="form-group">
+          <label for="staffName">Name</label>
+          <input type="text" class="form-control" id="staffName" />
+        </div>
+        <div class="form-group">
+          <label for="staffContactNo">Contact Number</label>
+          <input type="text" class="form-control" id="staffContactNo" />
+        </div>
+        <div class="form-group">
+          <label for="staffDesignation">Designation</label>
+          <input type="text" class="form-control" id="staffDesignation" />
+        </div>
+        <div class="form-group">
+          <label for="staffPassword" id="staffPasswordLabel"
+            >Password</label
+          >
+          <input type="password" class="form-control" id="staffPassword" />
+        </div>
+        <div class="form-group">
+          <label for="confirmStaffPassword">Confirm Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="confirmStaffPassword"
+          />
+        </div>
+      </form>
+    </div>
+    <!--display the message here-->
+    <div id="message-container"></div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        id="submitEditStaffUserButton"
+        style="display: none"
+      >
+        submit
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        id="closeAddStaffUserModalButton"
+      >
+        Close
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        id="submitAddStaffUserForm"
+      >
+        Submit
+      </button>
+    </div>
+  </div>
+</div>
+</div>

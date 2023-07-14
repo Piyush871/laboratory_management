@@ -29,7 +29,8 @@
     {% include 'Reusable Templates/viewItemRequestModal.html'%}
   </main>
 </div>
-{% endblock content %} {% block staticFiles %} {% load static %}
+{% endblock content %} {% block staticFiles %}
+ {% load static %}
 <script src="{% static 'js/itemRequestsScript.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/itemRequestsStyle.css' %}" />
 

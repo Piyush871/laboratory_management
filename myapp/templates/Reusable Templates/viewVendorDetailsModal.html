@@ -114,6 +114,7 @@
           >
             Close
           </button>
+          {% if user.is_staff%}
           <button
             id="editButton"
             type="button"
@@ -131,6 +132,7 @@
           >
             Save
           </button>
+          {% endif %}
         </div>
       </div>
     </div>

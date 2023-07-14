@@ -82,8 +82,8 @@ urlpatterns = [
          name="allEquipments"),
     path('api/allEquipments/', staff_user_equipment_views.allEquipments_api,
          name="allEquipments_api"),
-    path('api/addEquipment/', staff_user_equipment_views.add_equipment,
-         name='add_equipment'),
+    path('api/addEquipment/', staff_user_equipment_views.add_equipment,name='add_equipment'),
+    path('api/delete_equipments/', staff_user_equipment_views.delete_equipments_api,name='delete_equipments_api'),
 
     # staff user request views
     path("requests", staff_user_request_views.requests_view, name="requests"),
@@ -99,7 +99,8 @@ urlpatterns = [
          name="equipment_requests_api"),
     path("api/item_requests_details/", staff_user_request_views.item_requests_details_api,
          name="item_requests_details_api"),
-    path("api/update_itemRequest/", staff_user_request_views.update_itemRequest_api,name="update_itemRequest_api"),  # type: ignore
+    path("api/update_itemRequest/", staff_user_request_views.update_itemRequest_api,name="update_itemRequest_api"),# type: ignore
+     path("api/delete_itemRequests/", staff_user_request_views.delete_itemRequests_api,name="delete_itemRequest_api"),
 
 
     # normal user apis normal_user_equip_views.py

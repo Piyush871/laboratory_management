@@ -127,11 +127,10 @@ def normal_user_add_equipment_api(request):
             location = request.POST['location']
             max_size = 0.5 * 1024 * 1024
             image_file = request.FILES['image']
+            purchase_receipt_file = request.FILES['purchase_receipt']
             #add condition that image size should be lesser that 0.5 mb 
             if(image_file.size > max_size):
                 return JsonResponse({'message': 'Image size should be lesser than 500kb'}, status=400)
-            
-            purchase_receipt_file = request.FILES['purchase_receipt']
             
             #add a condition that th purchase receipt size should be less than 0.5 mb
             if(purchase_receipt_file.size > max_size):

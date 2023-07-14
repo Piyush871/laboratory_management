@@ -56,134 +56,10 @@
 
     <!-- Modal -->
     <!-- Add Staff User Modal -->
-    <div
-      class="modal fade"
-      id="addStaffUserModal"
-      tabindex="-1"
-      aria-labelledby="addStaffUserModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">2
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addStaffUserModalLabel">
-              Add New Staff User
-            </h5>
-            <button
-              type="button"
-              id="closeAddStaffUserModalIcon"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form id="addStaffUserForm">
-              <div class="form-group">
-                <label for="staffEmail">Email address</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="staffEmail"
-                  aria-describedby="emailHelp"
-                />
-              </div>
-              <div class="form-group">
-                <label for="staffName">Name</label>
-                <input type="text" class="form-control" id="staffName" />
-              </div>
-              <div class="form-group">
-                <label for="staffContactNo">Contact Number</label>
-                <input type="text" class="form-control" id="staffContactNo" />
-              </div>
-              <div class="form-group">
-                <label for="staffDesignation">Designation</label>
-                <input type="text" class="form-control" id="staffDesignation" />
-              </div>
-              <div class="form-group">
-                <label for="staffPassword" id="staffPasswordLabel"
-                  >Password</label
-                >
-                <input type="password" class="form-control" id="staffPassword" />
-              </div>
-              <div class="form-group">
-                <label for="confirmStaffPassword">Confirm Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="confirmStaffPassword"
-                />
-              </div>
-            </form>
-          </div>
-          <!--display the message here-->
-          <div id="message-container"></div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              id="submitEditStaffUserButton"
-              style="display: none"
-            >
-              submit
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              id="closeAddStaffUserModalButton"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              id="submitAddStaffUserForm"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+  {% include 'Reusable Templates/addStaffUserModal.html' %}
 
    <!-- Edit Staff User Modal -->
-  <div class="modal fade" id="editStaffUserModal" tabindex="-1" aria-labelledby="editStaffUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editStaffUserModalLabel">Edit Staff User</h5>
-          <button type="button" class="close" data-dismiss="modal" id="closeEditStaffUserModalIcon" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="editStaffUserForm">
-            <input type="hidden" id="editStaffUserId">
-            <div class="form-group">
-              <label for="editStaffEmail">Email address</label>
-              <input type="email" class="form-control" id="editStaffEmail" />
-            </div>
-            <div class="form-group">
-              <label for="editStaffName">Name</label>
-              <input type="text" class="form-control" id="editStaffName" />
-            </div>
-            <div class="form-group">
-              <label for="editStaffContactNo">Contact Number</label>
-              <input type="text" class="form-control" id="editStaffContactNo" />
-            </div>
-            <div class="form-group">
-              <label for="editStaffDesignation">Designation</label>
-              <input type="text" class="form-control" id="editStaffDesignation" />
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeEditStaffUserModalButton">Close</button>
-          <button type="button" class="btn btn-primary" id="submitEditStaffUserForm">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
+ {% include 'Reusable Templates/editStaffUserModal.html' %}
 
 
 
@@ -192,6 +68,12 @@
 
 {% endblock %} {% block staticFiles %} {% load static %}
 <script src="{% static 'js/staff_user_managementScript.js' %}"></script>
+<!--Add the Staff User  Javascript-->
+<script src="{% static 'js/Reusable_Javascript/addStaffUser.js' %}"></script>
+
+<!--Edit the Staff User  Javascript-->
+<script src="{% static 'js/Reusable_Javascript/editStaffUser.js' %}"></script>
+
 <link
   rel="stylesheet"
   href="{% static 'css/staff_user_managementStyle.css' %}"

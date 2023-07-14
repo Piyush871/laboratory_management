@@ -1,30 +1,29 @@
-from ..models import equipment, CustomUser
-from django.shortcuts import render, redirect
-from myapp.models import CustomUser, equipment
-from myapp.forms import UserRegistrationForm
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+import base64
+import json
+from datetime import datetime, timedelta
+
+from django.contrib import messages
 # import the authentication backend
 from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
-from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required, user_passes_test
-# import the timezone
-from django.utils import timezone
-from django.shortcuts import get_object_or_404
+from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.files.base import ContentFile
 # import httpresponse
 from django.db.models import Q
-from django.core import serializers
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-import json
+# import the timezone
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.core.files.base import ContentFile
-import base64
-from django.shortcuts import get_object_or_404
-from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.http import require_POST
 from django.views.generic.base import View
-from datetime import datetime, timedelta
-from django.core.exceptions import ValidationError
 
+from myapp.forms import UserRegistrationForm
+from myapp.models import CustomUser, equipment
+
+from ..models import CustomUser, equipment
 
 
 def get_names_view(request):
@@ -59,7 +58,7 @@ def get_names_view(request):
 def assign_equipment_view(request):
     print("assign equipment view")
     body_unicode = request.body.decode('utf-8')
-    body_data = json.loads(body_unicode)  
+    body_data = json.loads(body_unicode)
     equipment_id = body_data.get("equipment_id")
     employee_id = body_data.get("employee_id")
     location = body_data.get("location")
@@ -97,16 +96,17 @@ def check_equipment_deassign_view(request):
     try:
         eq = equipment.objects.get(equipment_id=equipment_id)
     except ObjectDoesNotExist:
-        return JsonResponse({'message': 'equipment does not exist!'},status=400)
+        return JsonResponse({'message': 'equipment does not exist!'}, status=400)
 
     if eq.assigned_user is None:
         responseText = "Equipment is not assigned to anyone"
         return JsonResponse({"message": responseText}, status=400)
 
     user = eq.assigned_user
-    
-    responseText = "Equipment is assigned to " + user.name if user.name else " Unknown user"
-    responseText += " and it is located at " 
+
+    responseText = "Equipment is assigned to " + \
+        user.name if user.name else " Unknown user"
+    responseText += " and it is located at "
     responseText += eq.location if eq.location else " Unknown location"
     return JsonResponse({"responseText": responseText})
 
@@ -114,17 +114,17 @@ def check_equipment_deassign_view(request):
 def deassign_equipment_view(request):
     body_unicode = request.body.decode('utf-8')
     body_data = json.loads(body_unicode)
-    
+
     equipment_id = body_data.get("equipment_id")
-    location = body_data.get("location") 
+    location = body_data.get("location")
     try:
         eq = equipment.objects.get(equipment_id=equipment_id)
     except ObjectDoesNotExist:
-        return JsonResponse({'message': "Equipment does not exist!"},status=400)
+        return JsonResponse({'message': "Equipment does not exist!"}, status=400)
 
     if eq.allocation_status == False:
-        return JsonResponse({'message': 'equipment is not assigned!'},status=400)
-        
+        return JsonResponse({'message': 'equipment is not assigned!'}, status=400)
+
     eq.assigned_user = None
 
     if location is not None:
@@ -134,9 +134,6 @@ def deassign_equipment_view(request):
     eq.allocation_status = False
     eq.save()
     return JsonResponse({'message': 'equipment deassigned successfully!'})
-
-
-
 
 
 def equipment_api(request):
@@ -222,13 +219,11 @@ class EquipmentApiView(View):
         date_before = self.request.GET.get('date_before', None)
         date_after = self.request.GET.get('date_after', None)
         assigned_status = self.request.GET.get('assigned_status', None)
-        search = self.request.GET.get('search', None) 
-        #console all this data
-        print(date_before, date_after, assigned_status,search)
-
+        search = self.request.GET.get('search', None)
+        # console all this data
+        print(date_before, date_after, assigned_status, search)
 
         equipments = equipment.objects.all().order_by('-last_assigned_date')
-        
 
         if date_before:
             date_before = datetime.strptime(date_before, '%Y-%m-%d').date()
@@ -241,18 +236,18 @@ class EquipmentApiView(View):
         if assigned_status is not None:
             assigned_status = assigned_status.lower() in ['true', '1', 'yes']
             equipments = equipments.filter(allocation_status=assigned_status)
-        
+
         if search:
             equipments = equipments.filter(
-            Q(equipment_id__icontains=search) |
-            Q(equipment_name__icontains=search) |
-            Q(category__icontains=search) |
-            Q(date_of_purchase__icontains=search) |
-            Q(location__icontains=search) |
-            Q(assigned_user__name__icontains=search) |
-            Q(assigned_user__employee_id__icontains=search)
-        )
-        
+                Q(equipment_id__icontains=search) |
+                Q(equipment_name__icontains=search) |
+                Q(category__icontains=search) |
+                Q(date_of_purchase__icontains=search) |
+                Q(location__icontains=search) |
+                Q(assigned_user__name__icontains=search) |
+                Q(assigned_user__employee_id__icontains=search)
+            )
+
         data = []
         for item in equipments:
             row = [
@@ -315,9 +310,9 @@ def update_equipment_api(request):
         # Validate the sizes of the uploaded files
         max_size = 0.5 * 1024 * 1024  # 0.5 MB in bytes
         if image and image.size > max_size:
-            return JsonResponse({"message": "The equipment image file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+            return JsonResponse({"message": "The equipment image file is too large. Please upload a file smaller than 0.5 MB."}, status=400)
         if purchase_receipt and purchase_receipt.size > max_size:
-            return JsonResponse({"message": "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."},status=400)
+            return JsonResponse({"message": "The purchase receipt file is too large. Please upload a file smaller than 0.5 MB."}, status=400)
 
         eq.equipment_name = equipment_name
         eq.category = category
@@ -329,13 +324,14 @@ def update_equipment_api(request):
         try:
             eq.save()
         except ValidationError as e:
-            return JsonResponse({"message": str(e)},status=400)
+            return JsonResponse({"message": str(e)}, status=400)
 
         return JsonResponse({"message": "Equipment updated successfully."})
     else:
         print("Invalid request method")
-        return JsonResponse({"message": "Invalid request method."},status=400)
-    
+        return JsonResponse({"message": "Invalid request method."}, status=400)
+
+
 def allEquipments_view(request):
     return render(request, 'STAFF_USER/allEquipments.html')
 
@@ -344,34 +340,64 @@ def allEquipments_view(request):
 def add_equipment(request):
     if request.method == 'POST':
         try:
-            print("int the add equipment")
             equipment_name = request.POST['equipment_name']
+            print(equipment_name)
             category = request.POST['category']
             date_of_purchase = request.POST['date_of_purchase']
             location = request.POST['location']
-            image_file = request.POST['image']
-            purchase_receipt=request.POST['purchase_receipt'] 
+            print(location)
+            # first if the file is uploaded or not
+            image_file = None
+            purchase_receipt = None
+            if 'image' in request.FILES:
+                image_file = request.FILES['image']
+            print("image_file is found successfully")
+            if 'purchase_receipt' in request.FILES:
+                purchase_receipt = request.FILES['purchase_receipt']
             new_equipment = equipment(
                 equipment_name=equipment_name,
                 category=category,
                 date_of_purchase=date_of_purchase,
                 location=location,
             )
-            
-            #check the size of the image 
+            # check the size of the image
             max_size = 0.5 * 1024 * 1024  # 0.5 MB in bytes
-            if image_file.size > max_size:
-                return JsonResponse({'message': 'The equipment image file is too large. Please upload a file smaller than 0.5 MB.'}, status=400)    
-            new_equipment.image.save(image_file.name, image_file)
-            
-            if purchase_receipt.size > max_size:
+            if image_file is not None and image_file.size > max_size:
+                return JsonResponse({'message': 'The equipment image file is too large. Please upload a file smaller than 0.5 MB.'}, status=400)
+            if image_file is not None:
+                new_equipment.image.save(image_file.name, image_file)
+
+            if purchase_receipt is not None and purchase_receipt.size > max_size:
                 return JsonResponse({'message': 'The purchase receipt file is too large. Please upload a file smaller than 0.5 MB.'}, status=400)
-            
-            new_equipment.purchase_receipt.save(purchase_receipt.name, purchase_receipt)
-            new_equipment.save()
+            if purchase_receipt is not None:
+                new_equipment.purchase_receipt.save(
+                    purchase_receipt.name, purchase_receipt)
+            # try saving the equipment
+            try:
+                new_equipment.save()
+            except ValidationError as e:
+                print("the error is in saving the equipment")
+                print(e)
+                return JsonResponse({'message': str(e)}, status=400)
 
             return JsonResponse({'status': 'ok'}, status=200)
         except Exception as e:
+            print("the error is here")
+            print(e)
             return JsonResponse({'error': str(e)}, status=400)
     else:
+        print(request.method)
         return JsonResponse({'error': 'Invalid Method'}, status=400)
+
+def delete_equipments_api(request):
+    if request.method == 'POST':
+        # get the ids of the equipments to be deleted
+        ids = request.GET.getlist('ids[]')
+        print(ids)
+        if ids:
+            try:
+                equipments = equipment.objects.filter(equipment_id__in=ids)
+                equipments.delete()
+            except equipment.DoesNotExist:
+                return JsonResponse({'message': 'Equipment not found'}, status=400)
+            return JsonResponse({'status': 'ok', 'message': "equipments deleted successfully"}, status=200)

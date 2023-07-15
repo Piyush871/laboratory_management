@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings anda their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -27,7 +26,7 @@ SECRET_KEY = 'django-insecure-$1&cfgy#q@l5y7pfg_h^(q-7-275tu)9y^s9rtnm8q!cdrjm8v
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['sea-lion-app-gv4p8.ondigitalocean.app','localhost']
+ALLOWED_HOSTS = ['sea-lion-app-gv4p8.ondigitalocean.app', 'localhost']
 
 # Application definition
 
@@ -144,10 +143,13 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER=os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD=os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = 'jgff19852@gmail.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
 
 DEBUG = True
+SITE_URL = 'http://localhost:8000'  # replace with your site's domain
+
 # For django.contrib.sites
 SITE_ID = 1
-

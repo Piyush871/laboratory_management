@@ -23,7 +23,7 @@ import base64
 import random
 from collections import namedtuple
 import re
-
+from ..email_utils import staffUserWelcomeMail
 
 @login_required(login_url='reg_normal_user')
 def home_view(request):
@@ -101,6 +101,8 @@ def create_staff_user(request):
 
     user = CustomUser.objects.create_staffuser(
         email=email, password=password, name=name, contact_no=contact_no, employee_designation=employee_designation)
+    #send email to the user
+    staffUserWelcomeMail(user)
     # Return the url where you want to redirect
     redirect_url = reverse('staff_user_management_view')
     return JsonResponse({'message': 'User created successfully!', 'redirect_url': redirect_url}, status=201)

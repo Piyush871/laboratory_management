@@ -25,6 +25,7 @@ from collections import namedtuple
 from django.template.loader import render_to_string
 # import the ValidationError
 from django.core.exceptions import ValidationError
+from ..email_utils import sendAllotmentSuccessMail
 
 
 def requests_view(request):
@@ -189,6 +190,8 @@ def handle_allocation_request(allocation_request, action):
             allocation_request.status = "Approved"
             # delete the request
             allocation_request.delete()
+            #send mail to the user
+            sendAllotmentSuccessMail(allocation_request.user, allocation_request.equipment)
             return True, "Allocation request approved successfully."
         else:
             return False, message

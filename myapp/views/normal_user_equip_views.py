@@ -21,7 +21,7 @@ from myapp.forms import UserRegistrationForm
 from myapp.models import CustomUser, equipment, requested_equipments, AllocationRequest
 
 from ..models import CustomUser, equipment
-
+from ..email_utils import newEquipmentRequestMail,newAllocationRequestMail,newDeallocationRequestMail
 # *imports completed for the normal user views
 
 
@@ -53,7 +53,6 @@ def normal_user_assigned_equipments_api(request):
         error_data = {'error': 'Invalid request method!'}
         return JsonResponse(error_data, status=400)
     
-
 
 def normal_user_all_equipments_api(request):
     if request.method == "GET":
@@ -145,6 +144,8 @@ def normal_user_add_equipment_api(request):
             new_equipment.image.save(image_file.name, image_file)
             new_equipment.purchase_receipt.save(purchase_receipt_file.name, purchase_receipt_file)
             new_equipment.save()
+            # send the mail to the admin for the new equipment request
+            newEquipmentRequestMail(new_equipment, request.user)
             return JsonResponse({'message': 'equipment added successfully'}, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
@@ -186,6 +187,8 @@ def normal_user_request_equipment_api(request):
                     timestamp=timezone.now()
                 )
                 new_request.save()
+            #send mail to the admin
+            newAllocationRequestMail(equipment_ids,request.user)
 
         elif request_type == 'DEALLOCATION':
             # only proceed if the equipment is allocated to the user
@@ -211,7 +214,8 @@ def normal_user_request_equipment_api(request):
                     timestamp=timezone.now()
                 )
                 new_request.save()
-
+            #send mail to the admin for deallocation request
+            newDeallocationRequestMail(equipment_ids,request.user)
         # Send a response back to the client.
         return JsonResponse({"message": "Request processed successfully"})
     else:

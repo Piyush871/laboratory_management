@@ -20,6 +20,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.base import ContentFile
 import base64
 
+from  ..email_utils import sendAccountActivationMail ,normalUserRegistrationEmail
+
 def reg_normal_user_view(request):
     if request.method == 'POST':
         form_data = request.POST.copy()
@@ -31,6 +33,11 @@ def reg_normal_user_view(request):
             return JsonResponse({'message': 'Email already exists!'}, status=400)
         if form.is_valid():
             form.save()
+            #get the user 
+            user = CustomUser.objects.get(email=form_data['email'])
+            #send email to the staff user 
+            staff_users = CustomUser.objects.filter(is_staff=True)
+            normalUserRegistrationEmail(user,staff_users)
             return JsonResponse ({'message':'User created successfully!Wait for the account to be activated by Admin'})
         else:
             print("form error",form.errors)
@@ -82,9 +89,16 @@ def inactive_users_api(request):
 
 def activate_users_api(request):
     ids = request.GET.getlist('ids[]')
-
+    print("activating users", ids)
     if ids:
         CustomUser.objects.filter(employee_id__in=ids).update(is_active=True)
+        #send a mail to the users
+        try:
+            for id in ids:
+                print("sending mail to", id)
+                sendAccountActivationMail(CustomUser.objects.get(employee_id=id))
+        except Exception as e:
+            print(e)
         return JsonResponse({'status': 'success', 'message': 'Users activated successfully.'})
     else:
         return JsonResponse({'status': 'error', 'message': 'No user IDs provided.'})
